@@ -50,6 +50,14 @@ extern "C"
 #define SCU_SSP1_SCK        (P1_19) /* P1_19 */
 #define SCU_SSP1_SSEL       (P1_20) /* P1_20 */
 
+/* UART0 Peripheral PinMux */
+#define SCU_UART0_RX       (P2_1) /* P2_1 pin81 */
+#define SCU_UART0_TX       (P2_0) /* P2_0 pin75 */
+
+/* UART3 Peripheral PinMux */
+#define SCU_UART3_RX       (P2_4) /* P2_4 pin88 */
+#define SCU_UART3_TX       (P2_3) /* P2_3 pin89 */
+
 /* TODO add other Pins */
 
 /*

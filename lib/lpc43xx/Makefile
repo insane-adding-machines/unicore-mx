@@ -31,7 +31,7 @@ CFLAGS		= -O2 -g3 -Wall -Wextra -I../../include -fno-common \
 		  -mfloat-abi=hard -mfpu=fpv4-sp-d16
 # ARFLAGS	= rcsv
 ARFLAGS		= rcs
-OBJS		= gpio.o vector.o scu.o i2c.o ssp.o nvic.o systick.o
+OBJS		= gpio.o vector.o scu.o i2c.o ssp.o nvic.o systick.o uart.o
 
 # VPATH += ../usb
 

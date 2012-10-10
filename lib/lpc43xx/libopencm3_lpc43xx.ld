@@ -65,6 +65,7 @@ SECTIONS
 	} >ram AT >rom
 
 	.bss : {
+		_bss = .;
 		*(.bss*)	/* Read-write zero initialized data */
 		*(COMMON)
 		. = ALIGN(4);

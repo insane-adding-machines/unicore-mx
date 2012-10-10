@@ -188,7 +188,7 @@ void reset_handler(void)
 	for (src = &_etext, dest = &_data; dest < &_edata; src++, dest++)
 		*dest = *src;
 
-	while (dest < &_ebss)
+	for (dest = &_bss; dest < &_ebss; dest++)
 		*dest++ = 0;
 
 	/* Call the application's entry point. */

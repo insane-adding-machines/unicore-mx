@@ -21,7 +21,7 @@
 #define WEAK __attribute__ ((weak))
 
 /* Symbols exported by the linker script(s). */
-extern unsigned _etext, _data, _edata, _ebss, _stack;
+extern unsigned _etext, _data, _edata, _bss, _ebss, _stack;
 extern unsigned _etext_ram, _text_ram, _etext_rom;
 
 void main(void);

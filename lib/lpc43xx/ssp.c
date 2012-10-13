@@ -78,26 +78,6 @@ void ssp_init(ssp_num_t ssp_num,
 	SSP_CR1(ssp_port) = (SSP_ENABLE | mode | master_slave | slave_option);
 }
 
-/*
-* This Function Wait until Data RX Ready, and return Data Read from SSP.
-*/
-u16 ssp_read(ssp_num_t ssp_num)
-{
-	u32 ssp_port;
-
-	if(ssp_num == SSP0_NUM)
-	{
-		ssp_port = SSP0;
-	}else
-	{
-		ssp_port = SSP1;
-	}
-	/* Wait Until Data Received (Rx FIFO not Empty) */
-	while( (SSP_SR(ssp_port) & SSP_SR_RNE) == 0);
-
-	return SSP_DR(ssp_port);
-}
-
 void ssp_wait_until_not_busy(ssp_num_t ssp_num)
 {
 	u32 ssp_port;
@@ -114,7 +94,7 @@ void ssp_wait_until_not_busy(ssp_num_t ssp_num)
 }
 
 /* This Function Wait Data TX Ready, and Write Data to SSP */
-void ssp_write(ssp_num_t ssp_num, u16 data)
+u16 ssp_transfer(ssp_num_t ssp_num, u16 data)
 {
 	u32 ssp_port;
 
@@ -141,5 +121,10 @@ void ssp_write(ssp_num_t ssp_num, u16 data)
 	 * example...
 	 */
 	ssp_wait_until_not_busy(ssp_num);
+	
+	/* Wait Until Data Received (Rx FIFO not Empty) */
+	while( (SSP_SR(ssp_port) & SSP_SR_RNE) == 0);
+
+	return SSP_DR(ssp_port);
 }
 

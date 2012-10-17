@@ -133,7 +133,7 @@
 
 /* --- I2C funtion prototypes----------------------------------------------- */
 
-void i2c0_init(void);
+void i2c0_init(const uint16_t duty_cycle_count);
 void i2c0_tx_start(void);
 void i2c0_tx_byte(u8 byte);
 u8 i2c0_rx_byte(void);

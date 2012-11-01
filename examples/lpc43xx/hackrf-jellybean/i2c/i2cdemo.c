@@ -88,7 +88,7 @@ int main(void)
 	int i;
 
 	gpio_setup();
-	i2c0_init();
+	i2c0_init(60);
 
 	gpio_set(PORT_EN1V8, PIN_EN1V8); /* 1V8 on */
 

@@ -23,6 +23,7 @@
 /* Symbols exported by the linker script(s). */
 extern unsigned _etext, _data, _edata, _bss, _ebss, _stack;
 extern unsigned _etext_ram, _text_ram, _etext_rom;
+extern unsigned _data_rom, _edata_rom;
 
 void main(void);
 void reset_handler(void);
@@ -185,8 +186,11 @@ void reset_handler(void)
 		/* Continue Execution in RAM */
 	}
 
-	for (src = &_etext, dest = &_data; dest < &_edata; src++, dest++)
-		*dest = *src;
+	dest = &_data;
+	for(src = &_data_rom; src < &_edata_rom; )
+	{
+		*dest++ = *src++;
+	}
 
 	for (dest = &_bss; dest < &_ebss; dest++)
 		*dest++ = 0;

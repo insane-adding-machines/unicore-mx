@@ -192,7 +192,7 @@ void reset_handler(void)
 		*dest++ = *src++;
 	}
 
-	for (dest = &_bss; dest < &_ebss; dest++)
+	for (dest = &_bss; dest < &_ebss; )
 		*dest++ = 0;
 
 	/* Call the application's entry point. */

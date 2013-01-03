@@ -30,7 +30,10 @@ MEMORY
   ram_local1 (rwx) : ORIGIN = 0x10000000, LENGTH =  128K
   /* there are some additional RAM regions for data */
   ram_local2 (rwx) : ORIGIN = 0x10080000, LENGTH =  72K
+  ram_ahb2   (rwx) : ORIGIN = 0x2000C000, LENGTH =  16K /* Reserved for Cortex M0 code/data */
 }
+
+cm0_exec_baseaddr = ORIGIN(ram_ahb2);	/* Used by M4 to load code from M4 RAM to this M0 final exec/run addr */
 
 /* Include the common ld script. */
 INCLUDE libopencm3_lpc43xx_rom_to_ram.ld

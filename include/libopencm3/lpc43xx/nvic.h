@@ -67,7 +67,7 @@
 
 /* --- IRQ channel numbers-------------------------------------------------- */
 
-/* Cortex M4 System Interrupts */
+/* Cortex M4/M0 System Interrupts */
 #define NVIC_NMI_IRQ                    -14
 #define NVIC_HARD_FAULT_IRQ             -13
 #define NVIC_MEM_MANAGE_IRQ             -12
@@ -78,7 +78,7 @@
 #define DEBUG_MONITOR_IRQ               -4
 /* irq number -3 reserved */
 #define NVIC_PENDSV_IRQ                 -2
-#define NVIC_SYSTICK_IRQ                -1
+#define NVIC_SYSTICK_IRQ                -1 /* Supported on M4 but not supported on M0 */
 
 /* LPC43xx M4 specific user interrupts */
 #define NVIC_M4_DAC_IRQ                 0
@@ -130,7 +130,37 @@
 #define NVIC_M4_QEI_IRQ                 52
 
 /* LPC43xx M0 specific user interrupts */
-//TODO
+#define NVIC_M0_RTC_IRQ                 0 
+#define NVIC_M0_M4CORE_IRQ              1 
+#define NVIC_M0_DMA_IRQ                 2 
+/* M0 IRQ 3 Reserved */
+#define NVIC_M0_FLASHEEPROMAT_IRQ       4 
+#define NVIC_M0_ETHERNET_IRQ            5 
+#define NVIC_M0_SDIO_IRQ                6 
+#define NVIC_M0_LCD_IRQ                 7 
+#define NVIC_M0_USB0_IRQ                8 
+#define NVIC_M0_USB1_IRQ                9 
+#define NVIC_M0_SCT_IRQ                 10
+#define NVIC_M0_RITIMER_OR_WWDT_IRQ     11
+#define NVIC_M0_TIMER0_IRQ              12
+#define NVIC_M0_GINT1_IRQ               13
+#define NVIC_M0_PIN_INT4_IRQ            14
+#define NVIC_M0_TIMER3_IRQ              15
+#define NVIC_M0_MCPWM_IRQ               16
+#define NVIC_M0_ADC0_IRQ                17
+#define NVIC_M0_I2C0_OR_I2C1_IRQ        18
+#define NVIC_M0_SGPIO_IRQ               19
+#define NVIC_M0_SPI_OR_DAC_IRQ          20
+#define NVIC_M0_ADC1_IRQ                21
+#define NVIC_M0_SSP0_OR_SSP1_IRQ        22
+#define NVIC_M0_EVENTROUTER_IRQ         23
+#define NVIC_M0_USART0_IRQ              24
+#define NVIC_M0_UART1_IRQ               25
+#define NVIC_M0_USART2_OR_C_CAN1_IRQ    26
+#define NVIC_M0_USART3_IRQ              27
+#define NVIC_M0_I2S0_OR_I2S1_IRQ        28
+#define NVIC_M0_C_CAN0_IRQ              29
+/* M0 IRQ 30 & 31 Reserved */
 
 /* --- NVIC functions ------------------------------------------------------ */
 

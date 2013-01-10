@@ -31,10 +31,9 @@ GDB		= $(PREFIX)-gdb
 # TOOLCHAIN_DIR := $(shell dirname `which $(CC)`)/../$(PREFIX)
 TOOLCHAIN_DIR   = ../../../..
 CFLAGS		+= -O2 -g -Wall -Wextra -I$(TOOLCHAIN_DIR)/include -fno-common \
-		   -mcpu=cortex-m4 -mthumb -MD \
-		   -mfloat-abi=hard -mfpu=fpv4-sp-d16
+		   -mcpu=cortex-m0 -mthumb -MD
 LDSCRIPT	?= $(BINARY).ld
-LDFLAGS         += -L$(TOOLCHAIN_DIR)/lib -L$(TOOLCHAIN_DIR)/lib/lpc43xx \
+LDFLAGS         += -L$(TOOLCHAIN_DIR)/lib -L$(TOOLCHAIN_DIR)/lib/lpc43xx_m0 \
 		   -T$(LDSCRIPT) -nostartfiles -Wl,--gc-sections -Xlinker -Map=$(BINARY).map
 OBJS		+= $(BINARY).o
 
@@ -78,15 +77,11 @@ flash: $(BINARY).flash
 	@#printf "  OBJDUMP $(*).list\n"
 	$(Q)$(OBJDUMP) -S $(*).elf > $(*).list
 
-%.elf: $(OBJS) $(LDSCRIPT) $(TOOLCHAIN_DIR)/lib/lpc43xx/libopencm3_lpc43xx.a
+%.elf: $(OBJS) $(LDSCRIPT) $(TOOLCHAIN_DIR)/lib/lpc43xx_m0/libopencm3_lpc43xx_m0.a
 	@#printf "  LD      $(subst $(shell pwd)/,,$(@))\n"
-	$(Q)$(LD) $(LDFLAGS) -o $(*).elf $(OBJS) -lopencm3_lpc43xx
+	$(Q)$(LD) $(LDFLAGS) -o $(*).elf $(OBJS) -lopencm3_lpc43xx_m0
 
 %.o: %.c Makefile
-	@#printf "  CC      $(subst $(shell pwd)/,,$(@))\n"
-	$(Q)$(CC) $(CFLAGS) -o $@ -c $<
-
-%.o: %.s Makefile
 	@#printf "  CC      $(subst $(shell pwd)/,,$(@))\n"
 	$(Q)$(CC) $(CFLAGS) -o $@ -c $<
 

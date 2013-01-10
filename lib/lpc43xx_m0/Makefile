@@ -19,19 +19,25 @@
 ## along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-LIBNAME		= libopencm3_lpc43xx
+LIBNAME		= libopencm3_lpc43xx_m0
 
 PREFIX		?= arm-none-eabi
 #PREFIX		?= arm-elf
 CC		= $(PREFIX)-gcc
 AR		= $(PREFIX)-ar
 CFLAGS		= -O2 -g3 -Wall -Wextra -I../../include -fno-common \
-		  -mcpu=cortex-m4 -mthumb -Wstrict-prototypes \
-		  -ffunction-sections -fdata-sections -MD \
-		  -mfloat-abi=hard -mfpu=fpv4-sp-d16
+		  -mcpu=cortex-m0 -mthumb -Wstrict-prototypes \
+		  -ffunction-sections -fdata-sections -MD
 # ARFLAGS	= rcsv
 ARFLAGS		= rcs
-OBJS		= gpio.o vector.o scu.o i2c.o ssp.o nvic.o systick.o uart.o ipc.o
+
+# LPC43xx common files for M4 / M0
+COPIED_FILE_LPC43XX = ../lpc43xx/gpio.c ../lpc43xx/scu.c ../lpc43xx/i2c.c ../lpc43xx/ssp.c ../lpc43xx/nvic.c ../lpc43xx/uart.c
+OBJ_LPC43XX = gpio.o scu.o i2c.o ssp.o nvic.o uart.o
+SRC_LPC43XX = $(OBJ_LPC43XX:.o=.c)
+
+#LPC43xx M0 specific file + Generic LPC43xx M4/M0 files
+OBJS		= vector.o $(OBJ_LPC43XX)
 
 # VPATH += ../usb
 
@@ -40,7 +46,10 @@ ifneq ($(V),1)
 Q := @
 endif
 
-all: $(LIBNAME).a
+all: copy_files_lpc43xx $(LIBNAME).a
+
+copy_files_lpc43xx: $(COPIED_FILE_LPC43XX)
+	$(Q)cp $^ ./
 
 $(LIBNAME).a: $(OBJS)
 	@printf "  AR      $(subst $(shell pwd)/,,$(@))\n"
@@ -51,8 +60,9 @@ $(LIBNAME).a: $(OBJS)
 	$(Q)$(CC) $(CFLAGS) -o $@ -c $<
 
 clean:
-	@printf "  CLEAN   lib/lpc43xx\n"
+	@printf "  CLEAN   lib/lpc43xx_m0\n"
 	$(Q)rm -f *.o *.d
+	$(Q)rm -f $(SRC_LPC43XX)
 	$(Q)rm -f $(LIBNAME).a
 
 .PHONY: clean

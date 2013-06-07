@@ -195,6 +195,14 @@ void reset_handler(void)
 	for (dest = &_bss; dest < &_ebss; )
 		*dest++ = 0;
 
+	__asm(
+	"LDR.W   %R0, =0xE000ED88;"
+	"LDR     %R1, [%R0];"
+	"ORR     %R1, %R1, 0xF00000;"
+	"STR     %R1, [%R0];"
+	"DSB;"
+	"ISB;"
+	);
 	/* Call the application's entry point. */
 	main();
 }

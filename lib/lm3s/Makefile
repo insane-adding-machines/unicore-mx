@@ -20,38 +20,20 @@
 LIBNAME		= libopencm3_lm3s
 
 PREFIX		?= arm-none-eabi
-#PREFIX		?= arm-elf
+
 CC		= $(PREFIX)-gcc
 AR		= $(PREFIX)-ar
-CFLAGS		= -Os -g -Wall -Wextra -I../../include -fno-common \
-		  -mcpu=cortex-m3 -mthumb -Wstrict-prototypes \
-		  -ffunction-sections -fdata-sections -MD
+CFLAGS		= -Os -g \
+		  -Wall -Wextra -Wimplicit-function-declaration \
+		  -Wredundant-decls -Wmissing-prototypes -Wstrict-prototypes \
+		  -Wundef -Wshadow \
+		  -I../../include -fno-common \
+		  -mcpu=cortex-m3 -mthumb $(FP_FLAGS) -Wstrict-prototypes \
+		  -ffunction-sections -fdata-sections -MD -DLM3S
 # ARFLAGS	= rcsv
 ARFLAGS		= rcs
-OBJS		= gpio.o vector.o
+OBJS		= gpio.o vector.o assert.o
 
-# VPATH += ../usb
+VPATH += ../cm3
 
-# Be silent per default, but 'make V=1' will show all compiler calls.
-ifneq ($(V),1)
-Q := @
-endif
-
-all: $(LIBNAME).a
-
-$(LIBNAME).a: $(OBJS)
-	@printf "  AR      $(subst $(shell pwd)/,,$(@))\n"
-	$(Q)$(AR) $(ARFLAGS) $@ $^
-
-%.o: %.c
-	@printf "  CC      $(subst $(shell pwd)/,,$(@))\n"
-	$(Q)$(CC) $(CFLAGS) -o $@ -c $<
-
-clean:
-	@printf "  CLEAN   lib/lpc13xx\n"
-	$(Q)rm -f *.o *.d
-	$(Q)rm -f $(LIBNAME).a
-
-.PHONY: clean
-
--include $(OBJS:.o=.d)
+include ../Makefile.include

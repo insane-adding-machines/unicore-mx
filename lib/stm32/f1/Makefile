@@ -20,42 +20,32 @@
 LIBNAME		= libopencm3_stm32f1
 
 PREFIX		?= arm-none-eabi
-#PREFIX		?= arm-elf
+
 CC		= $(PREFIX)-gcc
 AR		= $(PREFIX)-ar
-CFLAGS		= -Os -g -Wall -Wextra -I../../../include -fno-common \
-		  -mcpu=cortex-m3 -mthumb -Wstrict-prototypes \
+CFLAGS		= -Os -g \
+		  -Wall -Wextra -Wimplicit-function-declaration \
+		  -Wredundant-decls -Wmissing-prototypes -Wstrict-prototypes \
+		  -Wundef -Wshadow \
+		  -I../../../include -fno-common \
+		  -mcpu=cortex-m3 $(FP_FLAGS) -mthumb -Wstrict-prototypes \
 		  -ffunction-sections -fdata-sections -MD -DSTM32F1
 # ARFLAGS	= rcsv
 ARFLAGS		= rcs
-OBJS		= vector.o rcc.o gpio.o usart.o adc.o spi.o flash.o nvic.o \
-		  rtc.o i2c.o dma.o systick.o exti.o scb.o ethernet.o \
-		  usb_f103.o usb.o usb_control.o usb_standard.o can.o \
-		  timer.o usb_f107.o
 
-VPATH += ../../usb:../
+OBJS		= adc.o can.o desig.o ethernet.o flash.o gpio.o \
+                  rcc.o rtc.o timer.o
 
-# Be silent per default, but 'make V=1' will show all compiler calls.
-ifneq ($(V),1)
-Q := @
-endif
+OBJS            += crc_common_all.o dac_common_all.o dma_common_l1f013.o \
+                   gpio_common_all.o i2c_common_all.o iwdg_common_all.o \
+                   pwr_common_all.o spi_common_all.o spi_common_f124.o \
+                   timer_common_all.o usart_common_all.o usart_common_f124.o \
+                   exti_common_all.o
 
-all: $(LIBNAME).a
+OBJS            += usb.o usb_control.o usb_standard.o usb_f103.o usb_f107.o \
+                   usb_fx07_common.o
 
-$(LIBNAME).a: $(OBJS)
-	@printf "  AR      $(subst $(shell pwd)/,,$(@))\n"
-	$(Q)$(AR) $(ARFLAGS) $@ $^
+VPATH += ../../usb:../:../../cm3:../common
 
-%.o: %.c
-	@printf "  CC      $(subst $(shell pwd)/,,$(@))\n"
-	$(Q)$(CC) $(CFLAGS) -o $@ -c $<
-
-clean:
-	@printf "  CLEAN   lib/stm32/f1\n"
-	$(Q)rm -f *.o *.d
-	$(Q)rm -f $(LIBNAME).a
-
-.PHONY: clean
-
--include $(OBJS:.o=.d)
+include ../../Makefile.include
 

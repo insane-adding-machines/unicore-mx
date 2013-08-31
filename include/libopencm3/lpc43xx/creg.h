@@ -1,3 +1,18 @@
+/** @defgroup creg_defines Configuration Registers Defines
+
+@brief <b>Defined Constants and Types for the LPC43xx Configuration
+Registers</b>
+
+@ingroup LPC43xx_defines
+
+@version 1.0.0
+
+@author @htmlonly &copy; @endhtmlonly 2012 Michael Ossmann <mike@ossmann.com>
+
+@date 10 March 2013
+
+LGPL License Terms @ref lgpl_license
+ */
 /*
  * This file is part of the libopencm3 project.
  *
@@ -19,6 +34,8 @@
 
 #ifndef LPC43XX_CREG_H
 #define LPC43XX_CREG_H
+
+/**@{*/
 
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/lpc43xx/memorymap.h>
@@ -238,7 +255,8 @@
 
 /* --- CREG_FLASHCFGA values ------------------------------------ */
 
-/* FLASHTIM: Flash access time. The value of this field plus 1 gives the number of BASE_M4_CLK clocks used for a flash access */
+/* FLASHTIM: Flash access time. The value of this field plus 1 gives the number
+ * of BASE_M4_CLK clocks used for a flash access */
 #define CREG_FLASHCFGA_FLASHTIM_SHIFT (12)
 #define CREG_FLASHCFGA_FLASHTIM_MASK (0xf << CREG_FLASHCFGA_FLASHTIM_SHIFT)
 #define CREG_FLASHCFGA_FLASHTIM(x) ((x) << CREG_FLASHCFGA_FLASHTIM_SHIFT)
@@ -249,7 +267,8 @@
 
 /* --- CREG_FLASHCFGB values ------------------------------------ */
 
-/* FLASHTIM: Flash access time. The value of this field plus 1 gives the number of BASE_M4_CLK clocks used for a flash access */
+/* FLASHTIM: Flash access time. The value of this field plus 1 gives the number
+ * of BASE_M4_CLK clocks used for a flash access */
 #define CREG_FLASHCFGB_FLASHTIM_SHIFT (12)
 #define CREG_FLASHCFGB_FLASHTIM_MASK (0xf << CREG_FLASHCFGB_FLASHTIM_SHIFT)
 #define CREG_FLASHCFGB_FLASHTIM(x) ((x) << CREG_FLASHCFGB_FLASHTIM_SHIFT)
@@ -266,7 +285,8 @@
 
 /* --- CREG_CREG6 values ---------------------------------------- */
 
-/* ETHMODE: Selects the Ethernet mode. Reset the ethernet after changing the PHY interface */
+/* ETHMODE: Selects the Ethernet mode. Reset the ethernet after changing the
+ * PHY interface */
 #define CREG_CREG6_ETHMODE_SHIFT (0)
 #define CREG_CREG6_ETHMODE_MASK (0x7 << CREG_CREG6_ETHMODE_SHIFT)
 #define CREG_CREG6_ETHMODE(x) ((x) << CREG_CREG6_ETHMODE_SHIFT)
@@ -311,7 +331,8 @@
 
 /* M0APPMAP: Shadow address when accessing memory at address 0x00000000 */
 #define CREG_M0APPMEMMAP_M0APPMAP_SHIFT (12)
-#define CREG_M0APPMEMMAP_M0APPMAP_MASK (0xfffff << CREG_M0APPMEMMAP_M0APPMAP_SHIFT)
+#define CREG_M0APPMEMMAP_M0APPMAP_MASK \
+			(0xfffff << CREG_M0APPMEMMAP_M0APPMAP_SHIFT)
 #define CREG_M0APPMEMMAP_M0APPMAP(x) ((x) << CREG_M0APPMEMMAP_M0APPMAP_SHIFT)
 
 /* --- CREG_USB0FLADJ values ------------------------------------ */
@@ -327,5 +348,7 @@
 #define CREG_USB1FLADJ_FLTV_SHIFT (0)
 #define CREG_USB1FLADJ_FLTV_MASK (0x3f << CREG_USB1FLADJ_FLTV_SHIFT)
 #define CREG_USB1FLADJ_FLTV(x) ((x) << CREG_USB1FLADJ_FLTV_SHIFT)
+
+/**@}*/
 
 #endif

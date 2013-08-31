@@ -24,22 +24,21 @@
 /* Set M0 in reset mode */
 void ipc_halt_m0(void)
 {
-	volatile u32 rst_active_status1;
+	volatile uint32_t rst_active_status1;
 
 	/* Check if M0 is reset by reading status */
 	rst_active_status1 = RESET_ACTIVE_STATUS1;
 
 	/* If the M0 has reset not asserted, halt it... */
-	while( (rst_active_status1 & RESET_CTRL1_M0APP_RST) )
-	{
+	while (rst_active_status1 & RESET_CTRL1_M0APP_RST) {
 		RESET_CTRL1 = ((~rst_active_status1) | RESET_CTRL1_M0APP_RST);
 		rst_active_status1 = RESET_ACTIVE_STATUS1;
 	}
 }
 
-void ipc_start_m0(u32 cm0_baseaddr)
+void ipc_start_m0(uint32_t cm0_baseaddr)
 {
-	volatile u32 rst_active_status1;
+	volatile uint32_t rst_active_status1;
 
 	/* Set M0 memory mapping to point to start of M0 image */
 	CREG_M0APPMEMMAP = cm0_baseaddr;
@@ -51,9 +50,8 @@ void ipc_start_m0(u32 cm0_baseaddr)
 
 	/* If the M0 is being held in reset, release it */
 	/* 1 = no reset, 0 = reset */
-	while( !(rst_active_status1 & RESET_CTRL1_M0APP_RST) )
-	{
-		RESET_CTRL1 = ((~rst_active_status1) & (~RESET_CTRL1_M0APP_RST));
+	while (!(rst_active_status1 & RESET_CTRL1_M0APP_RST)) {
+		RESET_CTRL1 = ((~rst_active_status1) & ~RESET_CTRL1_M0APP_RST);
 		rst_active_status1 = RESET_ACTIVE_STATUS1;
 	}
 }

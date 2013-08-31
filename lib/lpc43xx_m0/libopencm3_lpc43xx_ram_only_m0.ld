@@ -44,6 +44,29 @@ SECTIONS
 		. = ALIGN(4);
 	} >ram_ahb2
 
+	/* C++ Static constructors/destructors, also used for __attribute__
+	 * ((constructor)) and the likes */
+	.preinit_array : {
+		. = ALIGN(4);
+		__preinit_array_start = .;
+		KEEP (*(.preinit_array))
+		__preinit_array_end = .;
+	} >ram_ahb2
+	.init_array : {
+		. = ALIGN(4);
+		__init_array_start = .;
+		KEEP (*(SORT(.init_array.*)))
+		KEEP (*(.init_array))
+		__init_array_end = .;
+	} >ram_ahb2
+	.fini_array : {
+		. = ALIGN(4);
+		__fini_array_start = .;
+		KEEP (*(.fini_array))
+		KEEP (*(SORT(.fini_array.*)))
+		__fini_array_end = .;
+	} >ram_ahb2
+
 	/* exception index - required due to libgcc.a issuing /0 exceptions */
 	__exidx_start = .;
 	.ARM.exidx : {
@@ -59,6 +82,7 @@ SECTIONS
 		*(.data*)	/* Read-write initialized data */
 		. = ALIGN(4);
 	} >ram_ahb2
+	_data_loadaddr = LOADADDR(.data);
 
 	_data = .;
 	_edata = .;

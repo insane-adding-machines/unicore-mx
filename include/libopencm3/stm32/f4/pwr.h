@@ -1,3 +1,17 @@
+/** @defgroup pwr_defines PWR Defines
+
+@brief <b>Defined Constants and Types for the STM32F4xx Power Control</b>
+
+@ingroup STM32F4xx_defines
+
+@version 1.0.0
+
+@author @htmlonly &copy; @endhtmlonly 2011 Stephen Caudle <scaudle@doceme.com>
+
+@date 4 March 2013
+
+LGPL License Terms @ref lgpl_license
+ */
 /*
  * This file is part of the libopencm3 project.
  *
@@ -17,10 +31,11 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBOPENCM3_PWR_F4_H
-#define LIBOPENCM3_PWR_F4_H
+#ifndef LIBOPENCM3_PWR_H
+#define LIBOPENCM3_PWR_H
 
-#include <libopencm3/stm32/pwr.h>
+#include <libopencm3/stm32/memorymap.h>
+#include <libopencm3/stm32/common/pwr_common_all.h>
 
 /*
  * This file extends the common STM32 version with definitions only
@@ -63,6 +78,10 @@ typedef enum {
 	SCALE2,
 } vos_scale_t;
 
+BEGIN_DECLS
+
 void pwr_set_vos_scale(vos_scale_t scale);
+
+END_DECLS
 
 #endif

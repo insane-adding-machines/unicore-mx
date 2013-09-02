@@ -1,3 +1,17 @@
+/** @defgroup can_defines CAN defines
+
+@ingroup STM32F_defines
+
+@brief <b>libopencm3 Defined Constants and Types for STM32 CAN </b>
+
+@version 1.0.0
+
+@author @htmlonly &copy; @endhtmlonly 2010 Piotr Esden-Tempski <piotr@esden.net>
+
+@date 12 November 2012
+
+LGPL License Terms @ref lgpl_license
+*/
 /*
  * This file is part of the libopencm3 project.
  *
@@ -23,11 +37,19 @@
 #include <libopencm3/stm32/memorymap.h>
 #include <libopencm3/cm3/common.h>
 
+/**@{*/
+
 /* --- Convenience macros -------------------------------------------------- */
 
-/* CAN register base adresses (for convenience) */
+/* CAN register base addresses (for convenience) */
+/*****************************************************************************/
+/** @defgroup can_reg_base CAN register base address
+@ingroup can_defines
+
+@{*/
 #define CAN1				BX_CAN1_BASE
 #define CAN2				BX_CAN2_BASE
+/**@}*/
 
 /* --- CAN registers ------------------------------------------------------- */
 
@@ -137,8 +159,10 @@
  * Connectivity line devices have 28 banks so the bank ID spans 0..27
  * all other devices have 14 banks so the bank ID spans 0..13.
  */
-#define CAN_FiR1(can_base, bank)	MMIO32(can_base + 0x240 + (bank * 0x8) + 0x0)
-#define CAN_FiR2(can_base, bank)	MMIO32(can_base + 0x240 + (bank * 0x8) + 0x4)
+#define CAN_FiR1(can_base, bank)	MMIO32(can_base + 0x240 + \
+						(bank * 0x8) + 0x0)
+#define CAN_FiR2(can_base, bank)	MMIO32(can_base + 0x240 + \
+						(bank * 0x8) + 0x4)
 
 /* --- CAN_MCR values ------------------------------------------------------ */
 
@@ -417,6 +441,7 @@
 #define CAN_BTR_SJW_3TQ			(0x2 << 24)
 #define CAN_BTR_SJW_4TQ			(0x3 << 24)
 #define CAN_BTR_SJW_MASK		(0x3 << 24)
+#define CAN_BTR_SJW_SHIFT		24
 
 /* 23 Reserved, forced by hardware to 0 */
 
@@ -430,6 +455,7 @@
 #define CAN_BTR_TS2_7TQ			(0x6 << 20)
 #define CAN_BTR_TS2_8TQ			(0x7 << 20)
 #define CAN_BTR_TS2_MASK		(0x7 << 20)
+#define CAN_BTR_TS2_SHIFT		20
 
 /* TS1[3:0]: Time segment 1 */
 #define CAN_BTR_TS1_1TQ			(0x0 << 16)
@@ -449,16 +475,17 @@
 #define CAN_BTR_TS1_15TQ		(0xE << 16)
 #define CAN_BTR_TS1_16TQ		(0xF << 16)
 #define CAN_BTR_TS1_MASK		(0xF << 16)
+#define CAN_BTR_TS1_SHIFT		16
 
 /* 15:10 Reserved, forced by hardware to 0 */
 
 /* BRP[9:0]: Baud rate prescaler */
-#define CAN_BTR_BRP_MASK		(0x1FF << 0)
+#define CAN_BTR_BRP_MASK		(0x1FFUL << 0)
 
 /* --- CAN_TIxR values ------------------------------------------------------ */
 
 /* STID[10:0]: Standard identifier */
-#define CAN_TIxR_STID_MASK		(0x3FF << 21)
+#define CAN_TIxR_STID_MASK		(0x7FF << 21)
 #define CAN_TIxR_STID_SHIFT		21
 
 /* EXID[15:0]: Extended identifier */
@@ -508,11 +535,11 @@
 /* --- CAN_RIxR values ------------------------------------------------------ */
 
 /* STID[10:0]: Standard identifier */
-#define CAN_RIxR_STID_MASK		(0x3FF << 21)
+#define CAN_RIxR_STID_MASK		(0x7FF)
 #define CAN_RIxR_STID_SHIFT		21
 
 /* EXID[15:0]: Extended identifier */
-#define CAN_RIxR_EXID_MASK		(0x1FFFFFF << 3)
+#define CAN_RIxR_EXID_MASK		(0x1FFFFFFF)
 #define CAN_RIxR_EXID_SHIFT		3
 
 /* IDE: Identifier extension */
@@ -615,28 +642,38 @@
 
 /* --- CAN functions -------------------------------------------------------- */
 
-void can_reset(u32 canport);
-int can_init(u32 canport, bool ttcm, bool abom, bool awum, bool nart,
-	     bool rflm, bool txfp, u32 sjw, u32 ts1, u32 ts2, u32 brp);
+BEGIN_DECLS
 
-void can_filter_init(u32 canport, u32 nr, bool scale_32bit, bool id_list_mode,
-		     u32 fr1, u32 fr2, u32 fifo, bool enable);
-void can_filter_id_mask_16bit_init(u32 canport, u32 nr, u16 id1, u16 mask1,
-				   u16 id2, u16 mask2, u32 fifo, bool enable);
-void can_filter_id_mask_32bit_init(u32 canport, u32 nr, u32 id, u32 mask,
-				   u32 fifo, bool enable);
-void can_filter_id_list_16bit_init(u32 canport, u32 nr, u16 id1, u16 id2,
-				   u16 id3, u16 id4, u32 fifo, bool enable);
-void can_filter_id_list_32bit_init(u32 canport, u32 nr, u32 id1, u32 id2,
-				   u32 fifo, bool enable);
+void can_reset(uint32_t canport);
+int can_init(uint32_t canport, bool ttcm, bool abom, bool awum, bool nart,
+	     bool rflm, bool txfp, uint32_t sjw, uint32_t ts1, uint32_t ts2,
+	     uint32_t brp, bool loopback, bool silent);
 
-void can_enable_irq(u32 canport, u32 irq);
-void can_disable_irq(u32 canport, u32 irq);
+void can_filter_init(uint32_t canport, uint32_t nr, bool scale_32bit,
+		     bool id_list_mode, uint32_t fr1, uint32_t fr2,
+		     uint32_t fifo, bool enable);
+void can_filter_id_mask_16bit_init(uint32_t canport, uint32_t nr, uint16_t id1,
+				   uint16_t mask1, uint16_t id2,
+				   uint16_t mask2, uint32_t fifo, bool enable);
+void can_filter_id_mask_32bit_init(uint32_t canport, uint32_t nr, uint32_t id,
+				   uint32_t mask, uint32_t fifo, bool enable);
+void can_filter_id_list_16bit_init(uint32_t canport, uint32_t nr, uint16_t id1,
+				   uint16_t id2, uint16_t id3, uint16_t id4,
+				   uint32_t fifo, bool enable);
+void can_filter_id_list_32bit_init(uint32_t canport, uint32_t nr, uint32_t id1,
+				   uint32_t id2, uint32_t fifo, bool enable);
 
-int can_transmit(u32 canport, u32 id, bool ext, bool rtr, u8 length, u8 *data);
-void can_receive(u32 canport, u8 fifo, bool release, u32 *id, bool *ext,
-		 bool *rtr, u32 *fmi, u8 *length, u8 *data);
+void can_enable_irq(uint32_t canport, uint32_t irq);
+void can_disable_irq(uint32_t canport, uint32_t irq);
 
-void can_fifo_release(u32 canport, u8 fifo);
+int can_transmit(uint32_t canport, uint32_t id, bool ext, bool rtr,
+		 uint8_t length, uint8_t *data);
+void can_receive(uint32_t canport, uint8_t fifo, bool release, uint32_t *id,
+		 bool *ext, bool *rtr, uint32_t *fmi, uint8_t *length,
+		 uint8_t *data);
+
+void can_fifo_release(uint32_t canport, uint8_t fifo);
+bool can_available_mailbox(uint32_t canport);
+END_DECLS
 
 #endif

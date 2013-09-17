@@ -25,6 +25,10 @@
 
 /* --- LPC43XX specific peripheral definitions ----------------------------- */
 
+/* local SRAM / external static memory banks (0x1000 0000 - 0x2000 0000) */
+
+#define SPIFI_DATA_BASE                 0x14000000
+
 /* Memory map for all busses */
 #define PERIPH_BASE_AHB                 0x40000000
 #define PERIPH_BASE_APB0                0x40080000
@@ -134,5 +138,6 @@
 /* 0x4400 0000 - 0x5FFF FFFF Reserved */
 
 /* 0x6000 0000 - 0xFFFF FFFF external memories and ARM private bus */
+#define SPIFI_DATA_UNCACHED_BASE        0x80000000
 
 #endif

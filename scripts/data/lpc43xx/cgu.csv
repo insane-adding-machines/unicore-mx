@@ -37,7 +37,7 @@ CGU_PLL0AUDIO_CTRL,24,5,CLK_SEL,Clock source selection,0x01,rw
 CGU_PLL0AUDIO_MDIV,0,17,MDEC,Decoded M-divider coefficient value,0x5B6A,rw
 CGU_PLL0AUDIO_NP_DIV,0,7,PDEC,Decoded P-divider coefficient value,0x02,rw
 CGU_PLL0AUDIO_NP_DIV,12,10,NDEC,Decoded N-divider coefficient value,0xB1,rw
-CGU_PLLAUDIO_FRAC,0,22,PLLFRACT_CTRL,PLL fractional divider control word,0x00,rw
+CGU_PLL0AUDIO_FRAC,0,22,PLLFRACT_CTRL,PLL fractional divider control word,0x00,rw
 CGU_PLL1_STAT,0,1,LOCK,PLL1 lock indicator,0,r
 CGU_PLL1_CTRL,0,1,PD,PLL1 power down,1,rw
 CGU_PLL1_CTRL,1,1,BYPASS,Input clock bypass control,1,rw
@@ -131,9 +131,9 @@ CGU_BASE_UART3_CLK,24,5,CLK_SEL,Clock source selection,0x01,rw
 CGU_BASE_OUT_CLK,0,1,PD,Output stage power down,0,rw
 CGU_BASE_OUT_CLK,11,1,AUTOBLOCK,Block clock automatically during frequency change,0,rw
 CGU_BASE_OUT_CLK,24,5,CLK_SEL,Clock source selection,0x01,rw
-CGU_BASE_APLL_CLK,0,1,PD,Output stage power down,0,rw
-CGU_BASE_APLL_CLK,11,1,AUTOBLOCK,Block clock automatically during frequency change,0,rw
-CGU_BASE_APLL_CLK,24,5,CLK_SEL,Clock source selection,0x01,rw
+CGU_BASE_AUDIO_CLK,0,1,PD,Output stage power down,0,rw
+CGU_BASE_AUDIO_CLK,11,1,AUTOBLOCK,Block clock automatically during frequency change,0,rw
+CGU_BASE_AUDIO_CLK,24,5,CLK_SEL,Clock source selection,0x01,rw
 CGU_BASE_CGU_OUT0_CLK,0,1,PD,Output stage power down,0,rw
 CGU_BASE_CGU_OUT0_CLK,11,1,AUTOBLOCK,Block clock automatically during frequency change,0,rw
 CGU_BASE_CGU_OUT0_CLK,24,5,CLK_SEL,Clock source selection,0x01,rw

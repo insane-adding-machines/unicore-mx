@@ -26,7 +26,7 @@
 #include "../dispatch/vector_nvic.c"
 
 /* Symbols exported by the linker script(s): */
-extern unsigned _data_loadaddr, _data, _edata, _ebss, _stack;
+extern unsigned _data_loadaddr, _data, _edata, _bss, _ebss, _stack;
 typedef void (*funcp_t) (void);
 extern funcp_t __preinit_array_start, __preinit_array_end;
 extern funcp_t __init_array_start, __init_array_end;
@@ -70,7 +70,7 @@ void WEAK __attribute__ ((naked)) reset_handler(void)
 		*dest = *src;
 	}
 
-	while (dest < &_ebss) {
+	for (dest = &_bss; dest < &_ebss; ) {
 		*dest++ = 0;
 	}
 

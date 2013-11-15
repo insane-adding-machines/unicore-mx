@@ -74,7 +74,7 @@ void ssp_init(ssp_num_t ssp_num,
 	/* use PLL1 as clock source for SSP1 */
 	CGU_BASE_SSP1_CLK =
 		  CGU_BASE_SSP1_CLK_CLK_SEL(CGU_SRC_PLL1)
-		| CGU_BASE_SSP1_CLK_AUTOBLOCK;
+		| CGU_BASE_SSP1_CLK_AUTOBLOCK(1);
 
 	/* Disable SSP before to configure it */
 	SSP_CR1(ssp_port) = 0x0;

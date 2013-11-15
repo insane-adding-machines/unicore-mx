@@ -18,14 +18,12 @@ I2S0_DAI,3,1,STOP,"When 1, disables accesses on FIFOs, places the transmit chann
 I2S0_DAI,4,1,RESET,"When 1, asynchronously resets the transmit channel and FIFO",0,rw
 I2S0_DAI,5,1,WS_SEL,"When 0, the interface is in master mode. When 1, the interface is in slave mode",1,rw
 I2S0_DAI,6,9,WS_HALFPERIOD,"Word select half period minus 1, i.e. WS 64clk period -> ws_halfperiod = 31.",0x1f,rw
-I2S0_DAI,15,1,MUTE,"When 1, the transmit channel sends only zeroes",1,rw
 I2S1_DAI,0,2,WORDWIDTH,Selects the number of bytes in data,1,rw
 I2S1_DAI,2,1,MONO,"When 1, data is of monaural format. When 0, the data is in stereo format",0,rw
 I2S1_DAI,3,1,STOP,"When 1, disables accesses on FIFOs, places the transmit channel in mute mode",0,rw
 I2S1_DAI,4,1,RESET,"When 1, asynchronously resets the transmit channel and FIFO",0,rw
 I2S1_DAI,5,1,WS_SEL,"When 0, the interface is in master mode. When 1, the interface is in slave mode",1,rw
 I2S1_DAI,6,9,WS_HALFPERIOD,"Word select half period minus 1, i.e. WS 64clk period -> ws_halfperiod = 31.",0x1f,rw
-I2S1_DAI,15,1,MUTE,"When 1, the transmit channel sends only zeroes",1,rw
 I2S0_TXFIFO,0,32,I2STXFIFO,8 x 32-bit transmit FIFO,0,w
 I2S1_TXFIFO,0,32,I2STXFIFO,8 x 32-bit transmit FIFO,0,w
 I2S0_RXFIFO,0,32,I2SRXFIFO,8 x 32-bit receive FIFO,0,r

@@ -137,12 +137,6 @@
         lsb: 6
         reset_value: '0x1f'
         width: 9
-    - MUTE:
-        access: rw
-        description: When 1, the transmit channel sends only zeroes
-        lsb: 15
-        reset_value: '1'
-        width: 1
 - I2S1_DAI:
     fields: !!omap
     - WORDWIDTH:
@@ -185,12 +179,6 @@
         lsb: 6
         reset_value: '0x1f'
         width: 9
-    - MUTE:
-        access: rw
-        description: When 1, the transmit channel sends only zeroes
-        lsb: 15
-        reset_value: '1'
-        width: 1
 - I2S0_TXFIFO:
     fields: !!omap
     - I2STXFIFO:

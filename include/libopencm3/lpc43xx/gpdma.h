@@ -39,6 +39,14 @@
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/lpc43xx/memorymap.h>
 
+typedef struct gpdma_lli_t gpdma_lli_t;
+struct gpdma_lli_t {
+	void* csrcaddr;
+	void* cdestaddr;
+	struct gpdma_lli_t* clli;
+	uint32_t ccontrol;
+};
+
 /* --- GPDMA registers ----------------------------------------------------- */
 
 /* General registers */

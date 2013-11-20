@@ -42,7 +42,7 @@ LGPL License Terms @ref lgpl_license
 /* --- Convenience macros -------------------------------------------------- */
 
 /* SPI port base addresses (for convenience) */
-#define SPI                             SPI_PORT_BASE
+#define SPI                             (SPI_PORT_BASE)
 
 /* --- SPI registers ----------------------------------------------------- */
 

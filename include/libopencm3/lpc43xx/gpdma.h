@@ -43,7 +43,7 @@ typedef struct gpdma_lli_t gpdma_lli_t;
 struct gpdma_lli_t {
 	void* csrcaddr;
 	void* cdestaddr;
-	struct gpdma_lli_t* clli;
+	uint32_t clli;
 	uint32_t ccontrol;
 };
 

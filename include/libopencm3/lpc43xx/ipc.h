@@ -27,4 +27,6 @@ void ipc_halt_m0(void);
 
 void ipc_start_m0(uint32_t cm0_baseaddr);
 
+void ipc_m0apptxevent_clear(void);
+
 #endif

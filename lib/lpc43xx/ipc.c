@@ -56,3 +56,6 @@ void ipc_start_m0(uint32_t cm0_baseaddr)
 	}
 }
 
+void ipc_m0apptxevent_clear(void) {
+	CREG_M0TXEVENT &= ~CREG_M0TXEVENT_TXEVCLR;
+}

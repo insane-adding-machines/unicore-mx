@@ -118,9 +118,6 @@ LGPL License Terms @ref lgpl_license
 /* Debounce Count Register */
 #define SDIO_DEBNCE                     MMIO32(SDIO_BASE + 0x064)
 
-/* UHS-1 Register */
-#define SDIO_UHS_REG                    MMIO32(SDIO_BASE + 0x074)
-
 /* Hardware Reset */
 #define SDIO_RST_N                      MMIO32(SDIO_BASE + 0x078)
 

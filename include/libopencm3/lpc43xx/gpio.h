@@ -7,6 +7,7 @@
 @version 1.0.0
 
 @author @htmlonly &copy; @endhtmlonly 2012 Michael Ossmann <mike@ossmann.com>
+@author @htmlonly &copy; @endhtmlonly 2014 Jared Boone <jared@sharebrained.com>
 
 @date 10 March 2013
 
@@ -17,6 +18,7 @@ LGPL License Terms @ref lgpl_license
  *
  * Copyright (C) 2010 Uwe Hermann <uwe@hermann-uwe.de>
  * Copyright (C) 2012 Michael Ossmann <mike@ossmann.com>
+ * Copyright (C) 2014 Jared Boone <jared@sharebrained.com>
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -692,6 +694,8 @@ LGPL License Terms @ref lgpl_license
 #define GPIO_W254                       (GPIO_PORT_BASE + 0x13F8)
 #define GPIO_W255                       (GPIO_PORT_BASE + 0x13FC)
 
+#define GPIO_W(port, pin)				MMIO32(GPIO_PORT_BASE + 0x1000 + (port * 0x80) + (pin * 4))
+			
 /* GPIO data direction register (GPIOn_DIR) */
 #define GPIO_DIR(port)                  MMIO32(port + 0x00)
 #define GPIO0_DIR                       GPIO_DIR(GPIO0)

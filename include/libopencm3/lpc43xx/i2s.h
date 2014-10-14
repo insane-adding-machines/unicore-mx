@@ -39,6 +39,10 @@ LGPL License Terms @ref lgpl_license
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/lpc43xx/memorymap.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* --- Convenience macros -------------------------------------------------- */
 
 /* I2S port base addresses (for convenience) */
@@ -614,5 +618,9 @@ LGPL License Terms @ref lgpl_license
 #define I2S1_RXMODE_RXMCENA(x) ((x) << I2S1_RXMODE_RXMCENA_SHIFT)
 
 /**@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

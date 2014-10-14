@@ -40,6 +40,10 @@ LGPL License Terms @ref lgpl_license
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/lpc43xx/memorymap.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* --- Convenience macros -------------------------------------------------- */
 
 /* Pin group base addresses */
@@ -776,5 +780,9 @@ void scu_pinmux(scu_grp_pin_t group_pin, uint32_t scu_conf);
 END_DECLS
 
 /**@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

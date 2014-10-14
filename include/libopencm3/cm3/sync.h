@@ -22,6 +22,10 @@
 
 #include "common.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void __dmb(void);
 
 /* Implements synchronisation primitives as discussed in the ARM document
@@ -49,6 +53,10 @@ typedef uint32_t mutex_t;
 void mutex_lock(mutex_t *m);
 void mutex_unlock(mutex_t *m);
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif

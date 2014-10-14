@@ -42,6 +42,10 @@ LGPL License Terms @ref lgpl_license
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/lpc43xx/memorymap.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* --- Repetitive Interrupt Timer registers -------------------------------- */
 
 /* Compare register */
@@ -100,5 +104,9 @@ LGPL License Terms @ref lgpl_license
 #define RITIMER_COUNTER_RICOUNTER(x) ((x) << RITIMER_COUNTER_RICOUNTER_SHIFT)
 
 /**@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

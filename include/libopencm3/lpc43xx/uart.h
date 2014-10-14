@@ -23,6 +23,10 @@
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/lpc43xx/memorymap.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* --- Convenience macros -------------------------------------------------- */
 
 /* UART port base addresses (for convenience) */
@@ -434,5 +438,9 @@ uint8_t uart_read_timeout(uart_num_t uart_num, uint32_t rx_timeout_nb_cycles,
 void uart_write(uart_num_t uart_num, uint8_t data);
 
 END_DECLS
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

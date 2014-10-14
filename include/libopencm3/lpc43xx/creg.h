@@ -40,6 +40,10 @@ LGPL License Terms @ref lgpl_license
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/lpc43xx/memorymap.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* --- CREG registers ----------------------------------------------------- */
 
 /*
@@ -350,5 +354,9 @@ LGPL License Terms @ref lgpl_license
 #define CREG_USB1FLADJ_FLTV(x) ((x) << CREG_USB1FLADJ_FLTV_SHIFT)
 
 /**@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -41,6 +41,10 @@ LGPL License Terms @ref lgpl_license
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/lpc43xx/memorymap.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* --- SDIO registers ----------------------------------------------------- */
 
 /* Control Register */
@@ -968,5 +972,9 @@ BEGIN_DECLS
 END_DECLS
 
 /**@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

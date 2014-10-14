@@ -42,6 +42,10 @@ LGPL License Terms @ref lgpl_license
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/lpc43xx/memorymap.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* --- Convenience macros -------------------------------------------------- */
 
 /* GPIO port base addresses (for convenience) */
@@ -785,5 +789,9 @@ uint32_t gpio_get(uint32_t gpioport, uint32_t gpios);
 END_DECLS
 
 /**@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

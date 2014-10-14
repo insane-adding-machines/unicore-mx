@@ -39,6 +39,10 @@ LGPL License Terms @ref lgpl_license
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/lpc43xx/memorymap.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* --- Convenience macros -------------------------------------------------- */
 
 /* I2C port base addresses (for convenience) */
@@ -160,5 +164,9 @@ void i2c0_stop(void);
 END_DECLS
 
 /**@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

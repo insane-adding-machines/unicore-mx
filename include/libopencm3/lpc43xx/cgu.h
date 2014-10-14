@@ -41,6 +41,10 @@
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/lpc43xx/memorymap.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* --- CGU registers ------------------------------------------------------- */
 
 /* Frequency monitor register */
@@ -993,5 +997,9 @@
 #define CGU_SRC_IDIVE     0x10
 
 /**@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

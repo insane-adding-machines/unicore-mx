@@ -7,8 +7,9 @@
 @version 1.0.0
 
 @author @htmlonly &copy; @endhtmlonly 2012 Michael Ossmann <mike@ossmann.com>
+@author @htmlonly &copy; @endhtmlonly 2013 Benjamin Vernoux <bvernoux@gmail.com>
 
-@date 10 March 2013
+@date 19 December 2013
 
 LGPL License Terms @ref lgpl_license
  */
@@ -16,6 +17,7 @@ LGPL License Terms @ref lgpl_license
  * This file is part of the libopencm3 project.
  *
  * Copyright (C) 2012 Michael Ossmann <mike@ossmann.com>
+ * Copyright (C) 2013 Benjamin Vernoux <bvernoux@gmail.com>
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -156,6 +158,12 @@ void i2c0_tx_start(void);
 void i2c0_tx_byte(uint8_t byte);
 uint8_t i2c0_rx_byte(void);
 void i2c0_stop(void);
+
+void i2c1_init(const uint16_t duty_cycle_count);
+void i2c1_tx_start(void);
+void i2c1_tx_byte(uint8_t byte);
+uint8_t i2c1_rx_byte(bool ack);
+void i2c1_stop(void);
 
 END_DECLS
 

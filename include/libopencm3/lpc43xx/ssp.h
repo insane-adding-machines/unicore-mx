@@ -40,6 +40,10 @@ LGPL License Terms @ref lgpl_license
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/lpc43xx/memorymap.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* --- Convenience macros -------------------------------------------------- */
 
 /* SSP port base addresses (for convenience) */
@@ -205,5 +209,9 @@ uint16_t ssp_transfer(ssp_num_t ssp_num, uint16_t data);
 END_DECLS
 
 /**@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

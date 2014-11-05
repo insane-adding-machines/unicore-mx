@@ -23,6 +23,10 @@
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/lpc43xx/memorymap.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define BIT_MASK(base_name) \
 	(((1 << base_name##_WIDTH) - 1) << base_name##_SHIFT)
 #define BIT_ARG(base_name, x) ((x) << base_name##_SHIFT)
@@ -1333,5 +1337,9 @@ to issue an interrupt the next time it advances asynchronous schedule */
 
 /* --- USB1 registers ------------------------------------------------------ */
 /* TODO */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

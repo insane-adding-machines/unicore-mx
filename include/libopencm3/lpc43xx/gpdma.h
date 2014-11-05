@@ -39,6 +39,10 @@
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/lpc43xx/memorymap.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct gpdma_lli_t gpdma_lli_t;
 struct gpdma_lli_t {
 	void* csrcaddr;
@@ -556,5 +560,9 @@ struct gpdma_lli_t {
 #define GPDMA_CxCONFIG_H(x)		((x) << GPDMA_CxCONFIG_H_SHIFT)
 
 /**@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -39,6 +39,10 @@ LGPL License Terms @ref lgpl_license
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/lpc43xx/memorymap.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* --- Convenience macros -------------------------------------------------- */
 
 /* RTC port base address (for convenience) */
@@ -355,5 +359,9 @@ LGPL License Terms @ref lgpl_license
 #define RTC_AYRS_YEAR(x) ((x) << RTC_AYRS_YEAR_SHIFT)
 
 /**@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

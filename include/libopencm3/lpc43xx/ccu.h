@@ -39,6 +39,10 @@ LGPL License Terms @ref lgpl_license
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/lpc43xx/memorymap.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* --- CCU1 registers ------------------------------------------------------ */
 
 /* CCU1 power mode register */
@@ -398,5 +402,9 @@ LGPL License Terms @ref lgpl_license
 #define CCU2_CLK_SDIO_STAT              MMIO32(CCU2_BASE + 0x804)
 
 /**@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

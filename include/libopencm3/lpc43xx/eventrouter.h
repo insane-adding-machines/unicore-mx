@@ -39,6 +39,10 @@ LGPL License Terms @ref lgpl_license
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/lpc43xx/memorymap.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* --- Event Router registers ---------------------------------------------- */
 
 /* Level configuration register */
@@ -66,5 +70,9 @@ LGPL License Terms @ref lgpl_license
 #define EVENTROUTER_SET_STAT            MMIO32(EVENTROUTER_BASE + 0xFEC)
 
 /**@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

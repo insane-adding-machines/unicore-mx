@@ -6,7 +6,7 @@
 
 @version 1.0.0
 
-@author @htmlonly &copy; @endhtmlonly 2012 Benjamin Vernoux <titanmkd@gmail.com>
+@author @htmlonly &copy; @endhtmlonly 2012/2014 Benjamin Vernoux <bvernoux@gmail.com>
 
 LGPL License Terms @ref lgpl_license
 */
@@ -14,7 +14,7 @@ LGPL License Terms @ref lgpl_license
 /*
  * This file is part of the libopencm3 project.
  *
- * Copyright (C) 2012 Benjamin Vernoux <titanmkd@gmail.com>
+ * Copyright (C) 2012 Benjamin Vernoux <bvernoux@gmail.com>
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -33,6 +33,7 @@ LGPL License Terms @ref lgpl_license
 /**@{*/
 
 #include <libopencm3/lpc43xx/ssp.h>
+#include <libopencm3/lpc43xx/ccu.h>
 #include <libopencm3/lpc43xx/cgu.h>
 
 /* Disable SSP */
@@ -65,16 +66,21 @@ void ssp_init(ssp_num_t ssp_num,
 	uint32_t ssp_port;
 	uint32_t clock;
 
-	if (ssp_num == SSP0_NUM) {
+	if (ssp_num == SSP0_NUM)
+	{
 		ssp_port = SSP0;
-	} else {
+		CGU_BASE_SSP0_CLK = CGU_BASE_SSP0_CLK_CLK_SEL(CGU_SRC_PLL1)
+			| CGU_BASE_SSP0_CLK_AUTOBLOCK(1);
+		CCU1_CLK_M4_SSP0_CFG |= 1; /* Enable SSP0 Clock */
+		/* use PLL1 as clock source for SSP0 */
+	} else
+	{
 		ssp_port = SSP1;
+		/* use PLL1 as clock source for SSP1 */
+		CGU_BASE_SSP1_CLK = CGU_BASE_SSP1_CLK_CLK_SEL(CGU_SRC_PLL1)
+			| CGU_BASE_SSP1_CLK_AUTOBLOCK(1);
+		CCU1_CLK_M4_SSP1_CFG |= 1; /* Enable SSP1 Clock */
 	}
-
-	/* use PLL1 as clock source for SSP1 */
-	CGU_BASE_SSP1_CLK =
-		  CGU_BASE_SSP1_CLK_CLK_SEL(CGU_SRC_PLL1)
-		| CGU_BASE_SSP1_CLK_AUTOBLOCK(1);
 
 	/* Disable SSP before to configure it */
 	SSP_CR1(ssp_port) = 0x0;

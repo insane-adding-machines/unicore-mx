@@ -56,6 +56,10 @@ void i2c_init(i2c_port_t port, const uint16_t duty_cycle_count)
 	I2C_CONSET(port) = I2C_CONSET_I2EN;
 }
 
+void i2c_disable(i2c_port_t port) {
+	I2C_CONCLR(port) = I2C_CONCLR_I2ENC;
+}
+
 /* transmit start bit */
 void i2c_tx_start(i2c_port_t port)
 {

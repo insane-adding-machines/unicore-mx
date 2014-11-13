@@ -160,6 +160,7 @@ BEGIN_DECLS
 typedef uint32_t i2c_port_t;
 
 void i2c_init(i2c_port_t port, const uint16_t duty_cycle_count);
+void i2c_disable(i2c_port_t port);
 void i2c_tx_start(i2c_port_t port);
 void i2c_tx_byte(i2c_port_t port, uint8_t byte);
 uint8_t i2c_rx_byte(i2c_port_t port);

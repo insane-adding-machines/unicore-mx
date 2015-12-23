@@ -8,6 +8,7 @@
 
 @author @htmlonly &copy; @endhtmlonly 2012 Michael Ossmann <mike@ossmann.com>
 @author @htmlonly &copy; @endhtmlonly 2013 Benjamin Vernoux <bvernoux@gmail.com>
+@author @htmlonly &copy; @endhtmlonly 2014 Jared Boone <jared@sharebrained.com>
 
 @date 19 December 2013
 
@@ -18,6 +19,7 @@ LGPL License Terms @ref lgpl_license
  *
  * Copyright (C) 2012 Michael Ossmann <mike@ossmann.com>
  * Copyright (C) 2013 Benjamin Vernoux <bvernoux@gmail.com>
+ * Copyright (C) 2014 Jared Boone <jared@sharebrained.com>
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -156,6 +158,15 @@ extern "C" {
 /* --- I2C function prototypes --------------------------------------------- */
 
 BEGIN_DECLS
+
+typedef uint32_t i2c_port_t;
+
+void i2c_init(i2c_port_t port, const uint16_t duty_cycle_count);
+void i2c_disable(i2c_port_t port);
+void i2c_tx_start(i2c_port_t port);
+void i2c_tx_byte(i2c_port_t port, uint8_t byte);
+uint8_t i2c_rx_byte(i2c_port_t port);
+void i2c_stop(i2c_port_t port);
 
 void i2c0_init(const uint16_t duty_cycle_count);
 void i2c0_tx_start(void);

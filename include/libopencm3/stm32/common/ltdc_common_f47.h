@@ -232,6 +232,7 @@
 #define LTDC_LxCR_LAYER_ENABLE     (1<<0)
 #define LTDC_LxCR_COLKEY_ENABLE    (1<<1)
 #define LTDC_LxCR_COLTAB_ENABLE    (1<<4)
+#define LTDC_LxCR_CLUT_ENABLE      (1<<4)
 
 /* --- LTDC_LxWHPCR values ------------------------------------------------- */
 

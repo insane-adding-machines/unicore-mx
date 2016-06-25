@@ -43,13 +43,13 @@ uint32_t __strex(uint32_t val, volatile uint32_t *addr)
 	return res;
 }
 
-void mutex_lock(mutex_t *m)
+void cm3_mutex_lock(cm3_mutex_t *m)
 {
 	while (!mutex_trylock(m));
 }
 
 /* returns 1 if the lock was acquired */
-uint32_t mutex_trylock(mutex_t *m)
+uint32_t cm3_mutex_trylock(cm3_mutex_t *m)
 {
 	uint32_t status = 1;
 
@@ -67,7 +67,7 @@ uint32_t mutex_trylock(mutex_t *m)
 	return status == 0;
 }
 
-void mutex_unlock(mutex_t *m)
+void cm3_mutex_unlock(cm3_mutex_t *m)
 {
 	/* Ensure accesses to protected resource are finished */
 	__dmb();

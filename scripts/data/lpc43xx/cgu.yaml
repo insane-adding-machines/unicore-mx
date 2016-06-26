@@ -253,7 +253,7 @@
         lsb: 12
         reset_value: '0xB1'
         width: 10
-- CGU_PLLAUDIO_FRAC:
+- CGU_PLL0AUDIO_FRAC:
     fields: !!omap
     - PLLFRACT_CTRL:
         access: rw
@@ -875,7 +875,7 @@
         lsb: 24
         reset_value: '0x01'
         width: 5
-- CGU_BASE_APLL_CLK:
+- CGU_BASE_AUDIO_CLK:
     fields: !!omap
     - PD:
         access: rw

@@ -39,6 +39,10 @@ LGPL License Terms @ref lgpl_license
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/lpc43xx/memorymap.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* --- Convenience macros -------------------------------------------------- */
 
 /* ADC port base addresses (for convenience) */
@@ -109,5 +113,9 @@ LGPL License Terms @ref lgpl_license
 #define ADC1_STAT                       ADC_STAT(ADC1)
 
 /**@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

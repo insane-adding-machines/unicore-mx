@@ -45,7 +45,7 @@ uint32_t __strex(uint32_t val, volatile uint32_t *addr)
 
 void cm3_mutex_lock(cm3_mutex_t *m)
 {
-	while (!mutex_trylock(m));
+	while (!cm3_mutex_trylock(m));
 }
 
 /* returns 1 if the lock was acquired */

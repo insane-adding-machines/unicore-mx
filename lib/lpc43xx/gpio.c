@@ -49,5 +49,10 @@ void gpio_toggle(uint32_t gpioport, uint32_t gpios)
 	GPIO_NOT(gpioport) = gpios;
 }
 
+uint32_t gpio_get(uint32_t gpioport, uint32_t gpios)
+{
+	return (GPIO_PIN(gpioport) & gpios) != 0;
+}
+
 /**@}*/
 

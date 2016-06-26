@@ -19,6 +19,7 @@
  */
 
 #include <libopencm3/cm3/common.h>
+#include <libopencm3/cm3/scb.h>
 
 extern unsigned _etext_ram, _text_ram, _etext_rom;
 
@@ -45,4 +46,7 @@ static void pre_main(void)
 
 		/* Continue Execution in RAM */
 	}
+
+	/* Enable access to Floating-Point coprocessor. */
+	SCB_CPACR |= SCB_CPACR_FULL * (SCB_CPACR_CP10 | SCB_CPACR_CP11);
 }

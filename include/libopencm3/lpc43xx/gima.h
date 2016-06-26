@@ -40,6 +40,10 @@ LGPL License Terms @ref lgpl_license
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/lpc43xx/memorymap.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* --- GIMA registers ----------------------------------------------------- */
 
 /* Timer 0 CAP0_0 capture input multiplexer (GIMA output 0) */
@@ -133,5 +137,9 @@ LGPL License Terms @ref lgpl_license
 #define GIMA_ADCSTART1_IN               MMIO32(GIMA_BASE + 0x074)
 
 /**@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

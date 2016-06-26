@@ -61,4 +61,6 @@ typedef struct {
 	vector_table_entry_t irq[NVIC_IRQ_COUNT];
 } vector_table_t;
 
+extern vector_table_t vector_table;
+
 #endif

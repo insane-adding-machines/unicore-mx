@@ -40,6 +40,10 @@ LGPL License Terms @ref lgpl_license
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/lpc43xx/memorymap.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* --- Windowed Watchdog Timer (WWDT) registers ---------------------------- */
 
 /* Watchdog mode register */
@@ -61,5 +65,9 @@ LGPL License Terms @ref lgpl_license
 #define WWDT_WINDOW                     MMIO32(WWDT_BASE + 0x018)
 
 /**@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

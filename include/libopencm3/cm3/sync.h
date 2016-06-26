@@ -22,6 +22,10 @@
 
 #include "common.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void __dmb(void);
 
 /* Implements synchronisation primitives as discussed in the ARM document
@@ -50,6 +54,10 @@ void cm3_mutex_lock(cm3_mutex_t *m);
 uint32_t cm3_mutex_trylock(cm3_mutex_t *m);
 void cm3_mutex_unlock(cm3_mutex_t *m);
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif

@@ -39,6 +39,10 @@ LGPL License Terms @ref lgpl_license
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/lpc43xx/memorymap.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* --- RGU registers ------------------------------------------------------- */
 
 /* Reset control register 0 */
@@ -1202,5 +1206,9 @@ LGPL License Terms @ref lgpl_license
 			(1 << RESET_EXT_STAT58_PERIPHERAL_RESET_SHIFT)
 
 /**@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

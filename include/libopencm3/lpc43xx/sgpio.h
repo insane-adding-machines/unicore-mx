@@ -56,6 +56,10 @@ LGPL License Terms @ref lgpl_license
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/lpc43xx/memorymap.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* --- SGPIO registers ----------------------------------------------------- */
 
 /* Pin multiplexer configuration registers (OUT_MUX_CFG0 to 15) */
@@ -687,5 +691,9 @@ typedef struct {
 #define SGPIO   ((sgpio_t *)SGPIO_PORT_BASE)
 
 /**@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

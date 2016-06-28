@@ -2,7 +2,7 @@
  *
  * @ingroup STM32F1xx
  *
- * @brief <b>libopencm3 STM32F1xx FLASH Memory</b>
+ * @brief <b>unicore-mx STM32F1xx FLASH Memory</b>
  *
  * @version 1.0.0
  *
@@ -38,8 +38,6 @@
  * LGPL License Terms @ref lgpl_license
  */
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2010 Thomas Otto <tommi@viadmin.org>
  * Copyright (C) 2010 Mark Butler <mbutler@physics.otago.ac.nz>
  *
@@ -59,8 +57,8 @@
 
 /**@{*/
 
-#include <libopencm3/stm32/desig.h>
-#include <libopencm3/stm32/flash.h>
+#include <unicore-mx/stm32/desig.h>
+#include <unicore-mx/stm32/flash.h>
 
 /*---------------------------------------------------------------------------*/
 /** @brief Enable the FLASH Half Cycle Mode

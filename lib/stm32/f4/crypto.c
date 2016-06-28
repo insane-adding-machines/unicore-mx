@@ -2,7 +2,7 @@
  *
  * @ingroup STM32F4xx
  *
- * @brief <b>libopencm3 STM32F4xx CRYPTO</b>
+ * @brief <b>unicore-mx STM32F4xx CRYPTO</b>
  *
  * @version 1.0.0
  *
@@ -10,8 +10,6 @@
  *
  */
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2011 Stephen Caudle <scaudle@doceme.com>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -28,7 +26,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/stm32/crypto.h>
+#include <unicore-mx/stm32/crypto.h>
 
 /**@{*/
 

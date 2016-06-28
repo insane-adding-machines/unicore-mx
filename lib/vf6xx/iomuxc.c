@@ -17,8 +17,6 @@
  * LGPL License Terms @ref lgpl_license
  */
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2014 Stefan Agner <stefan@agner.ch>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -37,8 +35,8 @@
 
 /**@{*/
 
-#include <libopencm3/vf6xx/iomuxc.h>
-#include <libopencm3/vf6xx/ccm.h>
+#include <unicore-mx/vf6xx/iomuxc.h>
+#include <unicore-mx/vf6xx/ccm.h>
 
 /*---------------------------------------------------------------------------*/
 /** @brief Set GPIO

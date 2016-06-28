@@ -2,7 +2,7 @@
  *
  * @ingroup STM32F4xx
  *
- * @brief <b>libopencm3 STM32F4xx RNG</b>
+ * @brief <b>unicore-mx STM32F4xx RNG</b>
  *
  * @version 1.0.0
  *
@@ -10,13 +10,11 @@
  *
  * This library supports the random number generator peripheral (RNG) in the STM32F4
  * series of ARM Cortex Microcontrollers by ST Microelectronics.
- * 
+ *
  *LGPL License Terms @ref lgpl_license
  */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -31,7 +29,7 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/stm32/rng.h>
+#include <unicore-mx/stm32/rng.h>
 
 /**@{*/
 

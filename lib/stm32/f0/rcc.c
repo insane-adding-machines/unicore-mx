@@ -2,7 +2,7 @@
  *
  * @ingroup STM32F0xx
  *
- * @brief <b>libopencm3 STM32F0xx Reset and Clock Control</b>
+ * @brief <b>unicore-mx STM32F0xx Reset and Clock Control</b>
  *
  * @version 1.0.0
  *
@@ -14,8 +14,6 @@
  * LGPL License Terms @ref lgpl_license
  */
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2009 Federico Ruiz-Ugalde <memeruiz at gmail dot com>
  * Copyright (C) 2009 Uwe Hermann <uwe@hermann-uwe.de>
  * Copyright (C) 2010 Thomas Otto <tommi@viadmin.org>
@@ -36,9 +34,9 @@
 
 /**@{*/
 
-#include <libopencm3/cm3/assert.h>
-#include <libopencm3/stm32/rcc.h>
-#include <libopencm3/stm32/flash.h>
+#include <unicore-mx/cm3/assert.h>
+#include <unicore-mx/stm32/rcc.h>
+#include <unicore-mx/stm32/flash.h>
 
 /* Set the default clock frequencies */
 uint32_t rcc_ahb_frequency = 8000000; /* 8MHz after reset */

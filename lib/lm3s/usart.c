@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2013 Gareth McMullin <gareth@blacksphere.co.nz>
  * Copyright (C) 2015 Daniele Lacamera <root at danielinux.net>
  *
@@ -18,7 +16,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/lm3s/usart.h>
+#include <unicore-mx/lm3s/usart.h>
 
 void usart_send(uint32_t usart, uint16_t data)
 {

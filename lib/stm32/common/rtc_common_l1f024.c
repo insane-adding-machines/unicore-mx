@@ -5,8 +5,6 @@
 */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2012 Karl Palsson <karlp@tweak.net.au>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -25,7 +23,7 @@
 
 /**@{*/
 
-#include <libopencm3/stm32/rtc.h>
+#include <unicore-mx/stm32/rtc.h>
 
 /*---------------------------------------------------------------------------*/
 /** @brief Set RTC prescalars.

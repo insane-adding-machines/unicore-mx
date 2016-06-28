@@ -2,7 +2,7 @@
  *
  * @ingroup STM32xx
  *
- * @brief <b>libopencm3 STM32 Clock Recovery Subsystem</b>
+ * @brief <b>unicore-mx STM32 Clock Recovery Subsystem</b>
  *
  * @version 1.0.0
  *
@@ -12,8 +12,6 @@
  */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -28,8 +26,8 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/stm32/crs.h>
-#include <libopencm3/stm32/rcc.h>
+#include <unicore-mx/stm32/crs.h>
+#include <unicore-mx/stm32/rcc.h>
 
 /**
  * This function enables automatic trimming of internal RC oscillator by USB SOF

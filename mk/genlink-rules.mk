@@ -1,6 +1,4 @@
 ##
-## This file is part of the libopencm3 project.
-##
 ## Copyright (C) 2014 Frantisek Burian <BuFran@seznam.cz>
 ##
 ## This library is free software: you can redistribute it and/or modify
@@ -17,7 +15,7 @@
 ## along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-$(LDSCRIPT):$(OPENCM3_DIR)/ld/linker.ld.S
+$(LDSCRIPT):$(UCMX_DIR)/ld/linker.ld.S
 ifeq ($(GENLINK_DEFS),)
 	$(error unknown device $(DEVICE) for the linker. Cannot generate ldscript)
 endif

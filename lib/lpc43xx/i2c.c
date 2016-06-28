@@ -2,7 +2,7 @@
 
 @ingroup LPC43xx
 
-@brief <b>libopencm3 LPC43xx I2C</b>
+@brief <b>unicore-mx LPC43xx I2C</b>
 
 @version 1.0.0
 
@@ -13,8 +13,6 @@ LGPL License Terms @ref lgpl_license
 */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2012 Michael Ossmann <mike@ossmann.com>
  * Copyright (C) 2014 Benjamin Vernoux <bvernoux@gmail.com>
  * Copyright (C) 2014 Jared Boone <jared@sharebrained.com>
@@ -40,9 +38,9 @@ LGPL License Terms @ref lgpl_license
 
 /**@{*/
 
-#include <libopencm3/lpc43xx/i2c.h>
-#include <libopencm3/lpc43xx/scu.h>
-#include <libopencm3/lpc43xx/cgu.h>
+#include <unicore-mx/lpc43xx/i2c.h>
+#include <unicore-mx/lpc43xx/scu.h>
+#include <unicore-mx/lpc43xx/cgu.h>
 
 #define I2C_TIMEOUT (10000)
 

@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2011 Gareth McMullin <gareth@blacksphere.co.nz>
  * Copyright (C) 2015 Kuldeep Singh Dhaka <kuldeepdhaka9@gmail.com>
  *
@@ -19,11 +17,11 @@
  */
 
 #include <string.h>
-#include <libopencm3/cm3/common.h>
-#include <libopencm3/efm32/memorymap.h>
-#include <libopencm3/efm32/cmu.h>
-#include <libopencm3/efm32/usb.h>
-#include <libopencm3/usb/usbd.h>
+#include <unicore-mx/cm3/common.h>
+#include <unicore-mx/efm32/memorymap.h>
+#include <unicore-mx/efm32/cmu.h>
+#include <unicore-mx/efm32/usb.h>
+#include <unicore-mx/usb/usbd.h>
 #include "usb_private.h"
 
 /* Receive FIFO size in 32-bit words. */

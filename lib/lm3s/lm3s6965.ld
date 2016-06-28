@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2016 Daniele Lacamera <root@danielinux.net>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -27,5 +25,5 @@ MEMORY
 }
 
 /* Include the common ld script. */
-INCLUDE libopencm3_lm3s.ld
+INCLUDE ucmx_lm3s.ld
 

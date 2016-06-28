@@ -1,6 +1,4 @@
 ##
-## This file is part of the libopencm3 project.
-##
 ## Copyright (C) 2009 Uwe Hermann <uwe@hermann-uwe.de>
 ## Copyright (C) 2014 Felix Held <felix-libopencm3@felixheld.de>
 ##
@@ -18,7 +16,7 @@
 ## along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-LIBNAME		= libopencm3_sam3u
+LIBNAME		= ucmx_sam3u
 SRCLIBDIR	?= ../..
 
 PREFIX		?= arm-none-eabi

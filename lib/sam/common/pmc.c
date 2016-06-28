@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2013 Gareth McMullin <gareth@blacksphere.co.nz>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -17,8 +15,8 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/sam/pmc.h>
-#include <libopencm3/sam/eefc.h>
+#include <unicore-mx/sam/pmc.h>
+#include <unicore-mx/sam/eefc.h>
 
 /** Default peripheral clock frequency after reset. */
 uint32_t pmc_mck_frequency = 4000000;

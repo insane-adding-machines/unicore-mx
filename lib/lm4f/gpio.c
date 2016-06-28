@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2011 Gareth McMullin <gareth@blacksphere.co.nz>
  * Copyright (C) 2013 Alexandru Gagniuc <mr.nuke.me@gmail.com>
  *
@@ -34,12 +32,12 @@
  *
  * LGPL License Terms @ref lgpl_license
  *
- * @brief <b>libopencm3 LM4F General Purpose I/O</b>
+ * @brief <b>unicore-mx LM4F General Purpose I/O</b>
  *
  * The LM4F GPIO API provides functionality for accessing the GPIO pins of the
  * LM4F.
  *
- * @attention @code  An important aspect to consider is that libopencm3 uses the
+ * @attention @code  An important aspect to consider is that unicore-mx uses the
  * AHB aperture for accessing the GPIO registers on the LM4F. The AHB must be
  * explicitly enabled with a call to gpio_enable_ahb_aperture() before accessing
  * any GPIO functionality.
@@ -48,14 +46,14 @@
  * Please see the individual GPIO modules for more details. To use the GPIO, the
  * gpio.h header needs to be included:
  * @code{.c}
- *	#include <libopencm3/lm4f/gpio.h>
+ *	#include <unicore-mx/lm4f/gpio.h>
  * @endcode
  */
 
 /**@{*/
 
-#include <libopencm3/lm4f/gpio.h>
-#include <libopencm3/lm4f/systemcontrol.h>
+#include <unicore-mx/lm4f/gpio.h>
+#include <unicore-mx/lm4f/systemcontrol.h>
 
 /* Value we need to write to unlock the GPIO commit register */
 #define GPIO_LOCK_UNLOCK_CODE		0x4C4F434B
@@ -178,7 +176,7 @@
 /**
  * \brief Enable access to GPIO registers via the AHB aperture
  *
- * All GPIO registers are accessed in libopencm3 via the AHB aperture. It
+ * All GPIO registers are accessed in unicore-mx via the AHB aperture. It
  * provides faster control over the older APB aperture. This aperture must be
  * enabled before calling any other gpio_*() function.
  *
@@ -463,7 +461,7 @@ void gpio_toggle(uint32_t gpioport, uint8_t gpios)
  * NVIC with @ref nvic_enable_irq(). For this last step, the nvic.h header is
  * needed:
  * @code{.c}
- *	#include <libopencm3/lm4f/nvic.h>
+ *	#include <unicore-mx/lm4f/nvic.h>
  * @endcode
  *
  * Enabling an interrupt is as simple as configuring the desired trigger,

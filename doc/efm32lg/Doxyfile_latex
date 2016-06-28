@@ -15,12 +15,12 @@
 
 WARN_LOGFILE           = doxygen_efm32lg_latex.log
 
-INPUT                  = ../../include/libopencm3/docmain.dox \
-                         ../../include/libopencm3/license.dox \
-					     ../../include/libopencm3/efm32/efm32lg \
+INPUT                  = ../../include/unicore-mx/docmain.dox \
+                         ../../include/unicore-mx/license.dox \
+					     ../../include/unicore-mx/efm32/efm32lg \
                          ../../lib/efm32/efm32lg
 
-EXCLUDE                = ../../include/libopencm3/efm32/doc-efm32lg.h
+EXCLUDE                = ../../include/unicore-mx/efm32/doc-efm32lg.h
 
 LAYOUT_FILE 		   = DoxygenLayout_efm32lg.xml
 

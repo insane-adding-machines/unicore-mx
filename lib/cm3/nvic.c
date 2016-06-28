@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2010 Thomas Otto <tommi@viadmin.org>
  * Copyright (C) 2012 Fergus Noble <fergusnoble@gmail.com>
  * Copyright (C) 2012 Benjamin Vernoux <titanmkd@gmail.com>
@@ -22,7 +20,7 @@
  *
  * @ingroup CM3_files
  *
- * @brief <b>libopencm3 Cortex Nested Vectored Interrupt Controller</b>
+ * @brief <b>unicore-mx Cortex Nested Vectored Interrupt Controller</b>
  *
  * @version 1.0.0
  *
@@ -43,8 +41,8 @@
 */
 /**@{*/
 
-#include <libopencm3/cm3/nvic.h>
-#include <libopencm3/cm3/scs.h>
+#include <unicore-mx/cm3/nvic.h>
+#include <unicore-mx/cm3/scs.h>
 
 /*---------------------------------------------------------------------------*/
 /** @brief NVIC Enable Interrupt

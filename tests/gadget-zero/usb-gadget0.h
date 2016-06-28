@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2015 Karl Palsson <karlp@tweak.net.au>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -20,7 +18,7 @@
 #ifndef USB_GADGET0_H
 #define USB_GADGET0_H
 
-#include <libopencm3/usb/usbd.h>
+#include <unicore-mx/usb/usbd.h>
 
 /**
  * Start up the gadget0 framework.

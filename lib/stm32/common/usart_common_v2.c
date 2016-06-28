@@ -5,8 +5,6 @@
  */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2016 Cem Basoglu <cem.basoglu@web.de>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -25,7 +23,7 @@
 
 /**@{*/
 
-#include <libopencm3/stm32/usart.h>
+#include <unicore-mx/stm32/usart.h>
 
 /*---------------------------------------------------------------------------*/
 /** @brief USART enable data inversion

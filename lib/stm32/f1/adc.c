@@ -2,7 +2,7 @@
 
 @ingroup STM32F1xx
 
-@brief <b>libopencm3 STM32F1xx Analog to Digital Converters</b>
+@brief <b>unicore-mx STM32F1xx Analog to Digital Converters</b>
 
 @version 1.0.0
 
@@ -75,8 +75,6 @@ and ADC, reset ADC and set the prescaler divider. Set dual mode to independent
 LGPL License Terms @ref lgpl_license
  */
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2009 Edward Cheeseman <evbuilder@users.sourceforge.net>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -109,7 +107,7 @@ LGPL License Terms @ref lgpl_license
 
 /**@{*/
 
-#include <libopencm3/stm32/adc.h>
+#include <unicore-mx/stm32/adc.h>
 
 /*---------------------------------------------------------------------------*/
 /** @brief ADC Power On

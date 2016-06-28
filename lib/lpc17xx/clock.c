@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2013 Silvio Gissi <silvio.gissi@outlook.com>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -16,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <libopencm3/lpc17xx/clock.h>
+#include <unicore-mx/lpc17xx/clock.h>
 
 const clock_scale_t clock_scale[] = {
         {
@@ -39,19 +37,19 @@ const clock_scale_t clock_scale[] = {
  void clock_setup(const clock_scale_t *clock)
 {
      /* Enable the external clock */
-     CLK_SCS |= CLK_SCS_OSCEN;                
+     CLK_SCS |= CLK_SCS_OSCEN;
      while((CLK_SCS & CLK_SCS_OSCSTAT) == 0);
      /* Select external oscilator */
-     CLK_CLKSRCSEL = CLK_CLKSRCSEL_MAIN;   
-     
+     CLK_CLKSRCSEL = CLK_CLKSRCSEL_MAIN;
+
      CLK_PLL0CFG = PLL0_CFG_VAL(clock->m, clock->n);
      /*Feed*/
-     CLK_PLL0FEED=PLL_KICK0; 
+     CLK_PLL0FEED=PLL_KICK0;
      CLK_PLL0FEED=PLL_KICK1;
      /*PLL0 Enable */
      CLK_PLL0CON = CLK_PLLCON_ENABLE;
      /*Feed*/
-     CLK_PLL0FEED=PLL_KICK0; 
+     CLK_PLL0FEED=PLL_KICK0;
      CLK_PLL0FEED=PLL_KICK1;
      /* Divide by 3 */
      CLK_CCLKCFG = clock->cclkdiv;
@@ -62,9 +60,9 @@ const clock_scale_t clock_scale[] = {
      /* PLL0 connect */
      CLK_PLL0CON |= CLK_PLLCON_CONNECT;
      /*Feed*/
-     CLK_PLL0FEED=PLL_KICK0; 
+     CLK_PLL0FEED=PLL_KICK0;
      CLK_PLL0FEED=PLL_KICK1;
      /* PLL0 operational */
 }
 
-    
+

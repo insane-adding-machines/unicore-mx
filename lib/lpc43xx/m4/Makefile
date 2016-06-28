@@ -1,6 +1,4 @@
 ##
-## This file is part of the libopencm3 project.
-##
 ## Copyright (C) 2009 Uwe Hermann <uwe@hermann-uwe.de>
 ## Copyright (C) 2012 Michael Ossmann <mike@ossmann.com>
 ## Copyright (C) 2012 Benjamin Vernoux <titanmkd@gmail.com>
@@ -20,7 +18,7 @@
 ## along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-LIBNAME		= libopencm3_lpc43xx
+LIBNAME		= ucmx_lpc43xx
 SRCLIBDIR	?= ../..
 
 FP_FLAGS	?= -mfloat-abi=hard -mfpu=fpv4-sp-d16

@@ -1,6 +1,6 @@
-#include <libopencm3/cm3/assert.h>
-#include <libopencm3/stm32/rcc.h>
-#include <libopencm3/stm32/flash.h>
+#include <unicore-mx/cm3/assert.h>
+#include <unicore-mx/stm32/rcc.h>
+#include <unicore-mx/stm32/flash.h>
 
 uint32_t rcc_ahb_frequency = 16000000;
 uint32_t rcc_apb1_frequency = 16000000;

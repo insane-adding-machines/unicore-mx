@@ -1,6 +1,4 @@
 ##
-## This file is part of the libopencm3 project.
-##
 ## Copyright (C) 2009 Uwe Hermann <uwe@hermann-uwe.de>
 ## Copyright (C) 2013 Alexandru Gagniuc <mr.nuke.me@gmail.com>
 ##
@@ -18,7 +16,7 @@
 ## along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-LIBNAME		= libopencm3_stm32f4
+LIBNAME		= ucmx_stm32f4
 SRCLIBDIR	?= ../..
 
 FP_FLAGS	?= -mfloat-abi=hard -mfpu=fpv4-sp-d16
@@ -55,7 +53,7 @@ OBJS            += usb.o usb_standard.o usb_control.o usb_fx07_common.o \
 
 OBJS		+= mac.o phy.o mac_stm32fxx7.o phy_ksz8051mll.o fmc_common_f47.o
 
-OBJS		+= ltdc_common_f47.o 
+OBJS		+= ltdc_common_f47.o
 
 VPATH += ../../usb:../:../../cm3:../common
 VPATH += ../../ethernet

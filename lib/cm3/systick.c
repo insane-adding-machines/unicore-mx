@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2010 Thomas Otto <tommi@viadmin.org>
  * Copyright (C) 2012 Benjamin Vernoux <titanmkd@gmail.com>
  *
@@ -21,7 +19,7 @@
  *
  * @ingroup CM3_files
  *
- * @brief <b>libopencm3 Cortex System Tick Timer</b>
+ * @brief <b>unicore-mx Cortex System Tick Timer</b>
  *
  * @version 1.0.0
  *
@@ -38,7 +36,7 @@
  */
 
 /**@{*/
-#include <libopencm3/cm3/systick.h>
+#include <unicore-mx/cm3/systick.h>
 
 /*---------------------------------------------------------------------------*/
 /** @brief SysTick Set the Automatic Reload Value.

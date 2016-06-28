@@ -1,6 +1,4 @@
 ##
-## This file is part of the libopencm3 project.
-##
 ## Copyright (C) 2013 Frantisek Burian <BuFran@seznam.cz>
 ##
 ## This library is free software: you can redistribute it and/or modify
@@ -17,7 +15,7 @@
 ## along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-LIBNAME		= libopencm3_stm32f0
+LIBNAME		= ucmx_stm32f0
 SRCLIBDIR	?= ../..
 
 PREFIX		?= arm-none-eabi

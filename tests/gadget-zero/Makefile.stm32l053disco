@@ -1,6 +1,4 @@
 ##
-## This file is part of the libopencm3 project.
-##
 ## This library is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU Lesser General Public License as published by
 ## the Free Software Foundation, either version 3 of the License, or
@@ -28,12 +26,12 @@ VPATH += $(SHARED_DIR)
 
 INCLUDES += $(patsubst %,-I%, . $(SHARED_DIR))
 
-OPENCM3_DIR=../..
+UCMX_DIR=../..
 
 ### This section can go to an arch shared rules eventually...
 LDSCRIPT = ../../lib/stm32/l0/stm32l0xx8.ld
-OPENCM3_LIB = opencm3_stm32l0
-OPENCM3_DEFS = -DSTM32L0
+UCMX_LIB = ucmx_stm32l0
+UCMX_DEFS = -DSTM32L0
 #FP_FLAGS ?= -mfloat-abi=hard -mfpu=fpv4-sp-d16
 ARCH_FLAGS = -mthumb -mcpu=cortex-m0plus $(FP_FLAGS)
 #OOCD_INTERFACE = stlink-v2-1

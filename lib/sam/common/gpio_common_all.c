@@ -11,8 +11,6 @@
  */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2012 Gareth McMullin <gareth@blacksphere.co.nz>
  * Copyright (C) 2014 Felix Held <felix-libopencm3@felixheld.de>
  *
@@ -30,7 +28,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/sam/gpio.h>
+#include <unicore-mx/sam/gpio.h>
 
 /** @brief Atomic set output
  *

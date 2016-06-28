@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2015 Karl Palsson <karlp@tweak.net.au>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -25,7 +23,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include <libopencm3/usb/usbd.h>
+#include <unicore-mx/usb/usbd.h>
 
 #include "trace.h"
 #include "usb-gadget0.h"
@@ -161,7 +159,7 @@ static const struct usb_config_descriptor config[] = {
 
 static char serial[] = "0123456789.0123456789.0123456789";
 static const char *usb_strings[] = {
-	"libopencm3",
+	"unicore-mx",
 	"Gadget-Zero",
 	serial,
 	"source and sink data",

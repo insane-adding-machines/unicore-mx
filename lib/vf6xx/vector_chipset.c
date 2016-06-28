@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2014 Stefan Agner <stefan@agner.ch>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -17,7 +15,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/cm3/scb.h>
+#include <unicore-mx/cm3/scb.h>
 
 extern vector_table_t vector_table;
 

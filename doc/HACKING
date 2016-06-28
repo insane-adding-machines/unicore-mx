@@ -1,4 +1,4 @@
-libopencm3 Documentation
+unicore-mx Documentation
 12 October 2012 (C) K Sarkies
 -----------------------------
 
@@ -41,11 +41,11 @@ will be incorporated into multiple family groups.
 
 The common files should not be included in an application explicitly. Also the
 doxygen preprocessor must be enabled to ensure that all macros and defines are
-included. This means that common header files need to have a section at the top 
+included. This means that common header files need to have a section at the top
 of the file of the type (eg for gpio_common_f24.h):
 
 /** @cond */
-#ifdef LIBOPENCM3_GPIO_H
+#ifdef UNICOREMX_GPIO_H
 /** @endcond */
 
 and at the end of the file:
@@ -62,7 +62,7 @@ conditional clauses are needed to stop the doxygen preprocessor seeing this
 statement and so excluding processing of the common file contents.
 
 /** @cond */
-#if defined(LIBOPENCM3_GPIO_H) || defined(LIBOPENCM3_GPIO_COMMON_F24_H)
+#if defined(UNICOREMX_GPIO_H) || defined(UNICOREMX_GPIO_COMMON_F24_H)
 /** @endcond */
 
 Each helper function must have a header with an @brief, and where appropriate
@@ -87,7 +87,7 @@ EXTERNAL_GROUPS = NO
 Each Doxyfile_include for a processor family has:
 
 @INCLUDE = ../Doxyfile_common
-INPUT = specific directories needed, including /include/libopencm3/cm3
+INPUT = specific directories needed, including /include/unicore-mx/cm3
 		in top directory to set the top level page and GNU license.
 LAYOUT_FILE = DoxygenLayout_$processor.xml
 WARN_LOGFILE = doxygen_$processor.log
@@ -97,7 +97,7 @@ PREDEFINED = list of macro definitions
 
 For the top level Doxyfile
 
-INPUT = ../include/libopencm3/docmain.dox to add in the main page text
+INPUT = ../include/unicore-mx/docmain.dox to add in the main page text
 LAYOUT_FILE = DoxygenLayout.xml
 WARN_LOGFILE = doxygen.log
 TAGFILES = cm3/cm3.tag=../cm3/html plus all families to be included.

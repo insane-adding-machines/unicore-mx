@@ -13,8 +13,6 @@ LGPL License Terms @ref lgpl_license
  */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2015 Karl Palsson <karlp@tweak.net.au>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -33,7 +31,7 @@ LGPL License Terms @ref lgpl_license
 
 /**@{*/
 
-#include <libopencm3/stm32/adc.h>
+#include <unicore-mx/stm32/adc.h>
 
 
 /** @brief ADC Read the End-of-Conversion Flag

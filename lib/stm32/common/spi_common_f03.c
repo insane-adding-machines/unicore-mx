@@ -33,8 +33,6 @@ LSB first.
 */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2009 Uwe Hermann <uwe@hermann-uwe.de>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -51,8 +49,8 @@ LSB first.
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/stm32/spi.h>
-#include <libopencm3/stm32/rcc.h>
+#include <unicore-mx/stm32/spi.h>
+#include <unicore-mx/stm32/rcc.h>
 
 /*
  * SPI and I2S code.

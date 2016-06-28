@@ -1,0 +1,21 @@
+/** @mainpage unicore-mx Developer Documentation
+
+@version 1.0.0
+
+@date 7 September 2012
+
+ * The unicore-mx project aims to create
+ * a free/libre/open-source (LGPL v3, or later) firmware library for various
+ * ARM Cortex-M microcontrollers, including ST STM32, Atmel SAM, NXP LPC,
+ * TI Stellaris/Tiva/MSP432, Silabs (Energy Micro) and others.
+ *
+ * @par ""
+ *
+ * See the <a href="http://www.unicore-mx.org">unicore-mx wiki</a> for
+ * more information.
+
+LGPL License Terms @ref lgpl_license
+*/
+
+
+

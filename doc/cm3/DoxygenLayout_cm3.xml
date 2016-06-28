@@ -1,7 +1,7 @@
 <doxygenlayout version="1.0">
   <!-- Navigation index tabs for HTML output -->
   <navindex>
-    <tab type="mainpage" visible="yes" title="libopencm3"/>
+    <tab type="mainpage" visible="yes" title="unicore-mx"/>
     <tab type="user" visible="yes" url="../../html/index.html" title="Back to Top" intro=""/>
     <tab type="modules" visible="yes" title="CM3 Core" intro=""/>
     <tab type="user" visible="yes" url="../../usb/html/modules.html" title="Generic USB" intro=""/>

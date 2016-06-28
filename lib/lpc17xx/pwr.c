@@ -2,7 +2,7 @@
 
 @ingroup LPC17xx
 
-@brief <b>libopencm3 LPC17xx Power Control</b>
+@brief <b>unicore-mx LPC17xx Power Control</b>
 
 @version 1.0.0
 
@@ -12,8 +12,6 @@ LGPL License Terms @ref lgpl_license
 */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2013 Silvio Gissi <silvio.gissi@outlook.com>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -32,7 +30,7 @@ LGPL License Terms @ref lgpl_license
 
 /**@{*/
 
-#include <libopencm3/lpc17xx/pwr.h>
+#include <unicore-mx/lpc17xx/pwr.h>
 
 void pwr_enable_peripherals(uint32_t peripherals)
 {

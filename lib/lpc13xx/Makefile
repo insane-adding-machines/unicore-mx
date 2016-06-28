@@ -1,6 +1,4 @@
 ##
-## This file is part of the libopencm3 project.
-##
 ## Copyright (C) 2009 Uwe Hermann <uwe@hermann-uwe.de>
 ##
 ## This library is free software: you can redistribute it and/or modify
@@ -17,7 +15,7 @@
 ## along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-LIBNAME		= libopencm3_lpc13xx
+LIBNAME		= ucmx_lpc13xx
 SRCLIBDIR	?= ..
 
 PREFIX		?= arm-none-eabi

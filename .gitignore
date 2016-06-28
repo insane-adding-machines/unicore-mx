@@ -20,8 +20,8 @@ latex/
 *.tag
 .DS_Store
 # These are generated
-include/libopencm3/**/nvic.h
-include/libopencm3/**/**/nvic.h
+include/unicore-mx/**/nvic.h
+include/unicore-mx/**/**/nvic.h
 lib/**/vector_nvic.c
 lib/**/**/vector_nvic.c
 include/libopencmsis/efm32/

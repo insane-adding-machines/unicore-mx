@@ -17,8 +17,6 @@
  */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2014 Stefan Agner <stefan@agner.ch>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -35,9 +33,9 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/vf6xx/memorymap.h>
-#include <libopencm3/vf6xx/ccm.h>
-#include <libopencm3/vf6xx/anadig.h>
+#include <unicore-mx/vf6xx/memorymap.h>
+#include <unicore-mx/vf6xx/ccm.h>
+#include <unicore-mx/vf6xx/anadig.h>
 
 /**@{*/
 static const uint32_t pll1_main_clk = 528000000;

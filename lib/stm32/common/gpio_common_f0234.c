@@ -50,8 +50,6 @@ Example 2: Digital input on port C12 with pullup
 
 */
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2011 Fergus Noble <fergusnoble@gmail.com>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -70,7 +68,7 @@ Example 2: Digital input on port C12 with pullup
 
 /**@{*/
 
-#include <libopencm3/stm32/gpio.h>
+#include <unicore-mx/stm32/gpio.h>
 
 /*---------------------------------------------------------------------------*/
 /** @brief Set GPIO Pin Mode

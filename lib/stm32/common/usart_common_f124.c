@@ -10,8 +10,6 @@ Devices can have up to 3 USARTs and 2 UARTs.
 */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2009 Uwe Hermann <uwe@hermann-uwe.de>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -30,8 +28,8 @@ Devices can have up to 3 USARTs and 2 UARTs.
 
 /**@{*/
 
-#include <libopencm3/stm32/usart.h>
-#include <libopencm3/stm32/rcc.h>
+#include <unicore-mx/stm32/usart.h>
+#include <unicore-mx/stm32/rcc.h>
 
 /*---------------------------------------------------------------------------*/
 /** @brief USART Send a Data Word.

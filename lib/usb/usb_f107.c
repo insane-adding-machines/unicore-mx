@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2011 Gareth McMullin <gareth@blacksphere.co.nz>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -18,10 +16,10 @@
  */
 
 #include <string.h>
-#include <libopencm3/cm3/common.h>
-#include <libopencm3/stm32/tools.h>
-#include <libopencm3/stm32/otg_fs.h>
-#include <libopencm3/usb/usbd.h>
+#include <unicore-mx/cm3/common.h>
+#include <unicore-mx/stm32/tools.h>
+#include <unicore-mx/stm32/otg_fs.h>
+#include <unicore-mx/usb/usbd.h>
 #include "usb_private.h"
 #include "usb_fx07_common.h"
 

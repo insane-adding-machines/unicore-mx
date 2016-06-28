@@ -1,6 +1,6 @@
 This project, inspired by [usbtest](http://www.linux-usb.org/usbtest/) and
 the linux usb gadget zero driver is used for regression testing changes to the
-libopencm3 usb stack.
+unicore-mx usb stack.
 
 The firmware itself is meant to be portable to any supported hardware, and then
 identical unit test code is run against all platforms.  This project can and

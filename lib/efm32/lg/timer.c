@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2015 Kuldeep Singh Dhaka <kuldeepdhaka9@gmail.com>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -17,7 +15,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/efm32/timer.h>
+#include <unicore-mx/efm32/timer.h>
 
 #define HAS_DEAD_TIME_INSERTION(timer) (timer == TIMER0)
 

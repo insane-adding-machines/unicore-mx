@@ -1,6 +1,4 @@
 ##
-## This file is part of the libopencm3 project.
-##
 ## Copyright (C) 2009 Uwe Hermann <uwe@hermann-uwe.de>
 ## Copyright (C) 2013 Alexandru Gagniuc <mr.nuke.me@gmail.com>
 ##
@@ -18,7 +16,7 @@
 ## along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-LIBNAME		= libopencm3_stm32f7
+LIBNAME		= ucmx_stm32f7
 SRCLIBDIR	?= ../..
 
 PREFIX		?= arm-none-eabi

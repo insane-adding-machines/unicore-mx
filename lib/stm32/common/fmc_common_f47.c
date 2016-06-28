@@ -1,7 +1,4 @@
 /*
- *
- * This file is part of the libopencm3 project.
- *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -19,7 +16,7 @@
 /* Utility functions for the SDRAM component of the FMC */
 
 #include <stdint.h>
-#include <libopencm3/stm32/fsmc.h>
+#include <unicore-mx/stm32/fsmc.h>
 
 /*
  * Install various timing values into the correct place in the

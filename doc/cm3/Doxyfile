@@ -15,8 +15,8 @@
 
 WARN_LOGFILE           = doxygen_cm3.log
 
-INPUT                  = ../../include/libopencm3/license.dox \
-						 ../../include/libopencm3/cm3/
+INPUT                  = ../../include/unicore-mx/license.dox \
+						 ../../include/unicore-mx/cm3/
 
 LAYOUT_FILE 		   = DoxygenLayout_cm3.xml
 

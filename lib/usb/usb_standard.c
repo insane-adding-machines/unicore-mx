@@ -15,8 +15,6 @@ LGPL License Terms @ref lgpl_license
 */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2010 Gareth McMullin <gareth@blacksphere.co.nz>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -36,7 +34,7 @@ LGPL License Terms @ref lgpl_license
 /**@{*/
 
 #include <string.h>
-#include <libopencm3/usb/usbd.h>
+#include <unicore-mx/usb/usbd.h>
 #include "usb_private.h"
 
 int usbd_register_set_config_callback(usbd_device *usbd_dev,

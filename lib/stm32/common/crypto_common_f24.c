@@ -1,6 +1,6 @@
 /** @addtogroup crypto_file
  *
- * @brief <b>libopencm3 STM32 Cryptographic controller</b>
+ * @brief <b>unicore-mx STM32 Cryptographic controller</b>
  *
  * @version 1.0.0
  *
@@ -12,8 +12,6 @@
  * LGPL License Terms @ref lgpl_license
  */
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2011 Stephen Caudle <scaudle@doceme.com>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -32,7 +30,7 @@
 
 /**@{*/
 
-#include <libopencm3/stm32/crypto.h>
+#include <unicore-mx/stm32/crypto.h>
 
 #define CRYP_CR_ALGOMODE_MASK	((1 << 19) | CRYP_CR_ALGOMODE)
 

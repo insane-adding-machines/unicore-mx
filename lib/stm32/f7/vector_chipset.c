@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2010 Piotr Esden-Tempski <piotr@esden.net>
  * Copyright (C) 2011 Fergus Noble <fergusnoble@gmail.com>
  *
@@ -18,7 +16,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/cm3/scb.h>
+#include <unicore-mx/cm3/scb.h>
 
 static void pre_main(void)
 {

@@ -2,7 +2,7 @@
  *
  * @ingroup STM32F1xx
  *
- * @brief <b>libopencm3 STM32F1xx RTC</b>
+ * @brief <b>unicore-mx STM32F1xx RTC</b>
  *
  * @author @htmlonly &copy; @endhtmlonly 2010 Uwe Hermann <uwe@hermann-uwe.de>
  * @author @htmlonly &copy; @endhtmlonly 2010 Lord James <lordjames@y7mail.com>
@@ -47,8 +47,6 @@
  */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2010 Uwe Hermann <uwe@hermann-uwe.de>
  * Copyright (C) 2010 Lord James <lordjames@y7mail.com>
  *
@@ -68,9 +66,9 @@
 /**@{*/
 
 
-#include <libopencm3/stm32/rcc.h>
-#include <libopencm3/stm32/rtc.h>
-#include <libopencm3/stm32/pwr.h>
+#include <unicore-mx/stm32/rcc.h>
+#include <unicore-mx/stm32/rtc.h>
+#include <unicore-mx/stm32/pwr.h>
 
 /*---------------------------------------------------------------------------*/
 /** @brief RTC Set Operational from the Off state.

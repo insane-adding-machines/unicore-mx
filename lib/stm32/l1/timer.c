@@ -2,7 +2,7 @@
 
 @ingroup STM32L1xx
 
-@brief <b>libopencm3 STM32L1xx Timers</b>
+@brief <b>unicore-mx STM32L1xx Timers</b>
 
 @version 1.0.0
 
@@ -11,8 +11,6 @@
 */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2010 Edward Cheeseman <evbuilder@users.sourceforge.org>
  * Copyright (C) 2011 Stephen Caudle <scaudle@doceme.com>
  *
@@ -32,7 +30,7 @@
 
 /**@{*/
 
-#include <libopencm3/stm32/timer.h>
+#include <unicore-mx/stm32/timer.h>
 
 /*---------------------------------------------------------------------------*/
 /** @brief Set Timer Option

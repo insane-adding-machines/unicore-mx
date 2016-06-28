@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2012 Karl Palsson <karlp@tweak.net.au>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -28,5 +26,5 @@ MEMORY
 }
 
 /* Include the common ld script. */
-INCLUDE libopencm3_stm32l1.ld
+INCLUDE ucmx_stm32l1.ld
 

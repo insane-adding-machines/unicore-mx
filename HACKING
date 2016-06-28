@@ -64,7 +64,7 @@ Development guidelines
  - Variables that are used to store register values read from registers or
    to be stored in a register should be named reg8, reg16, reg32 etc.
 
- - For examples on using libopencm3 see the libopencm3-examples repository.
+ - For examples on using unicore-mx see the unicore-mx-examples repository.
 
 Tips and tricks
 ---------------
@@ -72,9 +72,9 @@ Tips and tricks
 SublimeText users:
 
  - The project contains a sublime project description file with some basic
-   settings provided to make hacking on libopencm3 easier.
+   settings provided to make hacking on unicore-mx easier.
 
- - Recommended SublimeText plugins when hacking on libopencm3:
+ - Recommended SublimeText plugins when hacking on unicore-mx:
 
    - TrailingSpaces: Show and trim trailing line spaces.
 

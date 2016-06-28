@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2015 Kuldeep Singh Dhaka <kuldeepdhaka9@gmail.com>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -17,7 +15,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/efm32/dma.h>
+#include <unicore-mx/efm32/dma.h>
 
 #define CHANNEL_SUPPORT_LOOP(ch) (((ch) == DMA_CH0) || ((ch) == DMA_CH1))
 

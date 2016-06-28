@@ -1,6 +1,4 @@
 ##
-## This file is part of the libopencm3 project.
-##
 ## Copyright (C) 2009 Uwe Hermann <uwe@hermann-uwe.de>
 ## Copyright (C) 2012 Michael Ossmann <mike@ossmann.com>
 ## Copyright (C) 2012/2013 Benjamin Vernoux <titanmkd@gmail.com>
@@ -19,7 +17,7 @@
 ## along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-LIBNAME		= libopencm3_lpc43xx_m0
+LIBNAME		= ucmx_lpc43xx_m0
 SRCLIBDIR	?= ../..
 
 PREFIX		?= arm-none-eabi

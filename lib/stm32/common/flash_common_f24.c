@@ -3,8 +3,6 @@
  */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2010 Thomas Otto <tommi@viadmin.org>
  * Copyright (C) 2010 Mark Butler <mbutler@physics.otago.ac.nz>
  *
@@ -24,7 +22,7 @@
 
 /**@{*/
 
-#include <libopencm3/stm32/flash.h>
+#include <unicore-mx/stm32/flash.h>
 
 /*---------------------------------------------------------------------------*/
 /** @brief Set the Program Parallelism Size

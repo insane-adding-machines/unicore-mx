@@ -2,7 +2,7 @@
 
 @ingroup STM32F1xx
 
-@brief <b>libopencm3 STM32F1xx General Purpose I/O</b>
+@brief <b>unicore-mx STM32F1xx General Purpose I/O</b>
 
 @version 1.0.0
 
@@ -56,8 +56,6 @@ Example 1: Digital input on port C12
 LGPL License Terms @ref lgpl_license
 */
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2009 Uwe Hermann <uwe@hermann-uwe.de>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -74,7 +72,7 @@ LGPL License Terms @ref lgpl_license
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/stm32/gpio.h>
+#include <unicore-mx/stm32/gpio.h>
 
 /**@{*/
 

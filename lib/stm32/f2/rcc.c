@@ -4,7 +4,7 @@
  *
  * @section rcc_f2_api_ex Reset and Clock Control API.
  *
- * @brief <b>libopencm3 STM32F2xx Reset and Clock Control</b>
+ * @brief <b>unicore-mx STM32F2xx Reset and Clock Control</b>
  *
  * @author @htmlonly &copy; @endhtmlonly 2013 Frantisek Burian <BuFran at seznam.cz>
  *
@@ -17,8 +17,6 @@
  */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2009 Federico Ruiz-Ugalde <memeruiz at gmail dot com>
  * Copyright (C) 2009 Uwe Hermann <uwe@hermann-uwe.de>
  * Copyright (C) 2010 Thomas Otto <tommi@viadmin.org>
@@ -37,9 +35,9 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/cm3/assert.h>
-#include <libopencm3/stm32/rcc.h>
-#include <libopencm3/stm32/flash.h>
+#include <unicore-mx/cm3/assert.h>
+#include <unicore-mx/stm32/rcc.h>
+#include <unicore-mx/stm32/flash.h>
 
 /**@{*/
 

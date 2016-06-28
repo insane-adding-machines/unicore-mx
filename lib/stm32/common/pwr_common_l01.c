@@ -3,8 +3,6 @@
  * @author @htmlonly &copy; @endhtmlonly 2012 Karl Palsson <karlp@tweak.net.au>
  */
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2012 Karl Palsson <karlp@tweak.net.au>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -21,8 +19,8 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/stm32/pwr.h>
-#include <libopencm3/stm32/rcc.h>
+#include <unicore-mx/stm32/pwr.h>
+#include <unicore-mx/stm32/rcc.h>
 
 void pwr_set_vos_scale(enum pwr_vos_scale scale)
 {

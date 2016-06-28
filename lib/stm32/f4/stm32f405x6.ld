@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2009 Uwe Hermann <uwe@hermann-uwe.de>
  * Copyright (C) 2011 Stephen Caudle <scaudle@doceme.com>
  * Copyright (C) 2013 Sergey Krukowski <softsr@yahoo.de>
@@ -30,5 +28,5 @@ MEMORY
 }
 
 /* Include the common ld script. */
-INCLUDE libopencm3_stm32f4.ld
+INCLUDE ucmx_stm32f4.ld
 

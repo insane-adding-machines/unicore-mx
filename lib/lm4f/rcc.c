@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2012 Alexandru Gagniuc <mr.nuke.me@gmail.com>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -26,7 +24,7 @@
 @author @htmlonly &copy; @endhtmlonly 2012
 Alexandru Gagniuc <mr.nuke.me@gmail.com>
 
- * \brief <b>libopencm3 LM4F Clock control API</b>
+ * \brief <b>unicore-mx LM4F Clock control API</b>
  *
  * The LM$F clock API provides functionaliity for manipulating the system clock,
  * oscillator, and PLL. Functions are provided for fine-grained control of clock
@@ -76,7 +74,7 @@ Alexandru Gagniuc <mr.nuke.me@gmail.com>
  * @{
  */
 
-#include <libopencm3/lm4f/rcc.h>
+#include <unicore-mx/lm4f/rcc.h>
 
 /**
  * @defgroup rcc_low_level Low-level clock control API
@@ -172,7 +170,7 @@ void rcc_enable_interal_osc(void)
  * Enables the USERCC2 bit in SYSCTTL_RCC2. Settings in SYSCTL_RCC2 will
  * override settings in SYSCTL_RCC.
  * This function must be called before other calls to manipulate the clock, as
- * libopencm3 uses the SYSCTL_RCC2 register.
+ * unicore-mx uses the SYSCTL_RCC2 register.
  */
 void rcc_enable_rcc2(void)
 {

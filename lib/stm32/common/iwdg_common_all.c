@@ -18,8 +18,6 @@ relevant bit is not set, the IWDG timer must be enabled by software.
 
 */
 /*
- * This file is part of the libopencm3 project.
- *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -36,7 +34,7 @@ relevant bit is not set, the IWDG timer must be enabled by software.
 
 /**@{*/
 
-#include <libopencm3/stm32/iwdg.h>
+#include <unicore-mx/stm32/iwdg.h>
 
 #define LSI_FREQUENCY 32000
 #define COUNT_LENGTH 12

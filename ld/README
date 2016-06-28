@@ -2,11 +2,11 @@
 README
 ------------------------------------------------------------------------------
 
-LIBOPENCM3 LINKER SCRIPT GENERATOR
+UNICOREMX LINKER SCRIPT GENERATOR
 ----------------------------------
 
 This folder contains files needed for the automatic linker script generation
-mechanism developed for libopencm3 library.
+mechanism developed for unicore-mx library.
 
 File contents
 -------------
@@ -15,7 +15,7 @@ File contents
 * {ROOT}/ld/devices.data	- Device database file
 * {ROOT}/ld/Makefile.linker	- Common makefile part
 * {ROOT}/ld/linker.ld.S		- Linker script template
-* {ROOT}/scripts/genlink.awk	- Device database file search script 
+* {ROOT}/scripts/genlink.awk	- Device database file search script
 * {ROOT}/scripts/genlinktest.sh	- Device database file search test script
 
 Principle of operation
@@ -53,7 +53,7 @@ parameter for you.
 Testing
 -------
 
-The testing of feature is done by executing in the root of libopencm3 library.
+The testing of feature is done by executing in the root of unicore-mx library.
 
 make genlinktests
 
@@ -131,14 +131,14 @@ stm32f051c4t6
 -D_ROM=16K -D_RAM=4K -D_ROM_OFF=0x08000000 -D_RAM_OFF=0x20000000 \
 -mcpu=cortex-m0 -mthumb
 
-The generated linker script file will contain sections rom and ram with 
+The generated linker script file will contain sections rom and ram with
 appropriate initialization code, specified in linker file source linker.ld.S
 
 
 Copyright
 ---------
 
-This file is part of the libopencm3 project.
+This file is part of the unicore-mx project.
 
 Copyright (C) 2013 Frantisek Burian <Bufran@seznam.cz>
 Copyright (C) 2013 Werner Almesberger <wpwrak>

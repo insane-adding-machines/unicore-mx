@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2010 Uwe Hermann <uwe@hermann-uwe.de>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -17,7 +15,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/lpc17xx/exti.h>
+#include <unicore-mx/lpc17xx/exti.h>
 
 void exti_set_trigger(uint32_t extis, enum exti_trigger_type trig)
 {

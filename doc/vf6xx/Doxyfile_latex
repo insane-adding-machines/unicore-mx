@@ -15,15 +15,15 @@
 
 WARN_LOGFILE           = doxygen_vf6xx_latex.log
 
-INPUT                  = ../../include/libopencm3/docmain.dox \
-                         ../../include/libopencm3/license.dox \
-                         ../../include/libopencm3/vf6xx
+INPUT                  = ../../include/unicore-mx/docmain.dox \
+                         ../../include/unicore-mx/license.dox \
+                         ../../include/unicore-mx/vf6xx
 
 INPUT                 += ../../lib/vf6xx
 
 EXCLUDE_PATTERNS       =
 
-EXCLUDE                = ../../include/libopencm3/vf6xx/doc-vf6xx.h
+EXCLUDE                = ../../include/unicore-mx/vf6xx/doc-vf6xx.h
 
 LAYOUT_FILE 		   = DoxygenLayout_vf6xx.xml
 

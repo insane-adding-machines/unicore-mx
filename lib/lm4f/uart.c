@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2012 Alexandru Gagniuc <mr.nuke.me@gmail.com>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -24,7 +22,7 @@
  *
  * @author @htmlonly &copy; @endhtmlonly 2013 Alexandru Gagniuc <mr.nuke.me@gmail.com>
  *
- * \brief <b>libopencm3 LM4F Universal Asynchronous Receiver Transmitter</b>
+ * \brief <b>unicore-mx LM4F Universal Asynchronous Receiver Transmitter</b>
  *
  * The LM4F UART API provides functionality for accessing the UART hardware of
  * the LM4F.
@@ -32,15 +30,15 @@
  * Please see the individual UART modules for more details. To use the UART, the
  * uart.h header needs to be included:
  * @code{.c}
- *	#include <libopencm3/lm4f/uart.h>
+ *	#include <unicore-mx/lm4f/uart.h>
  * @endcode
  *
  * @{
  */
 
-#include <libopencm3/lm4f/uart.h>
-#include <libopencm3/lm4f/systemcontrol.h>
-#include <libopencm3/lm4f/rcc.h>
+#include <unicore-mx/lm4f/uart.h>
+#include <unicore-mx/lm4f/systemcontrol.h>
+#include <unicore-mx/lm4f/rcc.h>
 
 /** @defgroup uart_config UART configuration
  * @ingroup uart_file
@@ -363,7 +361,7 @@ uint16_t uart_recv_blocking(uint32_t uart)
  * NVIC with @ref nvic_enable_irq(). For this last step, the nvic.h header is
  * needed:
  * @code{.c}
- *	#include <libopencm3/lm4f/nvic.h>
+ *	#include <unicore-mx/lm4f/nvic.h>
  * @endcode
  *
  * Enabling an interrupt is as simple as unmasking the desired interrupt, and

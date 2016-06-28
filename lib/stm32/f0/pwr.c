@@ -2,7 +2,7 @@
  *
  * @ingroup STM32F0xx
  *
- * @brief <b>libopencm3 STM32F0xx Power Control</b>
+ * @brief <b>unicore-mx STM32F0xx Power Control</b>
  *
  * @version 1.0.0
  *
@@ -14,8 +14,6 @@
  * LGPL License Terms @ref lgpl_license
  */
 /*
- * This file is part of the libopencm3 project.
- *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -32,7 +30,7 @@
 
 /**@{*/
 
-#include <libopencm3/stm32/pwr.h>
+#include <unicore-mx/stm32/pwr.h>
 
 /**@}*/
 

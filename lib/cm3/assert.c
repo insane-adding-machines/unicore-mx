@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2012 Tomaz Solc <tomaz.solc@tablix.org>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -17,7 +15,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/cm3/assert.h>
+#include <unicore-mx/cm3/assert.h>
 
 void __attribute__((weak)) cm3_assert_failed(void)
 {

@@ -2,7 +2,7 @@
 
 @ingroup STM32L4xx
 
-@brief <b>libopencm3 STM32L4xx Analog to Digital Converters</b>
+@brief <b>unicore-mx STM32L4xx Analog to Digital Converters</b>
 
 @author @htmlonly &copy; @endhtmlonly 2016 Karl Palsson <karlp@tweak.net.au>
 
@@ -10,8 +10,6 @@
 LGPL License Terms @ref lgpl_license
  */
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2016 Karl Palsson <karlp@tweak.net.au>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -28,7 +26,7 @@ LGPL License Terms @ref lgpl_license
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/stm32/adc.h>
+#include <unicore-mx/stm32/adc.h>
 
 /**@{*/
 

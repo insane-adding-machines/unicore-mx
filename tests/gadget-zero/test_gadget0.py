@@ -26,7 +26,7 @@ class TestGadget0(unittest.TestCase):
     # gadget 0 code for different devices.  (or use different PIDs?)
     def setUp(self):
         self.dev = usb.core.find(idVendor=0xcafe, idProduct=0xcafe, custom_match=find_by_serial(DUT_SERIAL))
-        self.assertIsNotNone(self.dev, "Couldn't find locm3 gadget0 device")
+        self.assertIsNotNone(self.dev, "Couldn't find ucmx gadget0 device")
         self.longMessage = True
 
     def tearDown(self):
@@ -78,7 +78,7 @@ class TestConfigSourceSink(unittest.TestCase):
 
     def setUp(self):
         self.dev = usb.core.find(idVendor=0xcafe, idProduct=0xcafe, custom_match=find_by_serial(DUT_SERIAL))
-        self.assertIsNotNone(self.dev, "Couldn't find locm3 gadget0 device")
+        self.assertIsNotNone(self.dev, "Couldn't find ucmx gadget0 device")
 
         self.cfg = uu.find_descriptor(self.dev, bConfigurationValue=2)
         self.assertIsNotNone(self.cfg, "Config 2 should exist")
@@ -177,7 +177,7 @@ class TestConfigSourceSinkPerformance(unittest.TestCase):
 
     def setUp(self):
         self.dev = usb.core.find(idVendor=0xcafe, idProduct=0xcafe, custom_match=find_by_serial(DUT_SERIAL))
-        self.assertIsNotNone(self.dev, "Couldn't find locm3 gadget0 device")
+        self.assertIsNotNone(self.dev, "Couldn't find ucmx gadget0 device")
 
         self.cfg = uu.find_descriptor(self.dev, bConfigurationValue=2)
         self.assertIsNotNone(self.cfg, "Config 2 should exist")
@@ -228,7 +228,7 @@ class TestControlTransfer_Reads(unittest.TestCase):
 
     def setUp(self):
         self.dev = usb.core.find(idVendor=0xcafe, idProduct=0xcafe, custom_match=find_by_serial(DUT_SERIAL))
-        self.assertIsNotNone(self.dev, "Couldn't find locm3 gadget0 device")
+        self.assertIsNotNone(self.dev, "Couldn't find ucmx gadget0 device")
 
         self.cfg = uu.find_descriptor(self.dev, bConfigurationValue=2)
         self.assertIsNotNone(self.cfg, "Config 2 should exist")

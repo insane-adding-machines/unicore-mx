@@ -8,7 +8,7 @@
  *
  */
 
-#include <libopencm3/sam/adcife.h>
+#include <unicore-mx/sam/adcife.h>
 
 /** @brief Enable ADC interface. Must be done before any other configuration.
  *

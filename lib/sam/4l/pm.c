@@ -9,8 +9,6 @@
  */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2016 Maxim Sloyko <maxim@sloyko.com>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -27,7 +25,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/sam/pm.h>
+#include <unicore-mx/sam/pm.h>
 
 void pm_select_main_clock(enum mck_src source_clock)
 {

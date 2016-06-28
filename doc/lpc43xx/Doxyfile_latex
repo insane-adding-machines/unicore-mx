@@ -15,12 +15,12 @@
 
 WARN_LOGFILE           = doxygen_lpc43xx_latex.log
 
-INPUT                  = ../../include/libopencm3/docmain.dox \
-						 ../../include/libopencm3/license.dox \
-					     ../../include/libopencm3/lpc43xx/ \
+INPUT                  = ../../include/unicore-mx/docmain.dox \
+						 ../../include/unicore-mx/license.dox \
+					     ../../include/unicore-mx/lpc43xx/ \
                          ../../lib/lpc43xx
 
-EXCLUDE                = ../../include/libopencm3/lpc43xx/doc-lpc43xx.h
+EXCLUDE                = ../../include/unicore-mx/lpc43xx/doc-lpc43xx.h
 
 LAYOUT_FILE 		   = DoxygenLayout_lpc43xx.xml
 

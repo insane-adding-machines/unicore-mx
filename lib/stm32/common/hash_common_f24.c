@@ -10,8 +10,6 @@
  *  */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2013 Mikhail Avkhimenia <mikhail@avkhimenia.net>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -30,7 +28,7 @@
 
 /**@{*/
 
-#include <libopencm3/stm32/hash.h>
+#include <unicore-mx/stm32/hash.h>
 
 /*---------------------------------------------------------------------------*/
 /** @brief HASH Set Mode

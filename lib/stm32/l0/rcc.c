@@ -2,7 +2,7 @@
  *
  * @ingroup STM32L0xx
  *
- * @brief <b>libopencm3 STM32L0xx Reset and Clock Control</b>
+ * @brief <b>unicore-mx STM32L0xx Reset and Clock Control</b>
  *
  * @version 1.0.0
  *
@@ -14,8 +14,6 @@
  * LGPL License Terms @ref lgpl_license
  */
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2014 Karl Palsson <karlp@tweak.net.au>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -34,8 +32,8 @@
 
 /**@{*/
 
-#include <libopencm3/cm3/assert.h>
-#include <libopencm3/stm32/rcc.h>
+#include <unicore-mx/cm3/assert.h>
+#include <unicore-mx/stm32/rcc.h>
 
 void rcc_osc_on(enum rcc_osc osc)
 {

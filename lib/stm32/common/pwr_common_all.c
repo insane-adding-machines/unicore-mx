@@ -5,8 +5,6 @@ Ken Sarkies <ksarkies@internode.on.net>
 
 */
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2012 Ken Sarkies <ksarkies@internode.on.net>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -25,7 +23,7 @@ Ken Sarkies <ksarkies@internode.on.net>
 
 /**@{*/
 
-#include <libopencm3/stm32/pwr.h>
+#include <unicore-mx/stm32/pwr.h>
 
 /*---------------------------------------------------------------------------*/
 /** @brief Disable Backup Domain Write Protection.

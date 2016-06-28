@@ -15,13 +15,13 @@
 
 WARN_LOGFILE           = doxygen_stm32l4.log
 
-INPUT		= ../../include/libopencm3/license.dox
-INPUT		+=../../include/libopencm3/stm32/l4
-#INPUT		+=../../include/libopencm3/stm32/common
-INPUT		+=../../include/libopencm3/stm32/common/rcc_common_all.h
-INPUT		+=../../include/libopencm3/stm32/common/gpio_common_all.h
-INPUT		+=../../include/libopencm3/stm32/common/gpio_common_f234.h
-INPUT		+=../../include/libopencm3/stm32/common/gpio_common_f24.h
+INPUT		= ../../include/unicore-mx/license.dox
+INPUT		+=../../include/unicore-mx/stm32/l4
+#INPUT		+=../../include/unicore-mx/stm32/common
+INPUT		+=../../include/unicore-mx/stm32/common/rcc_common_all.h
+INPUT		+=../../include/unicore-mx/stm32/common/gpio_common_all.h
+INPUT		+=../../include/unicore-mx/stm32/common/gpio_common_f234.h
+INPUT		+=../../include/unicore-mx/stm32/common/gpio_common_f24.h
 
 INPUT		+=../../lib/stm32/l4
 #INPUT		+=../../lib/stm32/common

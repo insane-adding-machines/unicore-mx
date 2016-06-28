@@ -7,7 +7,7 @@ in which case this file must be added to the compile list. */
 
 @ingroup STM32F2xx
 
-@brief <b>libopencm3 STM32F2xx Timers</b>
+@brief <b>unicore-mx STM32F2xx Timers</b>
 
 @version 1.0.0
 
@@ -16,8 +16,6 @@ in which case this file must be added to the compile list. */
 */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2010 Edward Cheeseman <evbuilder@users.sourceforge.org>
  * Copyright (C) 2011 Stephen Caudle <scaudle@doceme.com>
  *
@@ -35,4 +33,4 @@ in which case this file must be added to the compile list. */
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/stm32/timer.h>
+#include <unicore-mx/stm32/timer.h>

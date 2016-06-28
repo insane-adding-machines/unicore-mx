@@ -2,7 +2,7 @@
  *
  * @ingroup STM32L4xx
  *
- * @brief <b>libopencm3 STM32L4xx FLASH</b>
+ * @brief <b>unicore-mx STM32L4xx FLASH</b>
  *
  * @version 1.0.0
  *
@@ -20,8 +20,6 @@
  */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2016 Benjamin Levine <benjamin@jesco.karoo.co.uk>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -40,7 +38,7 @@
 
 /**@{*/
 
-#include <libopencm3/stm32/flash.h>
+#include <unicore-mx/stm32/flash.h>
 
 /** @brief Enable the FLASH Prefetch Buffer
 
@@ -246,7 +244,7 @@ void flash_lock_option_bytes(void)
  * This performs all operations necessary to program a 32 bit word to FLASH
  * memory. The program error flag should be checked separately for the event
  * that memory was not properly erased.
- * 
+ *
  * @param[in] address Starting address in Flash.
  * @param[in] data word to write
  */

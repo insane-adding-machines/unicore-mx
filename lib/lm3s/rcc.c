@@ -14,8 +14,6 @@ Daniele Lacamera <root at danielinux dot net>
 LGPL License Terms @ref lgpl_license
 */
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2015 Daniele Lacamera <root@danielinux.net>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -33,8 +31,8 @@ LGPL License Terms @ref lgpl_license
  */
 
 #include <stdint.h>
-#include <libopencm3/lm3s/rcc.h>
-#include <libopencm3/cm3/sync.h>
+#include <unicore-mx/lm3s/rcc.h>
+#include <unicore-mx/cm3/sync.h>
 
 int rcc_clock_setup_in_xtal_8mhz_out_50mhz(void)
 {
@@ -47,7 +45,7 @@ int rcc_clock_setup_in_xtal_8mhz_out_50mhz(void)
     __dmb();
 
     /* Stage 1: Reset Oscillators and select configured values */
-    rcc = RCC_SYSDIV_50MHZ | RCC_PWMDIV_64 | RCC_XTAL_8MHZ_400MHZ | RCC_USEPWMDIV; 
+    rcc = RCC_SYSDIV_50MHZ | RCC_PWMDIV_64 | RCC_XTAL_8MHZ_400MHZ | RCC_USEPWMDIV;
     rcc2 = RCC2_SYSDIV2_4;
     RCC_CR = rcc;
     RCC2_CR = rcc2;

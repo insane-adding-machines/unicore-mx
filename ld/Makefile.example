@@ -11,9 +11,9 @@ OBJCOPY		= arm-none-eabi-objcopy
 OBJDUMP		= arm-none-eabi-objdump
 GDB		= arm-none-eabi-gdb
 
-TOOLCHAIN_DIR	?= ../../../../../libopencm3
+TOOLCHAIN_DIR	?= ../../../../../unicore-mx
 
-CFLAGS		+= <...> 
+CFLAGS		+= <...>
 LDSCRIPT	?= $(BINARY).ld
 LDFLAGS		+= <..>
 OBJS		+= $(BINARY).o

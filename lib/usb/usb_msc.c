@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2013 Weston Schmidt <weston_schmidt@alumni.purdue.edu>
  * Copyright (C) 2013 Pavol Rusnak <stick@gk2.sk>
  *
@@ -21,9 +19,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <libopencm3/cm3/common.h>
-#include <libopencm3/usb/usbd.h>
-#include <libopencm3/usb/msc.h>
+#include <unicore-mx/cm3/common.h>
+#include <unicore-mx/usb/usbd.h>
+#include <unicore-mx/usb/msc.h>
 #include "usb_private.h"
 
 /* Definitions of Mass Storage Class from:

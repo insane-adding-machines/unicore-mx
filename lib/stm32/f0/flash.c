@@ -2,7 +2,7 @@
  *
  * @ingroup STM32F0xx
  *
- * @brief <b>libopencm3 STM32F05x FLASH</b>
+ * @brief <b>unicore-mx STM32F05x FLASH</b>
  *
  * @version 1.0.0
  *
@@ -28,8 +28,6 @@
  */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2013 Frantisek Burian <BuFran@seznam.cz>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -48,7 +46,7 @@
 
 /**@{*/
 
-#include <libopencm3/stm32/flash.h>
+#include <unicore-mx/stm32/flash.h>
 
 /*---------------------------------------------------------------------------*/
 /** @brief Clear All Status Flags

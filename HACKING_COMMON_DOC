@@ -1,18 +1,18 @@
 Files for each peripheral (examples given for STM32 GPIO)
 ---------------------------------------------------------
 
-In include/libopencm3/stm32.
+In include/unicore-mx/stm32.
 A "dispatch" header to point to the subfamily header (gpio.h)
 
-In include/libopencm3/stm32/f*
+In include/unicore-mx/stm32/f*
 A file with defines that are specific to the subfamily, and an include of
 needed common header files (gpio.h).
 
-In include/libopencm3/stm32/common
+In include/unicore-mx/stm32/common
 A file with defines common to all subfamilies. Includes the cm3 common header
 (gpio_common_all.h).
 
-In include/libopencm3/stm32/common
+In include/unicore-mx/stm32/common
 May be one other file with defines common to a subgroup of devices.
 This includes the file common to all (gpio_common_f24.h).
 
@@ -37,7 +37,7 @@ These can differ between subfamilies.
 
 NOTE: The common source files must have a line of the form
 
-#ifdef LIBOPENCM3_xxx_H
+#ifdef UNICOREMX_xxx_H
 
 where xxx is the associated peripheral name. This prevents the common files
 from being included accidentally into a user's application. This however
@@ -52,14 +52,14 @@ time most distros have an earlier buggy version.
 Documentation
 -------------
 
-In include/libopencm3/stm32/f*
+In include/unicore-mx/stm32/f*
 A file doc-stm32f*.h contains a definition of the particular family grouping.
 This grouping will appear in the main index of the resulting document with all
 documentation under it.
 
 All header files for a peripheral (common or otherwise) will subgroup under a
 name which is the same in all families (such as gpio_defines). The peripheral
-header file in include/libopencm3/stm32/f* will then include this group as a
+header file in include/unicore-mx/stm32/f* will then include this group as a
 subgroup under the specific family group. Doxygen is run separately for each
 family so there is no danger of accidentally including the wrong stuff.
 

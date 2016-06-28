@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2013 Frantisek Burian <BuFran@seznam.cz>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -17,8 +15,8 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/cm3/scs.h>
-#include <libopencm3/cm3/dwt.h>
+#include <unicore-mx/cm3/scs.h>
+#include <unicore-mx/cm3/dwt.h>
 
 /*---------------------------------------------------------------------------*/
 /** @brief DebugTrace Enable the CPU cycle counter

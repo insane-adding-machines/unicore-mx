@@ -17,9 +17,9 @@
 
 WARN_LOGFILE            = doxygen_sam3u.log
 
-INPUT                   = ../../include/libopencm3/license.dox \
-                         ../../include/libopencm3/sam/3u \
-                         ../../include/libopencm3/sam/common
+INPUT                   = ../../include/unicore-mx/license.dox \
+                         ../../include/unicore-mx/sam/3u \
+                         ../../include/unicore-mx/sam/common
 
 INPUT                  += ../../lib/sam/3u \
                          ../../lib/sam/common

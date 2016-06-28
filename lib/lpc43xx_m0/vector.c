@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2010 Piotr Esden-Tempski <piotr@esden.net>,
  * Copyright (C) 2012 chrysn <chrysn@fsfe.org>
  * Copyright (C) 2012 Benjamin Vernoux <titanmkd@gmail.com>
@@ -94,7 +92,7 @@ void (*const vector_table[]) (void) = {
 	/* IrqID 0 , ExcNo 16 */ m0_rtc_isr,
 	/* IrqID 1 , ExcNo 17 */ m0_m4core_isr,
 	/* IrqID 2 , ExcNo 18 */ m0_dma_isr,
-	/* IrqID 3 , ExcNo 19 */ 0, 
+	/* IrqID 3 , ExcNo 19 */ 0,
 	/* IrqID 4 , ExcNo 20 */ m0_flasheepromat_isr,
 	/* IrqID 5 , ExcNo 21 */ m0_ethernet_isr,
 	/* IrqID 6 , ExcNo 22 */ m0_sdio_isr,
@@ -106,7 +104,7 @@ void (*const vector_table[]) (void) = {
 	/* IrqID 12, ExcNo 28 */ m0_timer0_isr,
 	/* IrqID 13, ExcNo 29 */ m0_gint1_isr,
 	/* IrqID 14, ExcNo 30 */ m0_pin_int4_isr,
-	/* IrqID 15, ExcNo 31 */ m0_timer3_isr, 
+	/* IrqID 15, ExcNo 31 */ m0_timer3_isr,
 	/* IrqID 16, ExcNo 32 */ m0_mcpwm_isr,
 	/* IrqID 17, ExcNo 33 */ m0_adc0_isr,
 	/* IrqID 18, ExcNo 34 */ m0_i2c0_or_i2c1_isr,
@@ -121,7 +119,7 @@ void (*const vector_table[]) (void) = {
 	/* IrqID 27, ExcNo 43 */ m0_usart3_isr,
 	/* IrqID 28, ExcNo 44 */ m0_i2s0_or_i2s1_isr,
 	/* IrqID 29, ExcNo 45 */ m0_c_can0_isr,
-	/* IrqID 30, ExcNo 46 */ 0, 
+	/* IrqID 30, ExcNo 46 */ 0,
 	/* IrqID 31, ExcNo 47 */ 0
 };
 

@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2010 Gareth McMullin <gareth@blacksphere.co.nz>
  * Copyright (C) 2015 Robin Kreis <r.kreis@uni-bremen.de>
  *
@@ -27,8 +25,8 @@
 #ifndef ST_USBFS_CORE
 #define ST_USBFS_CORE
 
-#include <libopencm3/stm32/st_usbfs.h>
-#include <libopencm3/usb/usbd.h>
+#include <unicore-mx/stm32/st_usbfs.h>
+#include <unicore-mx/usb/usbd.h>
 
 #define USBD_PM_TOP 0x40
 

@@ -1,4 +1,4 @@
-libopencm3 Documentation
+unicore-mx Documentation
 14 September 2012 (C) K Sarkies
 -------------------------------
 
@@ -16,7 +16,7 @@ HTML, LaTeX, and pdf output can be produced.
 Generation of HTML
 ------------------
 
-To view HTML, point a browser to libopencm3/doc/html/index.html.
+To view HTML, point a browser to unicore-mx/doc/html/index.html.
 
 Generation of PDF
 -----------------

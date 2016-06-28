@@ -17,8 +17,6 @@ register access, Error conditions
 
 */
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2010 Thomas Otto <tommi@viadmin.org>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -35,8 +33,8 @@ register access, Error conditions
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/stm32/i2c.h>
-#include <libopencm3/stm32/rcc.h>
+#include <unicore-mx/stm32/i2c.h>
+#include <unicore-mx/stm32/rcc.h>
 
 /**@{*/
 
@@ -492,7 +490,7 @@ void i2c_set_speed(uint32_t i2c, uint8_t fast)
 	} else {
 		I2C_CCR(i2c) = (freq * 5) & I2C_CCR_CCRMASK;
 	}
-	
+
 	/* set rise time to 1000ns */
 	reg = (I2C_TRISE(i2c) & ~(I2C_TRISE_MASK)) | ((freq + 1) & I2C_TRISE_MASK);
 	I2C_TRISE(i2c) = reg;

@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2010 Piotr Esden-Tempski <piotr@esden.net>,
  * Copyright (C) 2012 chrysn <chrysn@fsfe.org>
  *
@@ -18,8 +16,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/cm3/scb.h>
-#include <libopencm3/cm3/vector.h>
+#include <unicore-mx/cm3/scb.h>
+#include <unicore-mx/cm3/vector.h>
 
 /* load optional platform dependent initialization routines */
 #include "../dispatch/vector_chipset.c"

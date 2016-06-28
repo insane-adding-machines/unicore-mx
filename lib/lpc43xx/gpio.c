@@ -2,7 +2,7 @@
 
 @ingroup LPC43xx
 
-@brief <b>libopencm3 LPC43xx General Purpose I/O</b>
+@brief <b>unicore-mx LPC43xx General Purpose I/O</b>
 
 @version 1.0.0
 
@@ -12,8 +12,6 @@ LGPL License Terms @ref lgpl_license
 */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2010 Uwe Hermann <uwe@hermann-uwe.de>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -32,7 +30,7 @@ LGPL License Terms @ref lgpl_license
 
 /**@{*/
 
-#include <libopencm3/lpc43xx/gpio.h>
+#include <unicore-mx/lpc43xx/gpio.h>
 
 void gpio_set(uint32_t gpioport, uint32_t gpios)
 {

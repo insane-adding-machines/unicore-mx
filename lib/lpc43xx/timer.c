@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2013 Ben Gamari <bgamari@physics.umass.edu>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -20,7 +18,7 @@
  * devices.  (differences only in the source selection)
  */
 
-#include <libopencm3/lpc43xx/timer.h>
+#include <unicore-mx/lpc43xx/timer.h>
 
 void timer_reset(uint32_t timer_peripheral)
 {

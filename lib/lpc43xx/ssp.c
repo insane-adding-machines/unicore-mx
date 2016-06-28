@@ -2,7 +2,7 @@
 
 @ingroup LPC43xx
 
-@brief <b>libopencm3 LPC43xx SSP</b>
+@brief <b>unicore-mx LPC43xx SSP</b>
 
 @version 1.0.0
 
@@ -12,8 +12,6 @@ LGPL License Terms @ref lgpl_license
 */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2012 Benjamin Vernoux <bvernoux@gmail.com>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -32,9 +30,9 @@ LGPL License Terms @ref lgpl_license
 
 /**@{*/
 
-#include <libopencm3/lpc43xx/ssp.h>
-#include <libopencm3/lpc43xx/ccu.h>
-#include <libopencm3/lpc43xx/cgu.h>
+#include <unicore-mx/lpc43xx/ssp.h>
+#include <unicore-mx/lpc43xx/ccu.h>
+#include <unicore-mx/lpc43xx/cgu.h>
 
 /* Disable SSP */
 void ssp_disable(ssp_num_t ssp_num)

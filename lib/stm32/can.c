@@ -2,7 +2,7 @@
 
 @ingroup STM32F_files
 
-@brief <b>libopencm3 STM32Fxxx CAN</b>
+@brief <b>unicore-mx STM32Fxxx CAN</b>
 
 @version 1.0.0
 
@@ -17,8 +17,6 @@ can be distributed between two FIFOs and three transmit mailboxes.
 LGPL License Terms @ref lgpl_license
 */
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2010 Piotr Esden-Tempski <piotr@esden.net>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -35,14 +33,14 @@ LGPL License Terms @ref lgpl_license
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/stm32/can.h>
+#include <unicore-mx/stm32/can.h>
 
 #if defined(STM32F1)
-#	include <libopencm3/stm32/f1/rcc.h>
+#	include <unicore-mx/stm32/f1/rcc.h>
 #elif defined(STM32F2)
-#	include <libopencm3/stm32/f2/rcc.h>
+#	include <unicore-mx/stm32/f2/rcc.h>
 #elif defined(STM32F4)
-#	include <libopencm3/stm32/f4/rcc.h>
+#	include <unicore-mx/stm32/f4/rcc.h>
 #else
 #	error "stm32 family not defined."
 #endif

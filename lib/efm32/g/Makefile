@@ -1,6 +1,4 @@
 ##
-## This file is part of the libopencm3 project.
-##
 ## Copyright (C) 2009 Uwe Hermann <uwe@hermann-uwe.de>
 ## Copyright (C) 2012 chrysn <chrysn@fsfe.org>
 ##
@@ -18,7 +16,7 @@
 ## along with this library. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-LIBNAME		= libopencm3_efm32g
+LIBNAME		= ucmx_efm32g
 SRCLIBDIR	?= ../..
 FAMILY		= EFM32G
 

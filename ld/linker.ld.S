@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2009 Uwe Hermann <uwe@hermann-uwe.de>
  * Copyright (C) 2013 Frantisek Burian <BuFran@seznam.cz>
  *
@@ -18,7 +16,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Generic linker script for all targets using libopencm3. */
+/* Generic linker script for all targets using unicore-mx. */
 
 /* Enforce emmition of the vector table. */
 EXTERN(vector_table)

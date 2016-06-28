@@ -82,8 +82,6 @@ knob.
 */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2010 Edward Cheeseman <evbuilder@users.sourceforge.org>
  * Copyright (C) 2011 Stephen Caudle <scaudle@doceme.com>
  *
@@ -111,8 +109,8 @@ knob.
 
 /**@{*/
 
-#include <libopencm3/stm32/timer.h>
-#include <libopencm3/stm32/rcc.h>
+#include <unicore-mx/stm32/timer.h>
+#include <unicore-mx/stm32/rcc.h>
 
 #define ADVANCED_TIMERS (defined(TIM1_BASE) || defined(TIM8_BASE))
 
@@ -167,7 +165,7 @@ void timer_reset(uint32_t timer_peripheral)
 		rcc_periph_reset_pulse(RST_TIM8);
 		break;
 #endif
-/* These timers are not supported in libopencm3 yet */
+/* These timers are not supported in unicore-mx yet */
 /*
 	case TIM9:
 		rcc_periph_reset_pulse(RST_TIM9);

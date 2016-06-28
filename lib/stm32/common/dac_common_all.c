@@ -98,8 +98,6 @@ LGPL License Terms @ref lgpl_license
  */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2012 Ken Sarkies
  *
  * This library is free software: you can redistribute it and/or modify
@@ -118,7 +116,7 @@ LGPL License Terms @ref lgpl_license
 
 /**@{*/
 
-#include <libopencm3/stm32/dac.h>
+#include <unicore-mx/stm32/dac.h>
 
 #define MASK8 0xFF
 #define MASK12 0xFFF

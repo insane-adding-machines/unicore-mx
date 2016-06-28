@@ -3,8 +3,6 @@
 */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2010 Edward Cheeseman <evbuilder@users.sourceforge.org>
  * Copyright (C) 2011 Stephen Caudle <scaudle@doceme.com>
  *
@@ -24,7 +22,7 @@
 
 /**@{*/
 
-#include <libopencm3/stm32/timer.h>
+#include <unicore-mx/stm32/timer.h>
 
 /*---------------------------------------------------------------------------*/
 /** @brief Set Input Polarity

@@ -2,7 +2,7 @@
  *
  * @ingroup STM32F3xx
  *
- * @brief <b>libopencm3 STM32F3xx Analog to Digital Converters</b>
+ * @brief <b>unicore-mx STM32F3xx Analog to Digital Converters</b>
  *
  * @author @htmlonly &copy; @endhtmlonly 2012
  * Ken Sarkies <ksarkies@internode.on.net>
@@ -66,8 +66,6 @@
  * LGPL License Terms @ref lgpl_license
  */
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2012 Ken Sarkies <ksarkies@internode.on.net>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -84,7 +82,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/stm32/adc.h>
+#include <unicore-mx/stm32/adc.h>
 
 /**@{*/
 

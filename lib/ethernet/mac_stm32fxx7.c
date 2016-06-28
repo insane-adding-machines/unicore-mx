@@ -13,8 +13,6 @@
  * LGPL License Terms @ref lgpl_license
  */
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2013 Frantisek Burian <BuFran@seznam.cz>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -32,10 +30,10 @@
  */
 
 #include <string.h>
-#include <libopencm3/ethernet/mac.h>
-#include <libopencm3/ethernet/phy.h>
-#include <libopencm3/stm32/gpio.h>
-#include <libopencm3/cm3/nvic.h>
+#include <unicore-mx/ethernet/mac.h>
+#include <unicore-mx/ethernet/phy.h>
+#include <unicore-mx/stm32/gpio.h>
+#include <unicore-mx/cm3/nvic.h>
 
 /**@{*/
 

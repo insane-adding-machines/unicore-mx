@@ -2,7 +2,7 @@
  *
  * @ingroup STM32xx
  *
- * @brief <b>libopencm3 STM32xx LTDC</b>
+ * @brief <b>unicore-mx STM32xx LTDC</b>
  *
  * @author @htmlonly &copy; @endhtmlonly 2014
  * Oliver Meier <h2obrain@gmail.com>
@@ -22,8 +22,6 @@
  */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2014 Oliver Meier <h2obrain@gmail.com>
  * Copyright (C) 2016 Maxime Vincent <maxime.vince@gmail.com>
  *
@@ -41,7 +39,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/stm32/ltdc.h>
+#include <unicore-mx/stm32/ltdc.h>
 
 void ltdc_set_tft_sync_timings(uint16_t sync_width,    uint16_t sync_height,
 			       uint16_t h_back_porch,  uint16_t v_back_porch,

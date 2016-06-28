@@ -1,7 +1,7 @@
 #include <stdint.h>
-#include <libopencm3/cm3/common.h>
-#include <libopencm3/cm3/memorymap.h>
-#include <libopencm3/cm3/itm.h>
+#include <unicore-mx/cm3/common.h>
+#include <unicore-mx/cm3/memorymap.h>
+#include <unicore-mx/cm3/itm.h>
 #include "trace.h"
 
 void trace_send_blocking8(int stimulus_port, char c)

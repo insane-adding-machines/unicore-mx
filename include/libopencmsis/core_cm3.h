@@ -1,21 +1,21 @@
 /* big fat FIXME: this should use a consistent structure, and reference
- * functionality from libopencm3 instead of copypasting.
+ * functionality from unicore-mx instead of copypasting.
  *
  * particularly unimplemented features are FIXME'd extra
  * */
 
-/* the original core_cm3.h is nonfree by arm; this provides libopencm3 variant
+/* the original core_cm3.h is nonfree by arm; this provides unicore-mx variant
  * of the symbols efm32lib needs of CMSIS. */
 
 #ifndef OPENCMSIS_CORECM3_H
 #define OPENCMSIS_CORECM3_H
 
-#include <libopencm3/cm3/common.h>
-#include <libopencm3/cm3/cortex.h>
-#include <libopencm3/cm3/memorymap.h>
-#include <libopencm3/cm3/systick.h>
-#include <libopencm3/cm3/nvic.h>
-#include <libopencm3/cm3/scb.h>
+#include <unicore-mx/cm3/common.h>
+#include <unicore-mx/cm3/cortex.h>
+#include <unicore-mx/cm3/memorymap.h>
+#include <unicore-mx/cm3/systick.h>
+#include <unicore-mx/cm3/nvic.h>
+#include <unicore-mx/cm3/scb.h>
 
 /* needed by system_efm32.h:196, guessing */
 #define __INLINE inline
@@ -23,12 +23,12 @@
 #define __STATIC_INLINE static inline
 
 /* needed around efm32tg840f32.h:229. comparing the efm32lib definitions to the
- * libopencm3 ones, "volatile" is all that's missing. */
+ * unicore-mx ones, "volatile" is all that's missing. */
 #define __IO volatile
 #define __O volatile
 #define __I volatile
 
-/* -> style access for what is defined in libopencm3/stm32/f1/scb.h /
+/* -> style access for what is defined in unicore-mx/stm32/f1/scb.h /
  * cm3/memorymap.h, as it's needed by efm32lib/inc/efm32_emu.h */
 
 /* from cm3/scb.h */
@@ -36,7 +36,7 @@
 
 /* structure as in, for example,
  * DeviceSupport/EnergyMicro/EFM32/efm32tg840f32.h, data from
- * libopencm3/cm3/scb.h. FIXME incomplete. */
+ * unicore-mx/cm3/scb.h. FIXME incomplete. */
 typedef struct {
 	__IO uint32_t CPUID;
 	__IO uint32_t ICSR;

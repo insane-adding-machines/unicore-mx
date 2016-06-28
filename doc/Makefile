@@ -1,4 +1,4 @@
-# Makefile to build libopencm3 documentation
+# Makefile to build unicore-mx documentation
 
 # 14 September 2012
 # (C) Ken Sarkies <ksarkies@internode.on.net>

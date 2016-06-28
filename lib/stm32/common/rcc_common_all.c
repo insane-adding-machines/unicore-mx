@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2013 Frantisek Burian <bufran@seznam.cz>
  * .. file is merged from many other copyrighted files of stm32 family
  *
@@ -19,7 +17,7 @@
  */
 /**@{*/
 
-#include <libopencm3/stm32/rcc.h>
+#include <unicore-mx/stm32/rcc.h>
 
 /*---------------------------------------------------------------------------*/
 /** @brief RCC Enable Peripheral Clocks.

@@ -2,7 +2,7 @@
  *
  * @ingroup STM32L1xx
  *
- * @brief <b>libopencm3 STM32L1xx DMA</b>
+ * @brief <b>unicore-mx STM32L1xx DMA</b>
  *
  * @version 1.0.0
  *
@@ -12,8 +12,6 @@
  */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -28,4 +26,4 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/stm32/dma.h>
+#include <unicore-mx/stm32/dma.h>

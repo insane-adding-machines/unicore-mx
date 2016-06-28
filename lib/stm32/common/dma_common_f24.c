@@ -26,8 +26,6 @@ number of transfers is unknown.
 LGPL License Terms @ref lgpl_license
  */
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2012 Ken Sarkies <ksarkies@internode.on.net>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -46,7 +44,7 @@ LGPL License Terms @ref lgpl_license
 
 /**@{*/
 
-#include <libopencm3/stm32/dma.h>
+#include <unicore-mx/stm32/dma.h>
 
 /*---------------------------------------------------------------------------*/
 /** @brief DMA Stream Reset

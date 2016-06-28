@@ -29,7 +29,7 @@ LDLIBS		+= -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group
 # parameters for gcc module
 PREFIX		= arm-elf
 
-include $(OPENCM3_DIR)/mk/gcc-config.mk
+include $(UCMX_DIR)/mk/gcc-config.mk
 
 .PHONY: clean all
 
@@ -37,7 +37,7 @@ all: binary.images
 
 %.images: %.elf %.hex
 
-include $(OPENCM3_DIR)/mk/gcc-rules.mk
+include $(UCMX_DIR)/mk/gcc-rules.mk
 
 clean:
 	$(Q)$(RM) -rf binary.* *.o *.d
@@ -87,7 +87,7 @@ Variables to control the build process (should be set in your makefile):
 ------------------------------------------------------------------------
 
 DEVICE		The full device part name used for the compilation process.
-OPENCM3_DIR	The root path of libopencm3 library.
+UCMX_DIR	The root path of unicore-mx library.
 
 Output variables from this module:
 ----------------------------------
@@ -104,11 +104,11 @@ LDSCRIPT	(replaced)
  - Linker script generated file.
  * No needed to handle this variable if you use module <gcc> too.
 
-OPENCM3_LIBNAME	(replaced)
- - The right libopencm3 library base name to be linked with.
- ! Ensure that you have line 'LDLIBS += -l$(OPENCM3_LIBNAME)' in your makefile.
- ! Ensure that you have line 'LDFLAGS += -L$(OPENCM3_DIR)/lib' in your makefile.
- ! Ensure that you have rule '$(OPENCM3_DIR)/lib/lib$(OPENCM3_LIBNAME).a:'
+UCMX_LIBNAME	(replaced)
+ - The right unicore-mx library base name to be linked with.
+ ! Ensure that you have line 'LDLIBS += -l$(UCMX_LIBNAME)' in your makefile.
+ ! Ensure that you have line 'LDFLAGS += -L$(UCMX_DIR)/lib' in your makefile.
+ ! Ensure that you have rule '$(UCMX_DIR)/lib/$(UCMX_LIBNAME).a:'
    to be the library archive successfully built when needed.
 
 Temporary variables that you should not use in your makefile:

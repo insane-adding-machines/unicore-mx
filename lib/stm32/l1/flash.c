@@ -2,7 +2,7 @@
  *
  * @ingroup STM32L1xx
  *
- * @brief <b>libopencm3 STM32L1xx FLASH</b>
+ * @brief <b>unicore-mx STM32L1xx FLASH</b>
  *
  * @version 1.0.0
  *
@@ -25,8 +25,6 @@
  */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2010 Thomas Otto <tommi@viadmin.org>
  * Copyright (C) 2010 Mark Butler <mbutler@physics.otago.ac.nz>
  * Copyright (C) 2012-13 Karl Palsson <karlp@tweak.net.au>
@@ -47,7 +45,7 @@
 
 /**@{*/
 
-#include <libopencm3/stm32/flash.h>
+#include <unicore-mx/stm32/flash.h>
 
 /*---------------------------------------------------------------------------*/
 /** @brief Enable 64 Bit Programming Mode

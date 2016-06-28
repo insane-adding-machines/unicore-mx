@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2010 Gareth McMullin <gareth@blacksphere.co.nz>
  * Copyright (C) 2014 Kuldeep Singh Dhaka <kuldeepdhaka9@gmail.com>
  *
@@ -18,11 +16,11 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/cm3/common.h>
-#include <libopencm3/stm32/rcc.h>
-#include <libopencm3/stm32/tools.h>
-#include <libopencm3/stm32/st_usbfs.h>
-#include <libopencm3/usb/usbd.h>
+#include <unicore-mx/cm3/common.h>
+#include <unicore-mx/stm32/rcc.h>
+#include <unicore-mx/stm32/tools.h>
+#include <unicore-mx/stm32/st_usbfs.h>
+#include <unicore-mx/usb/usbd.h>
 #include "../usb/usb_private.h"
 #include "common/st_usbfs_core.h"
 

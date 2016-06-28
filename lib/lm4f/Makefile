@@ -1,6 +1,4 @@
 ##
-## This file is part of the libopencm3 project.
-##
 ## Copyright (C) 2009 Uwe Hermann <uwe@hermann-uwe.de>
 ## Copyright (C) 2013 Alexandru Gagniuc <mr.nuke.me@gmail.com>
 ##
@@ -18,7 +16,7 @@
 ## along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-LIBNAME		= libopencm3_lm4f
+LIBNAME		= ucmx_lm4f
 SRCLIBDIR	?= ..
 
 FP_FLAGS	?= -mfloat-abi=hard -mfpu=fpv4-sp-d16

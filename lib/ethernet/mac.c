@@ -14,8 +14,6 @@
  */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2013 Frantisek Burian <BuFran@seznam.cz>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -32,8 +30,8 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/ethernet/mac.h>
-#include <libopencm3/ethernet/phy.h>
+#include <unicore-mx/ethernet/mac.h>
+#include <unicore-mx/ethernet/phy.h>
 
 /**@{*/
 

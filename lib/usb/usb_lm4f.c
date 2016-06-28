@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2013 Alexandru Gagniuc <mr.nuke.me@gmail.com>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -25,9 +23,9 @@
  * @author @htmlonly &copy; @endhtmlonly 2013
  * Alexandru Gagniuc <mr.nuke.me@gmail.com>
  *
- * \brief <b>libopencm3 LM4F Universal Serial Bus controller </b>
+ * \brief <b>unicore-mx LM4F Universal Serial Bus controller </b>
  *
- * The LM4F USB driver is integrated with the libopencm3 USB stack. You should
+ * The LM4F USB driver is integrated with the unicore-mx USB stack. You should
  * use the generic stack.
  *
  * To use this driver, tell the linker to look for it:
@@ -99,10 +97,10 @@
  * [1] http://e2e.ti.com/support/microcontrollers/tiva_arm/f/908/t/238784.aspx
  */
 
-#include <libopencm3/cm3/common.h>
-#include <libopencm3/lm4f/usb.h>
-#include <libopencm3/lm4f/rcc.h>
-#include <libopencm3/usb/usbd.h>
+#include <unicore-mx/cm3/common.h>
+#include <unicore-mx/lm4f/usb.h>
+#include <unicore-mx/lm4f/rcc.h>
+#include <unicore-mx/usb/usbd.h>
 #include "../../lib/usb/usb_private.h"
 
 #include <stdbool.h>

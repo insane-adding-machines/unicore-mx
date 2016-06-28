@@ -4,7 +4,7 @@
  *
  * @section rcc_l4_api_ex Reset and Clock Control API.
  *
- * @brief <b>libopencm3 STM32L4xx Reset and Clock Control</b>
+ * @brief <b>unicore-mx STM32L4xx Reset and Clock Control</b>
  *
  * @author @htmlonly &copy; @endhtmlonly 2016 Karl Palsson <karlp@tweak.net.au>
  *
@@ -17,8 +17,6 @@
  */
 
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2016 Karl Palsson <karlp@tweak.net.au>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -36,7 +34,7 @@
  */
 
 /**@{*/
-#include <libopencm3/stm32/rcc.h>
+#include <unicore-mx/stm32/rcc.h>
 
 /* Set the default clock frequencies after reset. */
 uint32_t rcc_ahb_frequency = 4000000;

@@ -1,6 +1,4 @@
 /*
- * This file is part of the libopencm3 project.
- *
  * Copyright (C) 2010 Mark Butler <mbutler@physics.otago.ac.nz>
  * Copyright (C) 2012 Karl Palsson <karlp@tweak.net.au>
  *
@@ -23,10 +21,10 @@
 /**@{*/
 
 
-#include <libopencm3/stm32/exti.h>
-#include <libopencm3/stm32/gpio.h>
+#include <unicore-mx/stm32/exti.h>
+#include <unicore-mx/stm32/gpio.h>
 #if !defined(AFIO_BASE)
-#       include <libopencm3/stm32/syscfg.h>
+#       include <unicore-mx/stm32/syscfg.h>
 #endif
 
 void exti_set_trigger(uint32_t extis, enum exti_trigger_type trig)

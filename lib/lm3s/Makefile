@@ -15,7 +15,7 @@
 ## along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-LIBNAME		= ucmx_lm3s
+LIBNAME		= libucmx_lm3s
 SRCLIBDIR	?= ..
 
 PREFIX		?= arm-none-eabi

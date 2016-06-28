@@ -13,7 +13,7 @@
 ## along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-LIBNAME		= ucmx_sam4l
+LIBNAME		= libucmx_sam4l
 SRCLIBDIR	?= ../..
 
 PREFIX		?= arm-none-eabi

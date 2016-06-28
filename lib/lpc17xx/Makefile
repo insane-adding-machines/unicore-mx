@@ -15,7 +15,7 @@
 ## along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-LIBNAME		= ucmx_lpc17xx
+LIBNAME		= libucmx_lpc17xx
 SRCLIBDIR	?= ..
 
 PREFIX		?= arm-none-eabi

@@ -17,7 +17,7 @@
 ## along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-LIBNAME		= ucmx_lpc43xx_m0
+LIBNAME		= libucmx_lpc43xx_m0
 
 PREFIX		?= arm-none-eabi
 #PREFIX		?= arm-elf

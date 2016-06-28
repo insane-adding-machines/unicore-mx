@@ -16,7 +16,7 @@
 ## along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-LIBNAME		= ucmx_lm4f
+LIBNAME		= libucmx_lm4f
 SRCLIBDIR	?= ..
 
 FP_FLAGS	?= -mfloat-abi=hard -mfpu=fpv4-sp-d16

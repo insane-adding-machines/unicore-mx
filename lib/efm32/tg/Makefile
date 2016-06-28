@@ -16,7 +16,7 @@
 ## along with this library. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-LIBNAME		= ucmx_efm32tg
+LIBNAME		= libucmx_efm32tg
 SRCLIBDIR	?= ../..
 FAMILY		= EFM32TG
 

@@ -15,7 +15,7 @@
 ## along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-LIBNAME		= ucmx_stm32l1
+LIBNAME		= libucmx_stm32l1
 SRCLIBDIR	?= ../..
 
 PREFIX		?= arm-none-eabi

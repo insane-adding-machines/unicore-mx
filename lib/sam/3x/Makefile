@@ -15,7 +15,7 @@
 ## along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-LIBNAME		= ucmx_sam3x
+LIBNAME		= libucmx_sam3x
 SRCLIBDIR	?= ../..
 
 PREFIX		?= arm-none-eabi

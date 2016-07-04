@@ -59,7 +59,7 @@
  * Configurations Always implemented.
  */
 /* SCS_DHCSR register */
-#define SCS_DHCSR		MMIO32(SCS_BASE + 0xDF0)
+#define SCS_DHCSR			MMIO32(SCS_BASE + 0xDF0)
 /*
  * Debug Core Register Selector Register (DCRSR).
  *
@@ -72,7 +72,7 @@
  *
  */
 /* SCS_DCRS register */
-#define SCS_DCRSR		MMIO32(SCS_BASE + 0xDF4)
+#define SCS_DCRSR			MMIO32(SCS_BASE + 0xDF4)
 /*
  * Debug Core Register Data Register (DCRDR)
  *
@@ -91,7 +91,7 @@
  *
  */
 /* SCS_DCRDR register */
-#define SCS_DCRDR		MMIO32(SCS_BASE + 0xDF8)
+#define SCS_DCRDR			MMIO32(SCS_BASE + 0xDF8)
 /*
  * Debug Exception and Monitor Control Register (DEMCR).
  *
@@ -104,52 +104,52 @@
  *
  */
 /* SCS_DEMCR register */
-#define SCS_DEMCR		MMIO32(SCS_BASE + 0xDFC)
+#define SCS_DEMCR			MMIO32(SCS_BASE + 0xDFC)
 
 /* Debug Halting Control and Status Register (DHCSR) */
-#define SCS_DHCSR_DBGKEY	0xA05F0000
-#define SCS_DHCSR_C_DEBUGEN	0x00000001
-#define SCS_DHCSR_C_HALT	0x00000002
-#define SCS_DHCSR_C_STEP	0x00000004
-#define SCS_DHCSR_C_MASKINTS	0x00000008
-#define SCS_DHCSR_C_SNAPSTALL	0x00000020
-#define SCS_DHCSR_S_REGRDY	0x00010000
-#define SCS_DHCSR_S_HALT	0x00020000
-#define SCS_DHCSR_S_SLEEP	0x00040000
-#define SCS_DHCSR_S_LOCKUP	0x00080000
-#define SCS_DHCSR_S_RETIRE_ST	0x01000000
-#define SCS_DHCSR_S_RESET_ST	0x02000000
+#define SCS_DHCSR_DBGKEY		0xA05F0000
+#define SCS_DHCSR_C_DEBUGEN		0x00000001
+#define SCS_DHCSR_C_HALT		0x00000002
+#define SCS_DHCSR_C_STEP		0x00000004
+#define SCS_DHCSR_C_MASKINTS		0x00000008
+#define SCS_DHCSR_C_SNAPSTALL		0x00000020
+#define SCS_DHCSR_S_REGRDY		0x00010000
+#define SCS_DHCSR_S_HALT		0x00020000
+#define SCS_DHCSR_S_SLEEP		0x00040000
+#define SCS_DHCSR_S_LOCKUP		0x00080000
+#define SCS_DHCSR_S_RETIRE_ST		0x01000000
+#define SCS_DHCSR_S_RESET_ST		0x02000000
 
 /* Debug Core Register Selector Register (DCRSR) */
-#define SCS_DCRSR_REGSEL_MASK	0x0000001F
-#define SCS_DCRSR_REGSEL_XPSR	0x00000010
-#define SCS_DCRSR_REGSEL_MSP	0x00000011
-#define SCS_DCRSR_REGSEL_PSP	0x00000012
+#define SCS_DCRSR_REGSEL_MASK		0x0000001F
+#define SCS_DCRSR_REGSEL_XPSR		0x00000010
+#define SCS_DCRSR_REGSEL_MSP		0x00000011
+#define SCS_DCRSR_REGSEL_PSP		0x00000012
 
 /* Debug Exception and Monitor Control Register (DEMCR) */
 /* Bits 31:25 - Reserved */
-#define SCS_DEMCR_TRCENA	(1 << 24)
+#define SCS_DEMCR_TRCENA		(1 << 24)
 /* Bits 23:20 - Reserved */
-#define SCS_DEMCR_MON_REQ	(1 << 19)
-#define SCS_DEMCR_MON_STEP	(1 << 18)
-#define SCS_DEMCR_VC_MON_PEND	(1 << 17)
-#define SCS_DEMCR_VC_MON_EN	(1 << 16)
+#define SCS_DEMCR_MON_REQ		(1 << 19)
+#define SCS_DEMCR_MON_STEP		(1 << 18)
+#define SCS_DEMCR_VC_MON_PEND		(1 << 17)
+#define SCS_DEMCR_VC_MON_EN		(1 << 16)
 /* Bits 15:11 - Reserved */
-#define SCS_DEMCR_VC_HARDERR	(1 << 10)
-#define SCS_DEMCR_VC_INTERR	(1 << 9)
-#define SCS_DEMCR_VC_BUSERR	(1 << 8)
-#define SCS_DEMCR_VC_STATERR	(1 << 7)
-#define SCS_DEMCR_VC_CHKERR	(1 << 6)
-#define SCS_DEMCR_VC_NOCPERR	(1 << 5)
-#define SCS_DEMCR_VC_MMERR	(1 << 4)
+#define SCS_DEMCR_VC_HARDERR		(1 << 10)
+#define SCS_DEMCR_VC_INTERR		(1 << 9)
+#define SCS_DEMCR_VC_BUSERR		(1 << 8)
+#define SCS_DEMCR_VC_STATERR		(1 << 7)
+#define SCS_DEMCR_VC_CHKERR		(1 << 6)
+#define SCS_DEMCR_VC_NOCPERR		(1 << 5)
+#define SCS_DEMCR_VC_MMERR		(1 << 4)
 /* Bits 3:1 - Reserved */
-#define SCS_DEMCR_VC_CORERESET	(1 << 0)
+#define SCS_DEMCR_VC_CORERESET		(1 << 0)
 
 /* CoreSight Lock Status Register lock status bit */
-#define SCS_LSR_SLK		(1<<1)
+#define SCS_LSR_SLK			(1<<1)
 /* CoreSight Lock Status Register lock availability bit */
-#define SCS_LSR_SLI		(1<<0)
+#define SCS_LSR_SLI			(1<<0)
 /* CoreSight Lock Access key, common for all */
-#define SCS_LAR_KEY		0xC5ACCE55
+#define SCS_LAR_KEY			0xC5ACCE55
 
 #endif

@@ -15,7 +15,7 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#el defined(EFM32LG)
+#if defined(EFM32LG)
 #	include <unicore-mx/efm32/lg/wdog.h>
 #else
 #	error "efm32 family not defined."

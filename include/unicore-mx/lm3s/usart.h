@@ -22,12 +22,12 @@
 
 
 
-#define USART0_BASE        0x4000C000
-#define USART1_BASE        0x4000D000
-#define USART2_BASE        0x4000E000
+#define USART0_BASE		0x4000C000
+#define USART1_BASE		0x4000D000
+#define USART2_BASE		0x4000E000
 
 /* --- Universal Synchronous Asynchronous Receiver Transmitter (USART) */
-#define USART_DR(x)             MMIO32((x) + 0x0000)
+#define USART_DR(x)		MMIO32((x) + 0x0000)
 #define USART_IR(x)             MMIO32((x) + 0x0004)
 #define USART_FR(x)             MMIO32((x) + 0x0018)
 #define USART_ILPR(x)           MMIO32((x) + 0x0020)

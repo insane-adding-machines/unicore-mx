@@ -39,18 +39,18 @@
 
 /* Registers */
 
-#define PHY_REG_AFECTRL     0x11
-#define PHY_REG_RXERCTR     0x15
-#define PHY_REG_STRAPOVRD   0x16
-#define PHY_REG_STRAPSTAT   0x17
-#define PHY_REG_ECR         0x18
+#define PHY_REG_AFECTRL		0x11
+#define PHY_REG_RXERCTR		0x15
+#define PHY_REG_STRAPOVRD	0x16
+#define PHY_REG_STRAPSTAT	0x17
+#define PHY_REG_ECR		0x18
 
-#define PHY_REG_ICSR        0x1B
+#define PHY_REG_ICSR		0x1B
 
-#define PHY_REG_LINKMD      0x1D
+#define PHY_REG_LINKMD		0x1D
 
-#define PHY_REG_CR1         0x1E
-#define PHY_REG_CR2         0x1E
+#define PHY_REG_CR1		0x1E
+#define PHY_REG_CR2		0x1E
 
 /**@}*/
 

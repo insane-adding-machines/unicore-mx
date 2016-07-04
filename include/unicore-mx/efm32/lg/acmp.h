@@ -21,26 +21,26 @@
 #include <unicore-mx/efm32/memorymap.h>
 #include <unicore-mx/cm3/common.h>
 
-#define ACMP_CTRL(base)		((base) + 0x000)
-#define ACMP_INPUTSEL(base)	((base) + 0x004)
-#define ACMP_STATUS(base)	((base) + 0x008)
-#define ACMP_IEN(base)		((base) + 0x00C)
-#define ACMP_IF(base)		((base) + 0x010)
-#define ACMP_IFS(base)		((base) + 0x014)
-#define ACMP_IFC(base)		((base) + 0x018)
-#define ACMP_ROUTE(base)	((base) + 0x01C)
+#define ACMP_CTRL(base)			((base) + 0x000)
+#define ACMP_INPUTSEL(base)		((base) + 0x004)
+#define ACMP_STATUS(base)		((base) + 0x008)
+#define ACMP_IEN(base)			((base) + 0x00C)
+#define ACMP_IF(base)			((base) + 0x010)
+#define ACMP_IFS(base)			((base) + 0x014)
+#define ACMP_IFC(base)			((base) + 0x018)
+#define ACMP_ROUTE(base)		((base) + 0x01C)
 
 /* ACMP_CTRL */
-#define ACMP_CTRL_FULLBIAS	(1 << 31)
-#define ACMP_CTRL_HALFBIAS	(1 << 30)
+#define ACMP_CTRL_FULLBIAS		(1 << 31)
+#define ACMP_CTRL_HALFBIAS		(1 << 30)
 
 #define ACMP_CTRL_BIASPROG_SHIFT	(24)
 #define ACMP_CTRL_BIASPROG_MASK		(0xF << ACMP_CTRL_BIASPROG_SHIFT)
 #define ACMP_CTRL_BIASPROG(v)		\
 	(((v) << ACMP_CTRL_BIASPROG_SHIFT) & ACMP_CTRL_BIASPROG_MASK)
 
-#define ACMP_CTRL_IFALL		(1 << 17)
-#define ACMP_CTRL_IRISE		(1 << 16)
+#define ACMP_CTRL_IFALL			(1 << 17)
+#define ACMP_CTRL_IRISE			(1 << 16)
 
 #define ACMP_CTRL_WARMTIME_SHIFT	(8)
 #define ACMP_CTRL_WARMTIME_MASK		(0x7 << ACMP_CTRL_WARMTIME_SHIFT)
@@ -55,7 +55,7 @@
 #define ACMP_CTRL_WARMTIME_256CYCLES	ACMP_CTRL_WARMTIME(6)
 #define ACMP_CTRL_WARMTIME_512CYCLES	ACMP_CTRL_WARMTIME(7)
 
-#define ACMP_CTRL_HYSTSEL_SHIFT	(8)
+#define ACMP_CTRL_HYSTSEL_SHIFT		(8)
 #define ACMP_CTRL_HYSTSEL_MASK		(0x7 << ACMP_CTRL_HYSTSEL_SHIFT)
 #define ACMP_CTRL_HYSTSEL(v)		\
 	(((v) << ACMP_CTRL_HYSTSEL_SHIFT) & ACMP_CTRL_HYSTSEL_MASK)
@@ -159,25 +159,25 @@
 
 #define ACMP_ROUTE_ACMPPEN		(1 << 0)
 
-#define ACMP0			ACMP0_BASE
-#define ACMP0_CTRL		ACMP_CTRL(ACMP0)
-#define ACMP0_INPUTSEL		ACMP_INPUTSEL(ACMP0)
-#define ACMP0_STATUS		ACMP_STATUS(ACMP0)
-#define ACMP0_IEN		ACMP_IEN(ACMP0)
-#define ACMP0_IF		ACMP_IF(ACMP0)
-#define ACMP0_IFS		ACMP_IFS(ACMP0)
-#define ACMP0_IFC		ACMP_IFC(ACMP0)
-#define ACMP0_ROUTE		ACMP_ROUTE(ACMP0)
+#define ACMP0				ACMP0_BASE
+#define ACMP0_CTRL			ACMP_CTRL(ACMP0)
+#define ACMP0_INPUTSEL			ACMP_INPUTSEL(ACMP0)
+#define ACMP0_STATUS			ACMP_STATUS(ACMP0)
+#define ACMP0_IEN			ACMP_IEN(ACMP0)
+#define ACMP0_IF			ACMP_IF(ACMP0)
+#define ACMP0_IFS			ACMP_IFS(ACMP0)
+#define ACMP0_IFC			ACMP_IFC(ACMP0)
+#define ACMP0_ROUTE			ACMP_ROUTE(ACMP0)
 
-#define ACMP1			ACMP1_BASE
-#define ACMP1_CTRL		ACMP_CTRL(ACMP1)
-#define ACMP1_INPUTSEL		ACMP_INPUTSEL(ACMP1)
-#define ACMP1_STATUS		ACMP_STATUS(ACMP1)
-#define ACMP1_IEN		ACMP_IEN(ACMP1)
-#define ACMP1_IF		ACMP_IF(ACMP1)
-#define ACMP1_IFS		ACMP_IFS(ACMP1)
-#define ACMP1_IFC		ACMP_IFC(ACMP1)
-#define ACMP1_ROUTE		ACMP_ROUTE(ACMP1)
+#define ACMP1				ACMP1_BASE
+#define ACMP1_CTRL			ACMP_CTRL(ACMP1)
+#define ACMP1_INPUTSEL			ACMP_INPUTSEL(ACMP1)
+#define ACMP1_STATUS			ACMP_STATUS(ACMP1)
+#define ACMP1_IEN			ACMP_IEN(ACMP1)
+#define ACMP1_IF			ACMP_IF(ACMP1)
+#define ACMP1_IFS			ACMP_IFS(ACMP1)
+#define ACMP1_IFC			ACMP_IFC(ACMP1)
+#define ACMP1_ROUTE			ACMP_ROUTE(ACMP1)
 
 #endif
 

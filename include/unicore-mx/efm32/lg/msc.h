@@ -21,26 +21,26 @@
 #include <unicore-mx/efm32/memorymap.h>
 #include <unicore-mx/cm3/common.h>
 
-#define MSC_CTRL		MMIO32(MSC_BASE + 0x000)
-#define MSC_READCTRL		MMIO32(MSC_BASE + 0x004)
-#define MSC_WRITECTRL		MMIO32(MSC_BASE + 0x008)
-#define MSC_WRITECMD		MMIO32(MSC_BASE + 0x00C)
-#define MSC_ADDRB		MMIO32(MSC_BASE + 0x010)
-#define MSC_WDATA		MMIO32(MSC_BASE + 0x018)
-#define MSC_STATUS		MMIO32(MSC_BASE + 0x01C)
-#define MSC_IF			MMIO32(MSC_BASE + 0x02C)
-#define MSC_IFS			MMIO32(MSC_BASE + 0x030)
-#define MSC_IFC			MMIO32(MSC_BASE + 0x034)
-#define MSC_IEN			MMIO32(MSC_BASE + 0x038)
-#define MSC_LOCK		MMIO32(MSC_BASE + 0x03C)
-#define MSC_CMD			MMIO32(MSC_BASE + 0x040)
-#define MSC_CACHEHITS		MMIO32(MSC_BASE + 0x044)
-#define MSC_CACHEMISSES		MMIO32(MSC_BASE + 0x048)
-#define MSC_TIMEBASE		MMIO32(MSC_BASE + 0x050)
-#define MSC_MASSLOCK		MMIO32(MSC_BASE + 0x054)
+#define MSC_CTRL			MMIO32(MSC_BASE + 0x000)
+#define MSC_READCTRL			MMIO32(MSC_BASE + 0x004)
+#define MSC_WRITECTRL			MMIO32(MSC_BASE + 0x008)
+#define MSC_WRITECMD			MMIO32(MSC_BASE + 0x00C)
+#define MSC_ADDRB			MMIO32(MSC_BASE + 0x010)
+#define MSC_WDATA			MMIO32(MSC_BASE + 0x018)
+#define MSC_STATUS			MMIO32(MSC_BASE + 0x01C)
+#define MSC_IF				MMIO32(MSC_BASE + 0x02C)
+#define MSC_IFS				MMIO32(MSC_BASE + 0x030)
+#define MSC_IFC				MMIO32(MSC_BASE + 0x034)
+#define MSC_IEN				MMIO32(MSC_BASE + 0x038)
+#define MSC_LOCK			MMIO32(MSC_BASE + 0x03C)
+#define MSC_CMD				MMIO32(MSC_BASE + 0x040)
+#define MSC_CACHEHITS			MMIO32(MSC_BASE + 0x044)
+#define MSC_CACHEMISSES			MMIO32(MSC_BASE + 0x048)
+#define MSC_TIMEBASE			MMIO32(MSC_BASE + 0x050)
+#define MSC_MASSLOCK			MMIO32(MSC_BASE + 0x054)
 
 /* MSC_CTRL */
-#define MSC_CTRL_BUSFAULT	(1 << 0)
+#define MSC_CTRL_BUSFAULT		(1 << 0)
 
 /* MSC_READCTRL */
 #define MSC_READCTRL_BUSSTRATEGY_SHIFT	(16)
@@ -55,11 +55,11 @@
 #define MSC_READCTRL_BUSSTRATEGY_DMAEM1	MSC_READCTRL_BUSSTRATEGY(2)
 #define MSC_READCTRL_BUSSTRATEGY_NONE	MSC_READCTRL_BUSSTRATEGY(3)
 
-#define MSC_READCTRL_RAMCEN	(1 << 7)
-#define MSC_READCTRL_EBICDIS	(1 << 6)
-#define MSC_READCTRL_ICCDIS	(1 << 5)
-#define MSC_READCTRL_AIDIS	(1 << 4)
-#define MSC_READCTRL_IFCDIS	(1 << 3)
+#define MSC_READCTRL_RAMCEN		(1 << 7)
+#define MSC_READCTRL_EBICDIS		(1 << 6)
+#define MSC_READCTRL_ICCDIS		(1 << 5)
+#define MSC_READCTRL_AIDIS		(1 << 4)
+#define MSC_READCTRL_IFCDIS		(1 << 3)
 
 #define MSC_READCTRL_MODE_SHIFT		(0)
 #define MSC_READCTRL_MODE_MASK		(0x7 << MSC_READCTRL_MODE_SHIFT)
@@ -96,28 +96,28 @@
 #define MSC_STATUS_BUSY			(1 << 0)
 
 /* MSC_IF */
-#define MSC_IF_CMOF		(1 << 3)
-#define MSC_IF_CHOF		(1 << 2)
-#define MSC_IF_WRITE		(1 << 1)
-#define MSC_IF_ERASE		(1 << 0)
+#define MSC_IF_CMOF			(1 << 3)
+#define MSC_IF_CHOF			(1 << 2)
+#define MSC_IF_WRITE			(1 << 1)
+#define MSC_IF_ERASE			(1 << 0)
 
 /* MSC_IFS */
-#define MSC_IFS_CMOF		(1 << 3)
-#define MSC_IFS_CHOF		(1 << 2)
-#define MSC_IFS_WRITE		(1 << 1)
-#define MSC_IFS_ERASE		(1 << 0)
+#define MSC_IFS_CMOF			(1 << 3)
+#define MSC_IFS_CHOF			(1 << 2)
+#define MSC_IFS_WRITE			(1 << 1)
+#define MSC_IFS_ERASE			(1 << 0)
 
 /* MSC_IFC */
-#define MSC_IFC_CMOF		(1 << 3)
-#define MSC_IFC_CHOF		(1 << 2)
-#define MSC_IFC_WRITE		(1 << 1)
-#define MSC_IFC_ERASE		(1 << 0)
+#define MSC_IFC_CMOF			(1 << 3)
+#define MSC_IFC_CHOF			(1 << 2)
+#define MSC_IFC_WRITE			(1 << 1)
+#define MSC_IFC_ERASE			(1 << 0)
 
 /* MSC_*IEN */
-#define MSC_IEN_CMOF		(1 << 3)
-#define MSC_IEN_CHOF		(1 << 2)
-#define MSC_IEN_WRITE		(1 << 1)
-#define MSC_IEN_ERASE		(1 << 0)
+#define MSC_IEN_CMOF			(1 << 3)
+#define MSC_IEN_CHOF			(1 << 2)
+#define MSC_IEN_WRITE			(1 << 1)
+#define MSC_IEN_ERASE			(1 << 0)
 
 /* MSC_LOCK */
 #define MSC_LOCK_LOCKKEY_SHIFT		(0)

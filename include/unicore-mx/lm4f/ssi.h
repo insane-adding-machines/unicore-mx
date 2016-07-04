@@ -44,10 +44,10 @@
  * ---------------------------------------------------------------------------*/
 /** @defgroup ssi_base SSI register base addresses
  * @{*/
-#define SSI0				SSI0_BASE
-#define SSI1				SSI1_BASE
-#define SSI2				SSI2_BASE
-#define SSI3				SSI3_BASE
+#define SSI0			SSI0_BASE
+#define SSI1			SSI1_BASE
+#define SSI2			SSI2_BASE
+#define SSI3			SSI3_BASE
 /** @} */
 
 /* =============================================================================

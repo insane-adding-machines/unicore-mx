@@ -135,52 +135,52 @@
 /* --- SCB_CPUID values ---------------------------------------------------- */
 
 /* Implementer[31:24]: Implementer code */
-#define SCB_CPUID_IMPLEMENTER_LSB	24
-#define SCB_CPUID_IMPLEMENTER		(0xFF << SCB_CPUID_IMPLEMENTER_LSB)
+#define SCB_CPUID_IMPLEMENTER_LSB		24
+#define SCB_CPUID_IMPLEMENTER			(0xFF << SCB_CPUID_IMPLEMENTER_LSB)
 /* Variant[23:20]: Variant number */
-#define SCB_CPUID_VARIANT_LSB		20
-#define SCB_CPUID_VARIANT		(0xF << SCB_CPUID_VARIANT_LSB)
+#define SCB_CPUID_VARIANT_LSB			20
+#define SCB_CPUID_VARIANT			(0xF << SCB_CPUID_VARIANT_LSB)
 /* Constant[19:16]: Reads as 0xF (ARMv7-M) M3, M4  */
 /* Constant[19:16]: Reads as 0xC (ARMv6-M) M0, M0+ */
-#define SCB_CPUID_CONSTANT_LSB		16
-#define SCB_CPUID_CONSTANT		(0xF << SCB_CPUID_CONSTANT_LSB)
-#define SCB_CPUID_CONSTANT_ARMV6	(0xC << SCB_CPUID_CONSTANT_LSB)
-#define SCB_CPUID_CONSTANT_ARMV7	(0xF << SCB_CPUID_CONSTANT_LSB)
+#define SCB_CPUID_CONSTANT_LSB			16
+#define SCB_CPUID_CONSTANT			(0xF << SCB_CPUID_CONSTANT_LSB)
+#define SCB_CPUID_CONSTANT_ARMV6		(0xC << SCB_CPUID_CONSTANT_LSB)
+#define SCB_CPUID_CONSTANT_ARMV7		(0xF << SCB_CPUID_CONSTANT_LSB)
 
 /* PartNo[15:4]: Part number of the processor */
-#define SCB_CPUID_PARTNO_LSB		4
-#define SCB_CPUID_PARTNO		(0xFFF << SCB_CPUID_PARTNO_LSB)
+#define SCB_CPUID_PARTNO_LSB			4
+#define SCB_CPUID_PARTNO			(0xFFF << SCB_CPUID_PARTNO_LSB)
 /* Revision[3:0]: Revision number */
 #define SCB_CPUID_REVISION_LSB			0
-#define SCB_CPUID_REVISION		(0xF << SCB_CPUID_REVISION_LSB)
+#define SCB_CPUID_REVISION			(0xF << SCB_CPUID_REVISION_LSB)
 
 /* --- SCB_ICSR values ----------------------------------------------------- */
 
 /* NMIPENDSET: NMI set-pending bit */
-#define SCB_ICSR_NMIPENDSET		(1 << 31)
+#define SCB_ICSR_NMIPENDSET			(1 << 31)
 /* Bits [30:29]: reserved - must be kept cleared */
 /* PENDSVSET: PendSV set-pending bit */
-#define SCB_ICSR_PENDSVSET		(1 << 28)
+#define SCB_ICSR_PENDSVSET			(1 << 28)
 /* PENDSVCLR: PendSV clear-pending bit */
-#define SCB_ICSR_PENDSVCLR		(1 << 27)
+#define SCB_ICSR_PENDSVCLR			(1 << 27)
 /* PENDSTSET: SysTick exception set-pending bit */
-#define SCB_ICSR_PENDSTSET		(1 << 26)
+#define SCB_ICSR_PENDSTSET			(1 << 26)
 /* PENDSTCLR: SysTick exception clear-pending bit */
-#define SCB_ICSR_PENDSTCLR		(1 << 25)
+#define SCB_ICSR_PENDSTCLR			(1 << 25)
 /* Bit 24: reserved - must be kept cleared */
 /* Bit 23: reserved for debug - reads as 0 when not in debug mode */
-#define SCB_ICSR_ISRPREEMPT		(1 << 23)
+#define SCB_ICSR_ISRPREEMPT			(1 << 23)
 /* ISRPENDING: Interrupt pending flag, excluding NMI and Faults */
-#define SCB_ICSR_ISRPENDING		(1 << 22)
+#define SCB_ICSR_ISRPENDING			(1 << 22)
 /* VECTPENDING[21:12] Pending vector */
-#define SCB_ICSR_VECTPENDING_LSB	12
-#define SCB_ICSR_VECTPENDING		(0x1FF << SCB_ICSR_VECTPENDING_LSB)
+#define SCB_ICSR_VECTPENDING_LSB		12
+#define SCB_ICSR_VECTPENDING			(0x1FF << SCB_ICSR_VECTPENDING_LSB)
 /* RETOBASE: Return to base level */
-#define SCB_ICSR_RETOBASE		(1 << 11)
+#define SCB_ICSR_RETOBASE			(1 << 11)
 /* Bits [10:9]: reserved - must be kept cleared */
 /* VECTACTIVE[8:0] Active vector */
-#define SCB_ICSR_VECTACTIVE_LSB		0
-#define SCB_ICSR_VECTACTIVE		(0x1FF << SCB_ICSR_VECTACTIVE_LSB)
+#define SCB_ICSR_VECTACTIVE_LSB			0
+#define SCB_ICSR_VECTACTIVE			(0x1FF << SCB_ICSR_VECTACTIVE_LSB)
 
 
 /* --- SCB_VTOR values ----------------------------------------------------- */
@@ -189,8 +189,8 @@
 
 #if defined(__ARM_ARCH_6M__)
 
-#define SCB_VTOR_TBLOFF_LSB		7
-#define SCB_VTOR_TBLOFF			(0x1FFFFFF << SCB_VTOR_TBLOFF_LSB)
+#define SCB_VTOR_TBLOFF_LSB			7
+#define SCB_VTOR_TBLOFF				(0x1FFFFFF << SCB_VTOR_TBLOFF_LSB)
 
 #elif defined(CM1)
 /* VTOR not defined there */
@@ -201,17 +201,17 @@
 /* TBLOFF[29:9]: Vector table base offset field */
 /* inconsistent datasheet - LSB could be 11 */
 /* BUG: TBLOFF is in the ARMv6 Architecture reference manual defined from b7 */
-#define SCB_VTOR_TBLOFF_LSB		9
-#define SCB_VTOR_TBLOFF			(0x7FFFFF << SCB_VTOR_TBLOFF_LSB)
+#define SCB_VTOR_TBLOFF_LSB			9
+#define SCB_VTOR_TBLOFF				(0x7FFFFF << SCB_VTOR_TBLOFF_LSB)
 
 #endif
 
 /* --- SCB_AIRCR values ---------------------------------------------------- */
 
 /* VECTKEYSTAT[31:16]/ VECTKEY[31:16] Register key */
-#define SCB_AIRCR_VECTKEYSTAT_LSB	16
-#define SCB_AIRCR_VECTKEYSTAT		(0xFFFF << SCB_AIRCR_VECTKEYSTAT_LSB)
-#define SCB_AIRCR_VECTKEY		(0x05FA << SCB_AIRCR_VECTKEYSTAT_LSB)
+#define SCB_AIRCR_VECTKEYSTAT_LSB		16
+#define SCB_AIRCR_VECTKEYSTAT			(0xFFFF << SCB_AIRCR_VECTKEYSTAT_LSB)
+#define SCB_AIRCR_VECTKEY			(0x05FA << SCB_AIRCR_VECTKEYSTAT_LSB)
 
 /* ENDIANNESS Data endianness bit */
 #define SCB_AIRCR_ENDIANESS			(1 << 15)
@@ -282,20 +282,20 @@
 
 /* These numbers are designed to be used with the SCB_SHPR() macro */
 /* SCB_SHPR1 */
-#define SCB_SHPR_PRI_4_MEMMANAGE	0
-#define SCB_SHPR_PRI_5_BUSFAULT		1
-#define SCB_SHPR_PRI_6_USAGEFAULT	2
-#define SCB_SHPR_PRI_7_RESERVED		3
+#define SCB_SHPR_PRI_4_MEMMANAGE		0
+#define SCB_SHPR_PRI_5_BUSFAULT			1
+#define SCB_SHPR_PRI_6_USAGEFAULT		2
+#define SCB_SHPR_PRI_7_RESERVED			3
 /* SCB_SHPR2  */
-#define SCB_SHPR_PRI_8_RESERVED		4
-#define SCB_SHPR_PRI_9_RESERVED		5
-#define SCB_SHPR_PRI_10_RESERVED	6
-#define SCB_SHPR_PRI_11_SVCALL		7
+#define SCB_SHPR_PRI_8_RESERVED			4
+#define SCB_SHPR_PRI_9_RESERVED			5
+#define SCB_SHPR_PRI_10_RESERVED		6
+#define SCB_SHPR_PRI_11_SVCALL			7
 /* SCB_SHPR3 */
-#define SCB_SHPR_PRI_12_RESERVED	8
-#define SCB_SHPR_PRI_13_RESERVED	9
-#define SCB_SHPR_PRI_14_PENDSV		10
-#define SCB_SHPR_PRI_15_SYSTICK		11
+#define SCB_SHPR_PRI_12_RESERVED		8
+#define SCB_SHPR_PRI_13_RESERVED		9
+#define SCB_SHPR_PRI_14_PENDSV			10
+#define SCB_SHPR_PRI_15_SYSTICK			11
 
 /* Those defined only on ARMv7 and above */
 #if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
@@ -398,14 +398,14 @@
 /* --- SCB_CPACR values ---------------------------------------------------- */
 
 /* CPACR CPn: Access privileges values */
-#define SCB_CPACR_NONE			0	/* Access denied */
-#define SCB_CPACR_PRIV			1	/* Privileged access only */
-#define SCB_CPACR_FULL			3	/* Full access */
+#define SCB_CPACR_NONE				0	/* Access denied */
+#define SCB_CPACR_PRIV				1	/* Privileged access only */
+#define SCB_CPACR_FULL				3	/* Full access */
 
 /* CPACR [20:21]: Access privileges for coprocessor 10 */
-#define SCB_CPACR_CP10			(1 << 20)
+#define SCB_CPACR_CP10				(1 << 20)
 /* CPACR [22:23]: Access privileges for coprocessor 11 */
-#define SCB_CPACR_CP11			(1 << 22)
+#define SCB_CPACR_CP11				(1 << 22)
 #endif
 
 /* --- SCB functions ------------------------------------------------------- */

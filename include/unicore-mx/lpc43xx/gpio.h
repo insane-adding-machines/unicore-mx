@@ -127,29 +127,29 @@ extern "C" {
 /* GPIO GROUP0 interrupt */
 
 /* GPIO grouped interrupt control register */
-#define GPIO_GROUP0_INTERRUPT_CTRL \
+#define GPIO_GROUP0_INTERRUPT_CTRL		\
 			MMIO32(GPIO_GROUP0_INTERRUPT_BASE + 0x000)
 
 /* GPIO grouped interrupt port [0..7] polarity register */
-#define GPIO_GROUP0_INTERRUPT_PORT_POL(x) \
+#define GPIO_GROUP0_INTERRUPT_PORT_POL(x)	\
 			MMIO32(GPIO_GROUP0_INTERRUPT_BASE + 0x020 + ((x)*4))
 
 /* GPIO grouped interrupt port [0..7] enable register */
-#define GPIO_GROUP0_INTERRUPT_PORT_ENA(x) \
+#define GPIO_GROUP0_INTERRUPT_PORT_ENA(x)	\
 			MMIO32(GPIO_GROUP0_INTERRUPT_BASE + 0x040 + ((x)*4))
 
 /* GPIO GROUP1 interrupt */
 
 /* GPIO grouped interrupt control register */
-#define GPIO_GROUP1_INTERRUPT_CTRL \
+#define GPIO_GROUP1_INTERRUPT_CTRL		\
 			MMIO32(GPIO_GROUP1_INTERRUPT_BASE + 0x000)
 
 /* GPIO grouped interrupt port [0..7] polarity register */
-#define GPIO_GROUP1_INTERRUPT_PORT_POL(x) \
+#define GPIO_GROUP1_INTERRUPT_PORT_POL(x)	\
 			MMIO32(GPIO_GROUP1_INTERRUPT_BASE + 0x020 + ((x)*4))
 
 /* GPIO grouped interrupt port [0..7] enable register */
-#define GPIO_GROUP1_INTERRUPT_PORT_ENA(x) \
+#define GPIO_GROUP1_INTERRUPT_PORT_ENA(x)	\
 			MMIO32(GPIO_GROUP1_INTERRUPT_BASE + 0x040 + ((x)*4))
 
 /* Byte pin registers port 0; pins PIO0_0 to PIO0_31 (R/W) */
@@ -696,7 +696,7 @@ extern "C" {
 #define GPIO_W254                       (GPIO_PORT_BASE + 0x13F8)
 #define GPIO_W255                       (GPIO_PORT_BASE + 0x13FC)
 
-#define GPIO_W(port, pin)				MMIO32(GPIO_PORT_BASE + 0x1000 + (port * 0x80) + (pin * 4))
+#define GPIO_W(port, pin)		MMIO32(GPIO_PORT_BASE + 0x1000 + (port * 0x80) + (pin * 4))
 
 /* GPIO data direction register (GPIOn_DIR) */
 #define GPIO_DIR(port)                  MMIO32((port) + 0x00)

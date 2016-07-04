@@ -37,33 +37,33 @@
 
 /* Registers */
 
-#define PHY_REG_BCR         0x00
-#define PHY_REG_BSR         0x01
-#define PHY_REG_ID1         0x02
-#define PHY_REG_ID2         0x03
-#define PHY_REG_ANTX        0x04
-#define PHY_REG_ANRX        0x05
-#define PHY_REG_ANEXP       0x06
-#define PHY_REG_ANNPTX      0x07
-#define PHY_REG_ANNPRX      0x08
+#define PHY_REG_BCR		0x00
+#define PHY_REG_BSR		0x01
+#define PHY_REG_ID1		0x02
+#define PHY_REG_ID2		0x03
+#define PHY_REG_ANTX		0x04
+#define PHY_REG_ANRX		0x05
+#define PHY_REG_ANEXP		0x06
+#define PHY_REG_ANNPTX		0x07
+#define PHY_REG_ANNPRX		0x08
 
-#define PHY_REG_BCR_COLTEST     (1<<7)
-#define PHY_REG_BCR_FD          (1<<8)
-#define PHY_REG_BCR_ANRST       (1<<9)
-#define PHY_REG_BCR_ISOLATE     (1<<10)
-#define PHY_REG_BCR_POWERDN     (1<<11)
-#define PHY_REG_BCR_AN          (1<<12)
-#define PHY_REG_BCR_100M        (1<<13)
-#define PHY_REG_BCR_LOOPBACK    (1<<14)
-#define PHY_REG_BCR_RESET       (1<<15)
+#define PHY_REG_BCR_COLTEST	(1<<7)
+#define PHY_REG_BCR_FD		(1<<8)
+#define PHY_REG_BCR_ANRST	(1<<9)
+#define PHY_REG_BCR_ISOLATE	(1<<10)
+#define PHY_REG_BCR_POWERDN	(1<<11)
+#define PHY_REG_BCR_AN		(1<<12)
+#define PHY_REG_BCR_100M	(1<<13)
+#define PHY_REG_BCR_LOOPBACK	(1<<14)
+#define PHY_REG_BCR_RESET	(1<<15)
 
-#define PHY_REG_BSR_JABBER      (1<<1)
-#define PHY_REG_BSR_UP          (1<<2)
-#define PHY_REG_BSR_FAULT       (1<<4)
-#define PHY_REG_BSR_ANDONE      (1<<5)
+#define PHY_REG_BSR_JABBER	(1<<1)
+#define PHY_REG_BSR_UP		(1<<2)
+#define PHY_REG_BSR_FAULT	(1<<4)
+#define PHY_REG_BSR_ANDONE	(1<<5)
 
-#define PHY0 0
-#define PHY1 1
+#define PHY0			0
+#define PHY1			1
 
 enum phy_status {
 	LINK_DOWN,

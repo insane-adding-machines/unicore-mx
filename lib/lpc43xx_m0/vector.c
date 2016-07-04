@@ -73,9 +73,9 @@ void WEAK m0_c_can0_isr(void);
 /* See UserManual LPC43xx rev1_4 UM10503 Table 26. Connection of interrupt sources to the Cortex-M0 NVIC */
 
 __attribute__ ((section(".vectors")))
-void (*const vector_table[]) (void) = {
+void *(const vector_table[]) (void) = {
 	/* Cortex-M4 interrupts */
-	(void*)&_stack,
+	(void *)&_stack,
 	reset_handler,
 	nmi_handler,
 	hard_fault_handler,
@@ -131,8 +131,9 @@ void WEAK reset_handler(void)
 	/* Data does not need to be copied as M4 have already copied the whole bin including code+data */
 
 	/* Set BSS */
-	for (dest = (unsigned long*)(&_bss); dest < (unsigned long*)(&_ebss); )
+	for (dest = (unsigned long *)(&_bss); dest < (unsigned long *)(&_ebss); ) {
 		*dest++ = 0;
+	}
 
 	/* Call the application's entry point. */
 	main();
@@ -140,7 +141,7 @@ void WEAK reset_handler(void)
 
 void blocking_handler(void)
 {
-	while (1) ;
+	while (1);
 }
 
 void null_handler(void)

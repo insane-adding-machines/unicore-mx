@@ -137,8 +137,8 @@ bool eth_tx(uint8_t *ppkt, uint32_t n)
 
 	/* If the DMA engine is stalled then a restart request is issued.*/
 	if ((ETH_DMASR & ETH_DMASR_TPS) == ETH_DMASR_TPS_SUSPEND) {
-	    ETH_DMASR   = ETH_DMASR_TBUS;
-	    ETH_DMATPDR = ETH_DMASR_TBUS; /* Any value is OK.*/
+		ETH_DMASR   = ETH_DMASR_TBUS;
+		ETH_DMATPDR = ETH_DMASR_TBUS; /* Any value is OK.*/
 	}
 
 	return true;
@@ -179,8 +179,7 @@ bool eth_rx(uint8_t *ppkt, uint32_t *len, uint32_t maxlen)
 	}
 
 	/* If the DMA engine is stalled then a restart request is issued.*/
-	if ((ETH_DMASR & ETH_DMASR_RPS) == ETH_DMASR_RPS_SUSPEND)
-	{
+	if ((ETH_DMASR & ETH_DMASR_RPS) == ETH_DMASR_RPS_SUSPEND) {
 		ETH_DMASR   = ETH_DMASR_RBUS;
 		ETH_DMARPDR = ETH_DMASR_RBUS; /* Any value is OK.*/
 	}

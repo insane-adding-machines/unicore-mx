@@ -124,50 +124,50 @@ LGPL License Terms @ref lgpl_license
 
 /* GPIO interrupt register map */
 /* Interrupt enable rising edge */
-#define GPIO0_IER                       MMIO32(GPIOINTERRUPT_BASE + 0x90)
-#define GPIO2_IER                       MMIO32(GPIOINTERRUPT_BASE + 0xB0)
+#define GPIO0_IER			MMIO32(GPIOINTERRUPT_BASE + 0x90)
+#define GPIO2_IER			MMIO32(GPIOINTERRUPT_BASE + 0xB0)
 
 /* Interrupt enable falling edge */
-#define GPIO0_IEF                       MMIO32(GPIOINTERRUPT_BASE + 0x94)
-#define GPIO2_IEF                       MMIO32(GPIOINTERRUPT_BASE + 0xB4)
+#define GPIO0_IEF			MMIO32(GPIOINTERRUPT_BASE + 0x94)
+#define GPIO2_IEF			MMIO32(GPIOINTERRUPT_BASE + 0xB4)
 
 /* Interrupt status rising edge */
-#define GPIO0_ISR                       MMIO32(GPIOINTERRUPT_BASE + 0x84)
-#define GPIO2_ISR                       MMIO32(GPIOINTERRUPT_BASE + 0xA4)
+#define GPIO0_ISR			MMIO32(GPIOINTERRUPT_BASE + 0x84)
+#define GPIO2_ISR			MMIO32(GPIOINTERRUPT_BASE + 0xA4)
 
 /* Interrupt status falling edge */
-#define GPIO0_ISF                       MMIO32(GPIOINTERRUPT_BASE + 0x88)
-#define GPIO2_ISF                       MMIO32(GPIOINTERRUPT_BASE + 0xA8)
+#define GPIO0_ISF			MMIO32(GPIOINTERRUPT_BASE + 0x88)
+#define GPIO2_ISF			MMIO32(GPIOINTERRUPT_BASE + 0xA8)
 
 /* Interrupt clear */
-#define GPIO0_IC                        MMIO32(GPIOINTERRUPT_BASE + 0x8C)
-#define GPIO1_IC                        MMIO32(GPIOINTERRUPT_BASE + 0xAC)
+#define GPIO0_IC			MMIO32(GPIOINTERRUPT_BASE + 0x8C)
+#define GPIO1_IC			MMIO32(GPIOINTERRUPT_BASE + 0xAC)
 
 /* Overall interrupt status */
-#define GPIO_IS                         MMIO32(GPIOINTERRUPT_BASE + 0x80)
+#define GPIO_IS				MMIO32(GPIOINTERRUPT_BASE + 0x80)
 
 
-#define GPIO_AF0                            0x00
-#define GPIO_AF1                            0x01
-#define GPIO_AF2                            0x02
-#define GPIO_AF3                            0x03
+#define GPIO_AF0			0x00
+#define GPIO_AF1			0x01
+#define GPIO_AF2			0x02
+#define GPIO_AF3			0x03
 
-#define GPIO_PUPD_PULLUP          0x00
-#define GPIO_PUPD_REPEATER      0x01
-#define GPIO_PUPD_NONE               0x02
-#define GPIO_PUPD_PULLDOWN     0x03
+#define GPIO_PUPD_PULLUP		0x00
+#define GPIO_PUPD_REPEATER		0x01
+#define GPIO_PUPD_NONE			0x02
+#define GPIO_PUPD_PULLDOWN		0x03
 
 #define GPIO_MODE_INPUT			0x00
 #define GPIO_MODE_OUTPUT		0x01
-#define GPIO_MODE_AF                        0x02
-#define GPIO_MODE_ANALOG            0x03
+#define GPIO_MODE_AF			0x02
+#define GPIO_MODE_ANALOG		0x03
 
 BEGIN_DECLS
 
 void gpio_set(uint32_t gpioport, uint32_t gpios);
 void gpio_clear(uint32_t gpioport, uint32_t gpios);
 void gpio_set_af(uint32_t gpioport, uint8_t alt_func_num, uint32_t gpios);
-void gpio_mode_setup(uint32_t gpioport, uint8_t mode, uint8_t pull_up_down,uint32_t gpios);
+void gpio_mode_setup(uint32_t gpioport, uint8_t mode, uint8_t pull_up_down, uint32_t gpios);
 uint16_t gpio_get(uint32_t gpioport, uint32_t gpios);
 
 END_DECLS

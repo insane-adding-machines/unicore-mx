@@ -36,42 +36,42 @@ LGPL License Terms @ref lgpl_license
 
 int rcc_clock_setup_in_xtal_8mhz_out_50mhz(void)
 {
-    uint32_t rcc = RCC_RESET_VALUE;
-    uint32_t rcc2 = RCC2_RESET_VALUE;
+	uint32_t rcc = RCC_RESET_VALUE;
+	uint32_t rcc2 = RCC2_RESET_VALUE;
 
-    /* Stage 0: Reset values applied */
-    RCC_CR = rcc;
-    RCC2_CR = rcc2;
-    __dmb();
+	/* Stage 0: Reset values applied */
+	RCC_CR = rcc;
+	RCC2_CR = rcc2;
+	__dmb();
 
-    /* Stage 1: Reset Oscillators and select configured values */
-    rcc = RCC_SYSDIV_50MHZ | RCC_PWMDIV_64 | RCC_XTAL_8MHZ_400MHZ | RCC_USEPWMDIV;
-    rcc2 = RCC2_SYSDIV2_4;
-    RCC_CR = rcc;
-    RCC2_CR = rcc2;
-    __dmb();
+	/* Stage 1: Reset Oscillators and select configured values */
+	rcc = RCC_SYSDIV_50MHZ | RCC_PWMDIV_64 | RCC_XTAL_8MHZ_400MHZ | RCC_USEPWMDIV;
+	rcc2 = RCC2_SYSDIV2_4;
+	RCC_CR = rcc;
+	RCC2_CR = rcc2;
+	__dmb();
 
-    /* Stage 2: Power on oscillators */
-    rcc  &= ~RCC_OFF;
-    rcc2 &= ~RCC2_OFF;
-    RCC_CR = rcc;
-    RCC2_CR = rcc2;
-    __dmb();
+	/* Stage 2: Power on oscillators */
+	rcc  &= ~RCC_OFF;
+	rcc2 &= ~RCC2_OFF;
+	RCC_CR = rcc;
+	RCC2_CR = rcc2;
+	__dmb();
 
-    /* Stage 3: Set USESYSDIV */
-    rcc |= RCC_BYPASS | RCC_USESYSDIV;
-    RCC_CR = rcc;
-    __dmb();
+	/* Stage 3: Set USESYSDIV */
+	rcc |= RCC_BYPASS | RCC_USESYSDIV;
+	RCC_CR = rcc;
+	__dmb();
 
-    /* Stage 4: Wait for PLL raw interrupt */
-    while ((RCC_RIS & RIS_PLLLRIS) == 0)
-        ;
+	/* Stage 4: Wait for PLL raw interrupt */
+	while ((RCC_RIS & RIS_PLLLRIS) == 0);
 
-    /* Stage 5: Disable bypass */
-    rcc  &= ~RCC_BYPASS;
-    rcc2 &= ~RCC2_BYPASS;
-    RCC_CR = rcc;
-    RCC2_CR = rcc2;
-    __dmb();
-    return 0;
+	/* Stage 5: Disable bypass */
+	rcc  &= ~RCC_BYPASS;
+	rcc2 &= ~RCC2_BYPASS;
+	RCC_CR = rcc;
+	RCC2_CR = rcc2;
+	__dmb();
+
+	return 0;
 }

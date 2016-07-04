@@ -45,12 +45,12 @@ void usart_send_blocking(uint32_t usart, uint16_t data)
 
 bool usart_is_recv_ready(uint32_t usart)
 {
-	return((UART_LSR(usart) & UART_RDR_LS) == 0);
+	return ((UART_LSR(usart) & UART_RDR_LS) == 0);
 }
 
 bool usart_is_send_ready(uint32_t usart)
 {
-	return((UART_LSR(usart) & UART_TH_LS) != 0);
+	return ((UART_LSR(usart) & UART_TH_LS) != 0);
 }
 
 uint16_t usart_recv_blocking(uint32_t usart)

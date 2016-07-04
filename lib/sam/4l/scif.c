@@ -65,11 +65,11 @@ int scif_osc_enable(enum osc_mode mode, uint32_t freq, enum osc_startup startup)
 /** @brief Configure and enable PLL clock.
  *
  * @param[in] delay uint8_t: Specifies the number of RCSYS clock cycles before
- * 	ISR.PLLLOCKn will be set after PLL has been written, or after PLL has
+ *	ISR.PLLLOCKn will be set after PLL has been written, or after PLL has
  *	been automatically re-enabled after exiting a sleep mode.
  * @param[in] mul uint8_t: Multiply factor.
  * @param[in] div uint8_t: Division factor.These fields determine the ratio of
- * 	the PLL output frequency to the source oscillator frequency:
+ *	the PLL output frequency to the source oscillator frequency:
  *	f_vco = (PLLMUL+1)/PLLDIV * f_ref if PLLDIV >0
  *	f_vco = 2*(PLLMUL+1) * f_ref if PLLDIV = 0
  *	Note that the PLLMUL field should always be greater than 1 or the
@@ -81,16 +81,18 @@ int scif_osc_enable(enum osc_mode mode, uint32_t freq, enum osc_startup startup)
  */
 int scif_enable_pll(uint8_t delay, uint8_t mul, uint8_t div, uint8_t pll_opt, enum pll_clk_src source_clock)
 {
-	// First, PLL needs to be disabled, otherwise the configuration register
-	// is unaccessible.
+	/* First, PLL needs to be disabled, otherwise the configuration register
+	 * is unaccessible.
+	 */
 	uint32_t pll_val = SCIF_PLL0;
 	if (pll_val & SCIF_PLL0_PLLEN) {
 		SCIF_UNLOCK = SCIF_PLL0_KEY;
 		SCIF_PLL0 = pll_val & (~SCIF_PLL0_PLLEN);
 	}
 
-	if (mul == 0)
+	if (mul == 0) {
 		mul = 1;
+	}
 
 	pll_val = SCIF_PLL0_PLLOSC_MASKED(source_clock)
 		| SCIF_PLL0_PLLOPT_MASKED(pll_opt)
@@ -101,11 +103,11 @@ int scif_enable_pll(uint8_t delay, uint8_t mul, uint8_t div, uint8_t pll_opt, en
 	SCIF_UNLOCK = SCIF_PLL0_KEY;
 	SCIF_PLL0 = pll_val;
 
-	// Now enable TODO: does this really need to be separate operation?
+	/* Now enable TODO: does this really need to be separate operation? */
 	SCIF_UNLOCK = SCIF_PLL0_KEY;
 	SCIF_PLL0 = pll_val | SCIF_PLL0_PLLEN;
 
-	while(!(SCIF_PCLKSR & SCIF_PLL0LOCK));
+	while (!(SCIF_PCLKSR & SCIF_PLL0LOCK));
 
 	return 0;
 }

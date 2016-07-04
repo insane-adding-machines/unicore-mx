@@ -177,7 +177,7 @@
 #define GPIO_VERSION(X)			MMIO32((X) + 0x1fc)
 
 enum gpio_mode {
-	// Peripherals
+	/* Peripherals */
 	GPIO_MODE_A = 0,
 	GPIO_MODE_B,
 	GPIO_MODE_C,

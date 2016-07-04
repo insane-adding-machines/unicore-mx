@@ -72,8 +72,8 @@ void ltdc_set_tft_sync_timings(uint16_t sync_width,    uint16_t sync_height,
 
 void ltdc_setup_windowing(uint8_t  layer_number, uint16_t active_width, uint16_t active_height)
 {
-    uint32_t h_back_porch = (LTDC_BPCR >> LTDC_BPCR_AHBP_SHIFT) & LTDC_BPCR_AHBP_MASK;
-    uint32_t v_back_porch = (LTDC_BPCR >> LTDC_BPCR_AVBP_SHIFT) & LTDC_BPCR_AVBP_MASK;
+	uint32_t h_back_porch = (LTDC_BPCR >> LTDC_BPCR_AHBP_SHIFT) & LTDC_BPCR_AHBP_MASK;
+	uint32_t v_back_porch = (LTDC_BPCR >> LTDC_BPCR_AVBP_SHIFT) & LTDC_BPCR_AVBP_MASK;
 
 	/*assert((h_back_porch & 0xfff == h_back_porch) &&
 		 (v_back_porch  & 0xfff == v_back_porch) &&

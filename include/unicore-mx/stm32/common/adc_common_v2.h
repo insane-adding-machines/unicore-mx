@@ -35,11 +35,11 @@ specific memorymap.h header before including this header file.*/
 
 /* ----- ADC registers  -----------------------------------------------------*/
 /* ADC interrupt and status register */
-#define ADC_ISR(adc)		MMIO32((adc) + 0x00)
+#define ADC_ISR(adc)			MMIO32((adc) + 0x00)
 /* Interrupt Enable Register */
-#define ADC_IER(adc)		MMIO32((adc) + 0x04)
+#define ADC_IER(adc)			MMIO32((adc) + 0x04)
 /* Control Register */
-#define ADC_CR(adc)		MMIO32((adc) + 0x08)
+#define ADC_CR(adc)			MMIO32((adc) + 0x08)
 /* Configuration Register 1 */
 #define ADC_CFGR1(adc)			MMIO32((adc) + 0x0C)
 /* Configuration Register 2 */
@@ -53,17 +53,17 @@ specific memorymap.h header before including this header file.*/
 /* CALFACT for all but f0 :(*/
 
 /* ADC common (shared) registers */
-#define ADC_CCR(adc)		MMIO32((adc) + 0x300 + 0x8)
+#define ADC_CCR(adc)			MMIO32((adc) + 0x300 + 0x8)
 
 /* --- Register values -------------------------------------------------------*/
 
 /* ADC_ISR Values -----------------------------------------------------------*/
 
 /* AWD1: Analog watchdog 1 flag */
-#define ADC_ISR_AWD1		(1 << 7)
+#define ADC_ISR_AWD1			(1 << 7)
 #define ADC_ISR_OVR			(1 << 4)
-#define ADC_ISR_EOS			(1 << 3)   // FIXME - move to single/multi here.
-#define ADC_ISR_EOSEQ			ADC_ISR_EOS /* TODO - keep only one? */
+#define ADC_ISR_EOS			(1 << 3)	/* FIXME - move to single/multi here. */
+#define ADC_ISR_EOSEQ			ADC_ISR_EOS	/* TODO - keep only one? */
 #define ADC_ISR_EOC			(1 << 2)
 #define ADC_ISR_EOSMP			(1 << 1)
 #define ADC_ISR_ADRDY			(1 << 0)
@@ -71,37 +71,37 @@ specific memorymap.h header before including this header file.*/
 /* ADC_IER Values -----------------------------------------------------------*/
 
 /* AWD1IE: Analog watchdog 1 interrupt enable */
-#define ADC_IER_AWD1IE		(1 << 7)
+#define ADC_IER_AWD1IE			(1 << 7)
 /* OVRIE: Overrun interrupt enable */
-#define ADC_IER_OVRIE		(1 << 4)
+#define ADC_IER_OVRIE			(1 << 4)
 /* EOSIE: End of regular sequence of conversions interrupt enable */
-#define ADC_IER_EOSIE		(1 << 3)
-#define ADC_IER_EOSEQIE		ADC_IER_EOSIE /* TODO - keep only one? */
+#define ADC_IER_EOSIE			(1 << 3)
+#define ADC_IER_EOSEQIE			ADC_IER_EOSIE	/* TODO - keep only one? */
 /* EOCIE: End of regular conversion interrupt enable */
-#define ADC_IER_EOCIE		(1 << 2)
+#define ADC_IER_EOCIE			(1 << 2)
 /* EOSMPIE: End of sampling flag interrupt enable for regular conversions */
-#define ADC_IER_EOSMPIE		(1 << 1)
+#define ADC_IER_EOSMPIE			(1 << 1)
 /* ADRDYIE : ADC ready interrupt enable */
-#define ADC_IER_ADRDYIE		(1 << 0)
+#define ADC_IER_ADRDYIE			(1 << 0)
 
 /* ADC_CR Values -----------------------------------------------------------*/
 
 /* ADCAL: ADC calibration */
-#define ADC_CR_ADCAL		(1 << 31)
+#define ADC_CR_ADCAL			(1 << 31)
 /* ADSTP: ADC stop of regular conversion command */
-#define ADC_CR_ADSTP		(1 << 4)
+#define ADC_CR_ADSTP			(1 << 4)
 /* ADSTART: ADC start of regular conversion */
-#define ADC_CR_ADSTART		(1 << 2)
+#define ADC_CR_ADSTART			(1 << 2)
 /* ADDIS: ADC disable command */
-#define ADC_CR_ADDIS		(1 << 1)
+#define ADC_CR_ADDIS			(1 << 1)
 /* ADEN: ADC enable control */
-#define ADC_CR_ADEN		(1 << 0)
+#define ADC_CR_ADEN			(1 << 0)
 
 /* ADC_CFGR1 Values -----------------------------------------------------------*/
 
 /* AWD1CH[4:0]: Analog watchdog 1 channel selection */
 #define ADC_CFGR1_AWD1CH_SHIFT		26
-#define ADC_CFGR1_AWD1CH			(0x1F << ADC_CFGR1_AWD1CH_SHIFT)
+#define ADC_CFGR1_AWD1CH		(0x1F << ADC_CFGR1_AWD1CH_SHIFT)
 #define ADC_CFGR1_AWD1CH_VAL(x)		((x) << ADC_CFGR1_AWD1CH_SHIFT)
 
 /* AWD1EN: Analog watchdog 1 enable on regular channels */
@@ -117,7 +117,7 @@ specific memorymap.h header before including this header file.*/
 #define ADC_CFGR1_AUTDLY		(1 << 14)
 
 /* CONT: Single / continuous conversion mode for regular conversions */
-#define ADC_CFGR1_CONT		(1 << 13)
+#define ADC_CFGR1_CONT			(1 << 13)
 
 /* OVRMOD: Overrun Mode */
 #define ADC_CFGR1_OVRMOD		(1 << 12)
@@ -126,7 +126,7 @@ specific memorymap.h header before including this header file.*/
  * EXTEN[1:0]: External trigger enable and polarity selection for regular
  * channels
  */
-#define ADC_CFGR1_EXTEN_DISABLED		(0x0 << 10)
+#define ADC_CFGR1_EXTEN_DISABLED	(0x0 << 10)
 #define ADC_CFGR1_EXTEN_RISING_EDGE	(0x1 << 10)
 #define ADC_CFGR1_EXTEN_FALLING_EDGE	(0x2 << 10)
 #define ADC_CFGR1_EXTEN_BOTH_EDGES	(0x3 << 10)
@@ -134,20 +134,20 @@ specific memorymap.h header before including this header file.*/
 #define ADC_CFGR1_EXTEN_MASK		(0x3 << 10)
 
 /* ALIGN: Data alignment */
-#define ADC_CFGR1_ALIGN		(1 << 5)
+#define ADC_CFGR1_ALIGN			(1 << 5)
 
 /* RES[1:0]: Data resolution */
-#define ADC_CFGR1_RES_12_BIT	(0x0 << 3)
-#define ADC_CFGR1_RES_10_BIT	(0x1 << 3)
-#define ADC_CFGR1_RES_8_BIT	(0x2 << 3)
-#define ADC_CFGR1_RES_6_BIT	(0x3 << 3)
-#define ADC_CFGR1_RES_MASK	(0x3 << 3)
+#define ADC_CFGR1_RES_12_BIT		(0x0 << 3)
+#define ADC_CFGR1_RES_10_BIT		(0x1 << 3)
+#define ADC_CFGR1_RES_8_BIT		(0x2 << 3)
+#define ADC_CFGR1_RES_6_BIT		(0x3 << 3)
+#define ADC_CFGR1_RES_MASK		(0x3 << 3)
 
 /* DMACFG: Direct memory access configuration */
 #define ADC_CFGR1_DMACFG		(1 << 1)
 
 /* DMAEN: Direct memory access enable */
-#define ADC_CFGR1_DMAEN		(1 << 0)
+#define ADC_CFGR1_DMAEN			(1 << 0)
 
 /* ADC_TR1 Values ------------------------------------------------------------*/
 

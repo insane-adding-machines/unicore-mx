@@ -107,7 +107,7 @@
 #define PM_MCCTRL_MCSEL_SHIFT			0
 #define PM_MCCTRL_MCSEL_MASK			3
 
-// Values common for CPUSEL and PBxSEL
+/* Values common for CPUSEL and PBxSEL */
 #define PM_CKSEL_DIV			(1 << 7)
 #define PM_CKSEL_MASK			(3)
 

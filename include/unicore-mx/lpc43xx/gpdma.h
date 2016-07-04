@@ -43,8 +43,8 @@ extern "C" {
 
 typedef struct gpdma_lli_t gpdma_lli_t;
 struct gpdma_lli_t {
-	void* csrcaddr;
-	void* cdestaddr;
+	void *csrcaddr;
+	void *cdestaddr;
 	uint32_t clli;
 	uint32_t ccontrol;
 };

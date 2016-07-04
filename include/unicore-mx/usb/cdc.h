@@ -70,7 +70,7 @@ LGPL License Terms @ref lgpl_license
 /* ... */
 #define USB_CDC_TYPE_UNION		0x06
 /* ... */
-#define USB_CDC_TYPE_ECM        0x0F
+#define USB_CDC_TYPE_ECM        	0x0F
 
 /* Table 15: Class-Specific Descriptor Header Format */
 struct usb_cdc_header_descriptor {
@@ -114,28 +114,28 @@ struct usb_cdc_acm_descriptor {
 } __attribute__((packed));
 
 struct usb_cdc_ecm_descriptor {
-    uint8_t  bFunctionLength;
-    uint8_t  bDescriptorType;
-    uint8_t  bDescriptorSubtype;
-    uint8_t  iMACAddress;
-    uint8_t  bmEthernetStatistics[4];
-    uint16_t wMaxSegmentSize;
-    uint16_t wNumberMCFilters;
-    uint8_t  bNumberPowerFilters;
+	uint8_t  bFunctionLength;
+	uint8_t  bDescriptorType;
+	uint8_t  bDescriptorSubtype;
+	uint8_t  iMACAddress;
+	uint8_t  bmEthernetStatistics[4];
+	uint16_t wMaxSegmentSize;
+	uint16_t wNumberMCFilters;
+	uint8_t  bNumberPowerFilters;
 } __attribute__((packed));
 
 
 /* Table 13: Class-Specific Request Codes for PSTN subclasses */
 /* ... */
-#define USB_CDC_REQ_SET_LINE_CODING		0x20
+#define USB_CDC_REQ_SET_LINE_CODING			0x20
 /* ... */
-#define USB_CDC_REQ_SET_CONTROL_LINE_STATE	0x22
+#define USB_CDC_REQ_SET_CONTROL_LINE_STATE		0x22
 /* ... */
-#define USB_CDC_REQ_SET_ETHERNET_MULTICAST_FILTER 0x40
-#define USB_CDC_REQ_SET_ETHERNET_PM_PATTERN_FILTER 0x41
-#define USB_CDC_REQ_GET_ETHERNET_PM_PATTERN_FILTER 0x42
-#define USB_CDC_REQ_SET_ETHERNET_PACKET_FILTER 0x43
-#define USB_CDC_REQ_GET_ETHERNET_STATISTICS 0x44
+#define USB_CDC_REQ_SET_ETHERNET_MULTICAST_FILTER	0x40
+#define USB_CDC_REQ_SET_ETHERNET_PM_PATTERN_FILTER	0x41
+#define USB_CDC_REQ_GET_ETHERNET_PM_PATTERN_FILTER	0x42
+#define USB_CDC_REQ_SET_ETHERNET_PACKET_FILTER		0x43
+#define USB_CDC_REQ_GET_ETHERNET_STATISTICS		0x44
 /* ... */
 
 /* Table 17: Line Coding Structure */
@@ -147,22 +147,22 @@ struct usb_cdc_line_coding {
 } __attribute__((packed));
 
 enum usb_cdc_line_coding_bCharFormat {
-	USB_CDC_1_STOP_BITS			= 0,
-	USB_CDC_1_5_STOP_BITS			= 1,
-	USB_CDC_2_STOP_BITS			= 2,
+	USB_CDC_1_STOP_BITS   = 0,
+	USB_CDC_1_5_STOP_BITS = 1,
+	USB_CDC_2_STOP_BITS   = 2,
 };
 
 enum usb_cdc_line_coding_bParityType {
-	USB_CDC_NO_PARITY			= 0,
-	USB_CDC_ODD_PARITY			= 1,
-	USB_CDC_EVEN_PARITY			= 2,
-	USB_CDC_MARK_PARITY			= 3,
-	USB_CDC_SPACE_PARITY			= 4,
+	USB_CDC_NO_PARITY    = 0,
+	USB_CDC_ODD_PARITY   = 1,
+	USB_CDC_EVEN_PARITY  = 2,
+	USB_CDC_MARK_PARITY  = 3,
+	USB_CDC_SPACE_PARITY = 4,
 };
 
 /* Table 30: Class-Specific Notification Codes for PSTN subclasses */
 /* ... */
-#define USB_CDC_NOTIFY_SERIAL_STATE		0x20
+#define USB_CDC_NOTIFY_SERIAL_STATE			0x20
 /* ... */
 
 /* Notification Structure */

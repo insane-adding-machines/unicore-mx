@@ -64,15 +64,13 @@ void ssp_init(ssp_num_t ssp_num,
 	uint32_t ssp_port;
 	uint32_t clock;
 
-	if (ssp_num == SSP0_NUM)
-	{
+	if (ssp_num == SSP0_NUM) {
 		ssp_port = SSP0;
 		CGU_BASE_SSP0_CLK = CGU_BASE_SSP0_CLK_CLK_SEL(CGU_SRC_PLL1)
 			| CGU_BASE_SSP0_CLK_AUTOBLOCK(1);
 		CCU1_CLK_M4_SSP0_CFG |= 1; /* Enable SSP0 Clock */
 		/* use PLL1 as clock source for SSP0 */
-	} else
-	{
+	} else {
 		ssp_port = SSP1;
 		/* use PLL1 as clock source for SSP1 */
 		CGU_BASE_SSP1_CLK = CGU_BASE_SSP1_CLK_CLK_SEL(CGU_SRC_PLL1)

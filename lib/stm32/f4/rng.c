@@ -40,31 +40,29 @@
 */
 uint8_t rng_get_random(uint32_t *rand_nr)
 {
-    //wait for data to get ready
-    while ((RNG_SR & RNG_SR_DRDY) != 1);
+	/* wait for data to get ready */
+	while ((RNG_SR & RNG_SR_DRDY) != 1);
 
-    //check for clock error
-    if (RNG_SR & RNG_SR_CECS)
-    {
-	//return error
-	return 0;
-    }
+	/* check for clock error */
+	if (RNG_SR & RNG_SR_CECS) {
+		/* return error */
+		return 0;
+	}
 
-    //check for seed error
-    if (RNG_SR & RNG_SR_SECS)
-    {
-	//disable and enable the RNG to reinitialize and restart the RNG
-	rng_disable();
-	rng_enable();
-	//return with no errors
-	return 0;
-    }
+	/* check for seed error */
+	if (RNG_SR & RNG_SR_SECS) {
+		/* disable and enable the RNG to reinitialize and restart the RNG */
+		rng_disable();
+		rng_enable();
+		/* return with no errors */
+		return 0;
+	}
 
-    //set the random value
-    *rand_nr = RNG_DR;
+	/* set the random value */
+	*rand_nr = RNG_DR;
 
-    //return with no errors
-    return 1;
+	/* return with no errors */
+	return 1;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -73,8 +71,8 @@ The random number generator is disabled.
 */
 void rng_disable(void)
 {
-    //Clear the enable flag in RNG_CR
-    RNG_CR &= ~RNG_CR_RNGEN;
+	/* Clear the enable flag in RNG_CR */
+	RNG_CR &= ~RNG_CR_RNGEN;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -83,8 +81,8 @@ The random number generator is enabled.
 */
 void rng_enable(void)
 {
-    //Set the enable flag in RNG_CR
-    RNG_CR |= RNG_CR_RNGEN;
+	/* Set the enable flag in RNG_CR */
+	RNG_CR |= RNG_CR_RNGEN;
 }
 
 /*---------------------------------------------------------------------------*/

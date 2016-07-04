@@ -19,15 +19,15 @@
 
 void exti_set_trigger(uint32_t extis, enum exti_trigger_type trig)
 {
-    EXTPOLAR &= ~(1<<extis);
-    EXTPOLAR |= (trig == EXTI_TRIGGER_RISING  || trig == EXTI_TRIGGER_HIGH) ? (1 << extis) : 0;
+	EXTPOLAR &= ~(1<<extis);
+	EXTPOLAR |= (trig == EXTI_TRIGGER_RISING  || trig == EXTI_TRIGGER_HIGH) ? (1 << extis) : 0;
 
-    EXTMODE &= ~(1<<extis);
-    EXTMODE |= (trig == EXTI_TRIGGER_RISING  || trig == EXTI_TRIGGER_FALLING) ? (1 << extis) : 0;
+	EXTMODE &= ~(1<<extis);
+	EXTMODE |= (trig == EXTI_TRIGGER_RISING  || trig == EXTI_TRIGGER_FALLING) ? (1 << extis) : 0;
 }
 
 void exti_clear_flag(uint32_t extis)
 {
-    EXTINT = (1 << extis);
+	EXTINT = (1 << extis);
 }
 

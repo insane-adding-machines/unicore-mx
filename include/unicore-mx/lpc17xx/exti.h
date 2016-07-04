@@ -21,21 +21,21 @@
 #include <unicore-mx/cm3/common.h>
 #include <unicore-mx/lpc17xx/memorymap.h>
 
-#define EXTINT          MMIO32(SYSCON_BASE + 0x140)
-#define EXTMODE     MMIO32(SYSCON_BASE + 0x148)
-#define EXTPOLAR   MMIO32(SYSCON_BASE + 0x14C)
+#define EXTINT		MMIO32(SYSCON_BASE + 0x140)
+#define EXTMODE		MMIO32(SYSCON_BASE + 0x148)
+#define EXTPOLAR	MMIO32(SYSCON_BASE + 0x14C)
 
-#define EXTI0   0
-#define EXTI1   1
-#define EXTI2   2
-#define EXTI3   3
+#define EXTI0		0
+#define EXTI1		1
+#define EXTI2		2
+#define EXTI3		3
 
 
 enum exti_trigger_type {
 	EXTI_TRIGGER_RISING,
 	EXTI_TRIGGER_FALLING,
 	EXTI_TRIGGER_HIGH,
-        EXTI_TRIGGER_LOW
+	EXTI_TRIGGER_LOW
 };
 
 void exti_set_trigger(uint32_t extis, enum exti_trigger_type trig);

@@ -59,7 +59,8 @@ void i2c_init(i2c_port_t port, const uint16_t duty_cycle_count)
 	I2C_CONSET(port) = I2C_CONSET_I2EN;
 }
 
-void i2c_disable(i2c_port_t port) {
+void i2c_disable(i2c_port_t port)
+{
 	I2C_CONCLR(port) = I2C_CONCLR_I2ENC;
 }
 
@@ -72,8 +73,7 @@ void i2c_tx_start(i2c_port_t port)
 	I2C_CONSET(port) = I2C_CONSET_STA;
 
 	timeout = 0;
-	while( (!(I2C_CONSET(port) & I2C_CONSET_SI)) && (timeout < I2C_TIMEOUT) )
-	{
+	while ((!(I2C_CONSET(port) & I2C_CONSET_SI)) && (timeout < I2C_TIMEOUT)) {
 		timeout++;
 	}
 
@@ -92,8 +92,7 @@ void i2c_tx_byte(i2c_port_t port, uint8_t byte)
 	I2C_CONCLR(port) = I2C_CONCLR_SIC;
 
 	timeout = 0;
-	while( (!(I2C_CONSET(port) & I2C_CONSET_SI)) && (timeout < I2C_TIMEOUT) )
-	{
+	while ((!(I2C_CONSET(port) & I2C_CONSET_SI)) && (timeout < I2C_TIMEOUT)) {
 		timeout++;
 	}
 }
@@ -109,8 +108,7 @@ uint8_t i2c_rx_byte(i2c_port_t port)
 	I2C_CONCLR(port) = I2C_CONCLR_SIC;
 
 	timeout = 0;
-	while( (!(I2C_CONSET(port) & I2C_CONSET_SI)) && (timeout < I2C_TIMEOUT) )
-	{
+	while ((!(I2C_CONSET(port) & I2C_CONSET_SI)) && (timeout < I2C_TIMEOUT)) {
 		timeout++;
 	}
 
@@ -181,23 +179,19 @@ uint8_t i2c1_rx_byte(bool ack)
 {
 	uint32_t timeout;
 
-	if (I2C1_CONSET & I2C_CONSET_STA)
-	{
+	if (I2C1_CONSET & I2C_CONSET_STA) {
 		I2C1_CONCLR = I2C_CONCLR_STAC;
 	}
 
-	if (ack)
-	{
+	if (ack) {
 		I2C1_CONSET = I2C_CONSET_AA;
-	} else
-	{
+	} else {
 		I2C1_CONCLR = I2C_CONCLR_AAC;
 	}
 
 	I2C1_CONCLR = I2C_CONCLR_SIC;
 	timeout = 0;
-	while( (!(I2C1_CONSET & I2C_CONSET_SI)) && (timeout < I2C_TIMEOUT) )
-	{
+	while ((!(I2C1_CONSET & I2C_CONSET_SI)) && (timeout < I2C_TIMEOUT)) {
 		timeout++;
 	}
 

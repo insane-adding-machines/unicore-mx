@@ -21,9 +21,9 @@
 #include <unicore-mx/cm3/common.h>
 
 /* --- Universal Asynchronous Receiver Transmitter (UART) */
-#define UART_RBR(x)             MMIO32((x) + 0x0000)
-#define UART_THR(x)             MMIO32((x) + 0x0000)
-#define UART_DLL(x)             MMIO32((x) + 0x0000)
+#define UART_RBR(x)		MMIO32((x) + 0x0000)
+#define UART_THR(x)		MMIO32((x) + 0x0000)
+#define UART_DLL(x)		MMIO32((x) + 0x0000)
 #define UART_DLM(x)             MMIO32((x) + 0x0004)
 #define UART_IER(x)             MMIO32((x) + 0x0004)
 #define UART_IIR(x)             MMIO32((x) + 0x0008)
@@ -50,18 +50,18 @@
 #define UART_ABT_II             (0x01 << 9)
 #define UART_ABE_II             (0x01 << 8)
 /* Bits 5:4 reserved */
-#define UART_IIR_MASK             (0x07 << 1)
+#define UART_IIR_MASK           (0x07 << 1)
 /* Interrupt type: */
-    #define UART_IIR_RLS          (0x03 << 1)
-    #define UART_IIR_RDA          (0x02 << 1)
-    #define UART_IIR_CTI          (0x06 << 1)
-    #define UART_IIR_THE          (0x01 << 1)
+#define UART_IIR_RLS            (0x03 << 1)
+#define UART_IIR_RDA            (0x02 << 1)
+#define UART_IIR_CTI            (0x06 << 1)
+#define UART_IIR_THE            (0x01 << 1)
 #define UART_IEN_II             (0x01 << 0)
 
 
 /* compatibility API for interrupt source detection */
-#define USART_SR_TXE    UART_IIR_THE
-#define USART_SR_RXNE   UART_IIR_RDA
+#define USART_SR_TXE            UART_IIR_THE
+#define USART_SR_RXNE           UART_IIR_RDA
 
 /* UART Line Status Register (UART_LSR) */
 /* Bits [31:8] - Reserved */
@@ -79,27 +79,27 @@
 /* TODO: Other registries, according to datasheet */
 
 enum usart_stopbits {
-    USART_STOPBITS_1,
-    USART_STOPBITS_1_5,
-    USART_STOPBITS_2,
+	USART_STOPBITS_1,
+	USART_STOPBITS_1_5,
+	USART_STOPBITS_2,
 };
 
 enum usart_parity {
-    USART_PARITY_NONE,
-    USART_PARITY_ODD,
-    USART_PARITY_EVEN,
+	USART_PARITY_NONE,
+	USART_PARITY_ODD,
+	USART_PARITY_EVEN,
 };
 
 enum usart_mode {
-    USART_MODE_DISABLED,
-    USART_MODE_RX,
-    USART_MODE_TX,
-    USART_MODE_TX_RX,
+	USART_MODE_DISABLED,
+	USART_MODE_RX,
+	USART_MODE_TX,
+	USART_MODE_TX_RX,
 };
 
 enum usart_flowcontrol {
-    USART_FLOWCONTROL_NONE,
-    USART_FLOWCONTROL_RTS_CTS,
+	USART_FLOWCONTROL_NONE,
+	USART_FLOWCONTROL_RTS_CTS,
 };
 
 void usart_send(uint32_t usart, uint16_t data);

@@ -53,7 +53,7 @@ specific memorymap.h header before including this header file.*/
 
 /** @cond */
 #else
-#warning "syscfg_common_l1f234.h should not be included explicitly,"
+#warning "syscfg_common_l1f2347.h should not be included explicitly,"
 #warning "only via syscfg.h"
 #endif
 /** @endcond */

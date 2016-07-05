@@ -35,7 +35,7 @@
 #ifndef UNICOREMX_SYSCFG_H
 #define UNICOREMX_SYSCFG_H
 
-#include <unicore-mx/stm32/common/syscfg_common_l1f234.h>
+#include <unicore-mx/stm32/common/syscfg_common_l1f2347.h>
 
 #endif
 /**@}*/

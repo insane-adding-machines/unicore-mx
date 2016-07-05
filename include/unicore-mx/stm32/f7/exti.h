@@ -1,21 +1,21 @@
-/** @defgroup syscfg_defines SYSCFG Defines
+/** @defgroup exti_defines EXTI Defines
  *
- * @ingroup STM32F3xx_defines
+ * @brief <b>Defined Constants and Types for the STM32F4xx External Interrupts
+ * </b>
  *
- * @brief Defined Constants and Types for the STM32F3xx Sysconfig
+ * @ingroup STM32F7xx_defines
+ *
+ * @author @htmlonly &copy; @endhtmlonly 2013
+ * Piotr Esden-Tempski <piotr@esden.net>
  *
  * @version 1.0.0
  *
- * @author @htmlonly &copy; @endhtmlonly 2013
- * Frantisek Burian <BuFran@seznam.cz>
- *
- * @date 13 January 2014
+ * @date 14 January 2014
  *
  * LGPL License Terms @ref lgpl_license
- *  */
-
+ */
 /*
- * Copyright (C) 2013 Frantisek Burian <BuFran@seznam.cz>
+ * Copyright (C) 2013 Piotr Esden-Tempski <piotr@esden.net>
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -31,9 +31,9 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef UNICOREMX_SYSCFG_H
-#define UNICOREMX_SYSCFG_H
+#ifndef UNICOREMX_EXTI_H
+#define UNICOREMX_EXTI_H
 
-#include <unicore-mx/stm32/common/syscfg_common_l1f2347.h>
+#include <unicore-mx/stm32/common/exti_common_all.h>
 
 #endif

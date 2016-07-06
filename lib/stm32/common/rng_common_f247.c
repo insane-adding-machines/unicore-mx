@@ -2,7 +2,7 @@
  *
  * @ingroup STM32F4xx
  *
- * @brief <b>unicore-mx STM32F4xx RNG</b>
+ * @brief <b>unicore-mx STM32Fxxx RNG</b>
  *
  * @version 1.0.0
  *
@@ -15,6 +15,8 @@
  */
 
 /*
+ * Copyright (C) 2015 Sulter
+ * Copyright (C) 2016 brabo <brabo@centropy.info>
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -32,6 +34,44 @@
 #include <unicore-mx/stm32/rng.h>
 
 /**@{*/
+
+/*---------------------------------------------------------------------------*/
+/** @brief Disable rng.
+The random number generator is disabled.
+*/
+void rng_disable(void)
+{
+	/* Clear the enable flag in RNG_CR */
+	RNG_CR &= ~RNG_CR_RNGEN;
+}
+
+/*---------------------------------------------------------------------------*/
+/** @brief Enable rng.
+The random number generator is enabled.
+*/
+void rng_enable(void)
+{
+	/* Set the enable flag in RNG_CR */
+	RNG_CR |= RNG_CR_RNGEN;
+}
+
+/*---------------------------------------------------------------------------*/
+/** @brief Enable rng interrupt.
+The random number generator interrupt is enabled.
+*/
+void rng_enable_interrupt(void)
+{
+	RNG_CR |= RNG_CR_IE;
+}
+
+/*---------------------------------------------------------------------------*/
+/** @brief Disable rng interrupt.
+The random number generator interrupt is disabled.
+*/
+void rng_disable_interrupt(void)
+{
+	RNG_CR &= ~RNG_CR_IE;
+}
 
 /*---------------------------------------------------------------------------*/
 /** @brief Randomizes a number.
@@ -63,26 +103,6 @@ uint8_t rng_get_random(uint32_t *rand_nr)
 
 	/* return with no errors */
 	return 1;
-}
-
-/*---------------------------------------------------------------------------*/
-/** @brief Disable rng.
-The random number generator is disabled.
-*/
-void rng_disable(void)
-{
-	/* Clear the enable flag in RNG_CR */
-	RNG_CR &= ~RNG_CR_RNGEN;
-}
-
-/*---------------------------------------------------------------------------*/
-/** @brief Enable rng.
-The random number generator is enabled.
-*/
-void rng_enable(void)
-{
-	/* Set the enable flag in RNG_CR */
-	RNG_CR |= RNG_CR_RNGEN;
 }
 
 /*---------------------------------------------------------------------------*/

@@ -16,6 +16,6 @@
 #ifndef UNICOREMX_RNG_H
 #define UNICOREMX_RNG_H
 
-#include <unicore-mx/stm32/common/rng_common_f24.h>
+#include <unicore-mx/stm32/common/rng_common_f247.h>
 
 #endif

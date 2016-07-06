@@ -18,8 +18,12 @@
 #include <unicore-mx/cm3/common.h>
 #include <unicore-mx/stm32/memorymap.h>
 
-#if defined(STM32F4)
+#if defined(STM32F2)
+#       include <unicore-mx/stm32/f2/rng.h>
+#elif defined(STM32F4)
 #       include <unicore-mx/stm32/f4/rng.h>
+#elif defined(STM32F7)
+#       include <unicore-mx/stm32/f7/rng.h>
 #else
 #       error "stm32 family not defined."
 #endif

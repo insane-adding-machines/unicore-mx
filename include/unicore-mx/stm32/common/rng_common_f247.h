@@ -69,6 +69,8 @@ BEGIN_DECLS
 
 void rng_enable(void);
 void rng_disable(void);
+void rng_enable_interrupt(void);
+void rng_disable_interrupt(void);
 uint8_t rng_get_random(uint32_t *rand_nr);
 
 END_DECLS
@@ -78,7 +80,7 @@ END_DECLS
 #endif
 /** @cond */
 #else
-#warning "rng_common_f24.h should not be included explicitly, only via rng.h"
+#warning "rng_common_f247.h should not be included explicitly, only via rng.h"
 #endif
 /** @endcond */
 

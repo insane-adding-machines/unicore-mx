@@ -618,7 +618,7 @@ typedef struct {
 extern const clock_scale_t hse_25mhz_3v3[CLOCK_3V3_END];
 
 enum rcc_osc {
-	PLL, HSE, HSI, LSE, LSI
+	RCC_PLL, RCC_HSE, RCC_HSI, RCC_LSE, RCC_LSI
 };
 
 #define _REG_BIT(base, bit)		(((base) << 5) + (bit))

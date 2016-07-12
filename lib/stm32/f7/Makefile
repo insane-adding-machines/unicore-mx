@@ -47,6 +47,10 @@ OBJS            += usb.o usb_standard.o usb_control.o usb_fx07_common.o \
 		   usb_f107.o usb_f207.o usb_msc.o
 OBJS		+= ltdc_common_f47.o fmc_common_f47.o
 
+OBJS		+= mac.o phy.o mac_stm32fxx7.o phy_ksz8051mll.o fmc_common_f47.o
+
+OBJS		+= pwr.o pwr_common_all.o
+
 VPATH += ../../usb:../:../../cm3:../common
 VPATH += ../../ethernet
 

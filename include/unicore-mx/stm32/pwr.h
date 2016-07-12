@@ -28,6 +28,8 @@
 #       include <unicore-mx/stm32/f3/pwr.h>
 #elif defined(STM32F4)
 #       include <unicore-mx/stm32/f4/pwr.h>
+#elif defined(STM32F7)
+#       include <unicore-mx/stm32/f7/pwr.h>
 #elif defined(STM32L1)
 #       include <unicore-mx/stm32/l1/pwr.h>
 #elif defined(STM32L0)

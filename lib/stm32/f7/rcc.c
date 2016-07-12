@@ -1,12 +1,13 @@
 #include <unicore-mx/cm3/assert.h>
 #include <unicore-mx/stm32/rcc.h>
 #include <unicore-mx/stm32/flash.h>
+#include <unicore-mx/stm32/pwr.h>
 
-uint32_t rcc_ahb_frequency = 16000000;
+uint32_t rcc_ahb_frequency  = 16000000;
 uint32_t rcc_apb1_frequency = 16000000;
 uint32_t rcc_apb2_frequency = 16000000;
 
-const clock_scale_t hse_25mhz_3v3[CLOCK_3V3_END] = {
+const struct rcc_clock_scale hse_25mhz_3v3[RCC_CLOCK_3V3_END] = {
 	{ /* 216MHz */
 		.pllm = 25,
 		.plln = 432,
@@ -17,6 +18,7 @@ const clock_scale_t hse_25mhz_3v3[CLOCK_3V3_END] = {
 		.ppre2 = RCC_CFGR_PPRE_DIV_2,
 		.flash_config = FLASH_ACR_ICE | FLASH_ACR_DCE |
 				FLASH_ACR_LATENCY_7WS,
+		.ahb_frequency  = 216000000,
 		.apb1_frequency = 108000000,
 		.apb2_frequency = 216000000,
 	},
@@ -324,7 +326,7 @@ uint32_t rcc_system_clock_source(void)
 	return (RCC_CFGR & 0x000c) >> 2;
 }
 
-void rcc_clock_setup_hse_3v3(const clock_scale_t *clock)
+void rcc_clock_setup_hse_3v3(const struct rcc_clock_scale *clock)
 {
 	/* Enable internal high-speed oscillator. */
 	rcc_osc_on(RCC_HSI);
@@ -337,13 +339,9 @@ void rcc_clock_setup_hse_3v3(const clock_scale_t *clock)
 	rcc_osc_on(RCC_HSE);
 	rcc_wait_for_osc_ready(RCC_HSE);
 
-	/* Enable/disable high performance mode */
-/*	if (!clock->power_save) {
-		pwr_set_vos_scale(SCALE1);
-	} else {
-		pwr_set_vos_scale(SCALE2);
-	}
-*/
+    /* Set F7's SCALE1 + overdrive mode */
+    pwr_set_vos_scale(PWR_SCALE1);
+
 	/*
 	 * Set prescalers for AHB, ADC, ABP1, ABP2.
 	 * Do this before touching the RCC_PLL (TODO: why?).
@@ -369,6 +367,7 @@ void rcc_clock_setup_hse_3v3(const clock_scale_t *clock)
 	rcc_wait_for_sysclk_status(RCC_PLL);
 
 	/* Set the peripheral clock frequencies used. */
+    rcc_ahb_frequency = clock->ahb_frequency;
 	rcc_apb1_frequency = clock->apb1_frequency;
 	rcc_apb2_frequency = clock->apb2_frequency;
 

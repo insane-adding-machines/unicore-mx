@@ -1,19 +1,22 @@
-/** @defgroup ethernet_mac_defines MAC Generic Defines
+/** @defgroup pwr_file PWR
  *
- * @brief <b>Defined Constants and Types for the Ethernet MAC</b>
+ * @ingroup STM32F4xx
  *
- * @ingroup ETH
+ * @brief <b>unicore-mx STM32F4xx Power Control</b>
  *
  * @version 1.0.0
  *
- * @author @htmlonly &copy; @endhtmlonly 2013 Frantisek Burian <BuFran@seznam.cz>
+ * @author @htmlonly &copy; @endhtmlonly 2011 Stephen Caudle <scaudle@doceme.com>
  *
- * @date 1 September 2013
+ * @date 4 March 2013
+ *
+ * This library supports the power control system for the
+ * STM32F4 series of ARM Cortex Microcontrollers by ST Microelectronics.
  *
  * LGPL License Terms @ref lgpl_license
  */
 /*
- * Copyright (C) 2013 Frantisek Burian <BuFran@seznam.cz>
+ * Copyright (C) 2011 Stephen Caudle <scaudle@doceme.com>
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -29,18 +32,13 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**@{*/
+#include <unicore-mx/stm32/pwr.h>
 
-#if defined(STM32F1)
-#       include <unicore-mx/ethernet/mac_stm32fxx7.h>
-#elif defined(STM32F4)
-#       include <unicore-mx/ethernet/mac_stm32fxx7.h>
-#elif defined(STM32F7)
-#       include <unicore-mx/ethernet/mac_stm32fxx7.h>
-#else
-#       error "stm32 family not defined."
-#endif
-
-/**@}*/
-
-
+void pwr_set_vos_scale(enum pwr_vos_scale scale)
+{
+	if (scale == PWR_SCALE1) {
+		PWR_CR |= PWR_CR_VOS | PWR_CR_ODRIVE;
+	} else if (scale == PWR_SCALE2) {
+		PWR_CR &= ~PWR_CR_VOS;
+	}
+}

@@ -210,6 +210,11 @@ void eth_start(void)
  */
 void eth_init(uint8_t phy, enum eth_clk clock)
 {
+    /* DMA soft-reset */
+    ETH_DMABMR |= ETH_DMABMR_SR;
+    while(ETH_DMABMR & ETH_DMABMR_SR) {};
+
+    /* MII init */
 	ETH_MACMIIAR = clock;
 	phy_reset(phy);
 

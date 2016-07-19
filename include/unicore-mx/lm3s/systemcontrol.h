@@ -73,6 +73,42 @@ LGPL License Terms @ref lgpl_license
 #define SYSTEMCONTROL_DCGC2		MMIO32(SYSTEMCONTROL_BASE + 0x128)
 #define SYSTEMCONTROL_DSLPCLKCFG	MMIO32(SYSTEMCONTROL_BASE + 0x144)
 
+
+/* Values for SYSTEMCONTROL_RCGC0 */
+#define SYSCTL_CGR0_WDT		(1 << 3)
+#define SYSCTL_CGR0_HIB		(1 << 6)
+#define SYSCTL_CGR0_MAXADCSPD_LO	(1 << 8)
+#define SYSCTL_CGR0_MAXADCSPD_HI	(1 << 9)
+#define SYSCTL_CGR0_ADC		(1 << 16)
+#define SYSCTL_CGR0_PWM		(1 << 20)
+
+/* Values for SCGYMCONTROL_RCGC1 */
+#define SYSCTL_CGR1_UART0		(1 << 0)
+#define SYSCTL_CGR1_UART1   		(1 << 1)
+#define SYSCTL_CGR1_UART2   		(1 << 2)
+#define SYSCTL_CGR1_SSI0   		(1 << 4)
+#define SYSCTL_CGR1_QEI0   		(1 << 8)
+#define SYSCTL_CGR1_QEI1   		(1 << 9)
+#define SYSCTL_CGR1_I2C0   		(1 << 12)
+#define SYSCTL_CGR1_I2C1   		(1 << 14)
+#define SYSCTL_CGR1_TIMER0   		(1 << 16)
+#define SYSCTL_CGR1_TIMER1   		(1 << 17)
+#define SYSCTL_CGR1_TIMER2   		(1 << 18)
+#define SYSCTL_CGR1_TIMER3   		(1 << 19)
+#define SYSCTL_CGR1_COMP0   		(1 << 24)
+#define SYSCTL_CGR1_COMP1   		(1 << 25)
+
+/* Values for SCGYMCONTROL_RCGC2 */
+#define SYSCTL_CGR2_GPIOA   		(1 << 0)
+#define SYSCTL_CGR2_GPIOB   		(1 << 1)
+#define SYSCTL_CGR2_GPIOC   		(1 << 2)
+#define SYSCTL_CGR2_GPIOD   		(1 << 3)
+#define SYSCTL_CGR2_GPIOE   		(1 << 4)
+#define SYSCTL_CGR2_GPIOF   		(1 << 5)
+#define SYSCTL_CGR2_GPIOG   		(1 << 6)
+#define SYSCTL_CGR2_ETH_MAC 		(1 << 28)
+#define SYSCTL_CGR2_ETH_PHY 		(1 << 30)
+
 /**@}*/
 
 #endif

@@ -72,7 +72,7 @@
 #define ETH_MMCRFAECR			MMIO32(ETHERNET_BASE + 0x198)
 #define ETH_MMCRGUFCR			MMIO32(ETHERNET_BASE + 0x1C4)
 
-/* Ethrenet IEEE 1588 time stamp registers */
+/* Ethernet IEEE 1588 time stamp registers */
 #define ETH_PTPTSCR			MMIO32(ETHERNET_BASE + 0x700)
 #define ETH_PTPSSIR			MMIO32(ETHERNET_BASE + 0x704)
 #define ETH_PTPTSHR			MMIO32(ETHERNET_BASE + 0x708)
@@ -705,32 +705,6 @@ enum eth_clk {
 	ETH_CLK_150_168MHZ = ETH_MACMIIAR_CR_HCLK_DIV_102,
 };
 
-BEGIN_DECLS
-
-void eth_smi_write(uint8_t phy, uint8_t reg, uint16_t data);
-uint16_t eth_smi_read(uint8_t phy, uint8_t reg);
-void eth_smi_bit_op(uint8_t phy, uint8_t reg, uint16_t bits, uint16_t mask);
-void eth_smi_bit_clear(uint8_t phy, uint8_t reg, uint16_t clearbits);
-void eth_smi_bit_set(uint8_t phy, uint8_t reg, uint16_t setbits);
-
-void eth_set_mac(uint8_t *mac);
-void eth_desc_init(uint8_t *buf, uint32_t nTx, uint32_t nRx, uint32_t cTx,
-		    uint32_t cRx, bool isext);
-bool eth_tx(uint8_t *ppkt, uint32_t n);
-bool eth_rx(uint8_t *ppkt, uint32_t *len, uint32_t maxlen);
-
-void eth_init(uint8_t phy, enum eth_clk clock);
-void eth_start(void);
-
-void eth_enable_checksum_offload(void);
-
-void eth_irq_enable(uint32_t reason);
-void eth_irq_disable(uint32_t reason);
-bool eth_irq_is_pending(uint32_t reason);
-bool eth_irq_ack_pending(uint32_t reason);
-
-
-END_DECLS
 
 /*
  * Usage:

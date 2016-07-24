@@ -30,7 +30,7 @@ bool eth_tx(uint8_t *ppkt, uint32_t n)
     word |= (ppkt[i++] << 24);
     ETH_MAC_DATA = word;
 
-    while (i < (n - 6)) {
+    while (i < (n - 4)) {
         word = ppkt[i++];
         word |= (ppkt[i++] << 8);
         word |= (ppkt[i++] << 16);
@@ -112,7 +112,7 @@ void eth_init(uint8_t phy, enum eth_clk clock)
     ETH_MAC_MDV = clock;
 
     /* Set transmit control register */
-    ETH_MAC_TCTL = ETH_TCTL_DUPLEX;
+    ETH_MAC_TCTL = ETH_TCTL_DUPLEX | ETH_TCTL_PADDING | ETH_TCTL_CRCGEN;
 
     /* Set receive control register */
     ETH_MAC_RCTL = ETH_RCTL_MCAST;
@@ -120,15 +120,17 @@ void eth_init(uint8_t phy, enum eth_clk clock)
     /* Disable timestamps */
     ETH_MAC_TS = 0;
 
-
-
 }
 
 void eth_start(void) {
     /* Enable Ethernet */
     ETH_MAC_RCTL |= ETH_RCTL_CLRFIFO;
-    ETH_MAC_TCTL |= ETH_TCTL_TXON;
     ETH_MAC_RCTL |= ETH_RCTL_RXON;
+    
+
+    ETH_MAC_TCTL |= ETH_TCTL_TXON;
+
+
     ETH_MAC_RCTL |= ETH_RCTL_CLRFIFO;
 }
 

@@ -1,4 +1,6 @@
 /*
+ * This file is part of the unicore-mx project.
+ *
  * Copyright (C) 2013 Alexandru Gagniuc <mr.nuke.me@gmail.com>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -100,8 +102,8 @@
 #include <unicore-mx/cm3/common.h>
 #include <unicore-mx/lm4f/usb.h>
 #include <unicore-mx/lm4f/rcc.h>
-#include <unicore-mx/usb/usbd.h>
-#include "../../lib/usb/usb_private.h"
+#include <unicore-mx/usbd/usbd.h>
+#include "../../lib/usbd/usbd_private.h"
 
 #include <stdbool.h>
 

@@ -15,6 +15,8 @@ LGPL License Terms @ref lgpl_license
 */
 
 /*
+ * This file is part of the unicore-mx project.
+ *
  * Copyright (C) 2010 Gareth McMullin <gareth@blacksphere.co.nz>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -34,8 +36,8 @@ LGPL License Terms @ref lgpl_license
 /**@{*/
 
 #include <stdlib.h>
-#include <unicore-mx/usb/usbd.h>
-#include "usb_private.h"
+#include <unicore-mx/usbd/usbd.h>
+#include "usbd_private.h"
 
 /*
  * According to the USB 2.0 specification, section 8.5.3, when a control

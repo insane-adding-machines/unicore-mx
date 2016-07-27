@@ -20,8 +20,8 @@
 #include <unicore-mx/stm32/rcc.h>
 #include <unicore-mx/stm32/tools.h>
 #include <unicore-mx/stm32/st_usbfs.h>
-#include <unicore-mx/usb/usbd.h>
-#include "../../usb/usb_private.h"
+#include <unicore-mx/usbd/usbd.h>
+#include "../../usbd/usbd_private.h"
 #include "st_usbfs_core.h"
 
 /* TODO - can't these be inside the impls, not globals from the core? */

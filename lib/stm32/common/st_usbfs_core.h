@@ -26,7 +26,7 @@
 #define ST_USBFS_CORE
 
 #include <unicore-mx/stm32/st_usbfs.h>
-#include <unicore-mx/usb/usbd.h>
+#include <unicore-mx/usbd/usbd.h>
 
 #define USBD_PM_TOP 0x40
 

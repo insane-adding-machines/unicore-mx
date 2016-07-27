@@ -20,8 +20,8 @@
 #include <unicore-mx/stm32/rcc.h>
 #include <unicore-mx/stm32/tools.h>
 #include <unicore-mx/stm32/st_usbfs.h>
-#include <unicore-mx/usb/usbd.h>
-#include "../usb/usb_private.h"
+#include <unicore-mx/usbd/usbd.h>
+#include "../usbd/usbd_private.h"
 #include "common/st_usbfs_core.h"
 
 static usbd_device *st_usbfs_v2_usbd_init(void);

@@ -1,4 +1,6 @@
 /*
+ * This file is part of the unicore-mx project.
+ *
  * Copyright (C) 2013 Weston Schmidt <weston_schmidt@alumni.purdue.edu>
  * Copyright (C) 2013 Pavol Rusnak <stick@gk2.sk>
  *
@@ -20,9 +22,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unicore-mx/cm3/common.h>
-#include <unicore-mx/usb/usbd.h>
-#include <unicore-mx/usb/msc.h>
-#include "usb_private.h"
+#include <unicore-mx/usbd/usbd.h>
+#include <unicore-mx/usbd/msc.h>
+#include "usbd_private.h"
 
 /* Definitions of Mass Storage Class from:
  *

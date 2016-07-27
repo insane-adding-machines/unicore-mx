@@ -15,6 +15,8 @@ LGPL License Terms @ref lgpl_license
 */
 
 /*
+ * This file is part of the unicore-mx project.
+ *
  * Copyright (C) 2010 Gareth McMullin <gareth@blacksphere.co.nz>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -33,8 +35,8 @@ LGPL License Terms @ref lgpl_license
 
 /**@{*/
 
-#ifndef __USBD_H
-#define __USBD_H
+#ifndef LIBOPENCM3_USBD_H
+#define LIBOPENCM3_USBD_H
 
 #include <unicore-mx/usb/usbstd.h>
 

@@ -1,4 +1,6 @@
 /*
+ * This file is part of the unicore-mx project.
+ *
  * Copyright (C) 2011 Gareth McMullin <gareth@blacksphere.co.nz>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -20,9 +22,9 @@
 #include <unicore-mx/stm32/tools.h>
 #include <unicore-mx/stm32/otg_fs.h>
 #include <unicore-mx/stm32/otg_hs.h>
-#include <unicore-mx/usb/usbd.h>
-#include "usb_private.h"
-#include "usb_fx07_common.h"
+#include <unicore-mx/usbd/usbd.h>
+#include "usbd_private.h"
+#include "usbd_fx07_common.h"
 
 /* The FS core and the HS core have the same register layout.
  * As the code can be used on both cores, the registers offset is modified
@@ -281,7 +283,6 @@ void stm32fx07_poll(usbd_device *usbd_dev)
 		/* Save packet size for stm32f107_ep_read_packet(). */
 		usbd_dev->rxbcnt = (rxstsp & OTG_GRXSTSP_BCNT_MASK) >> 4;
 
-#if 0
 		/*
 		 * FIXME: Why is a delay needed here?
 		 * This appears to fix a problem where the first 4 bytes
@@ -290,7 +291,6 @@ void stm32fx07_poll(usbd_device *usbd_dev)
 		for (i = 0; i < 1000; i++) {
 			__asm__("nop");
 		}
-#endif
 
 		if (usbd_dev->user_callback_ctr[ep][type]) {
 			usbd_dev->user_callback_ctr[ep][type] (usbd_dev, ep);

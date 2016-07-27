@@ -1,4 +1,6 @@
 /*
+ * This file is part of the unicore-mx project.
+ *
  * Copyright (C) 2011 Gareth McMullin <gareth@blacksphere.co.nz>
  * Copyright (C) 2015 Kuldeep Singh Dhaka <kuldeepdhaka9@gmail.com>
  *
@@ -21,8 +23,8 @@
 #include <unicore-mx/efm32/memorymap.h>
 #include <unicore-mx/efm32/cmu.h>
 #include <unicore-mx/efm32/usb.h>
-#include <unicore-mx/usb/usbd.h>
-#include "usb_private.h"
+#include <unicore-mx/usbd/usbd.h>
+#include "usbd_private.h"
 
 /* Receive FIFO size in 32-bit words. */
 #define RX_FIFO_SIZE 256

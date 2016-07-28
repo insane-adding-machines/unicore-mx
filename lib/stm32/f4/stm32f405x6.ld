@@ -28,5 +28,5 @@ MEMORY
 }
 
 /* Include the common ld script. */
-INCLUDE ucmx_stm32f4.ld
+INCLUDE libucmx_stm32f4.ld
 

@@ -25,5 +25,5 @@ MEMORY
 }
 
 /* Include the common ld script. */
-INCLUDE ucmx_lm3s.ld
+INCLUDE libucmx_lm3s.ld
 

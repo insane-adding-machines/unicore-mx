@@ -12,4 +12,4 @@ MEMORY
 	ram (rwx) : ORIGIN = 0x20000000, LENGTH = 4k
 }
 
-INCLUDE ucmx_efm32tg.ld;
+INCLUDE libucmx_efm32tg.ld;

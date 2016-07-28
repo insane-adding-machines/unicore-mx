@@ -17,8 +17,8 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBOPENCM3_USBH_CLASS_HID_H
-#define LIBOPENCM3_USBH_CLASS_HID_H
+#ifndef UNICOREMX_USBH_CLASS_HID_H
+#define UNICOREMX_USBH_CLASS_HID_H
 
 #include <unicore-mx/usbh/usbh.h>
 #include <unicore-mx/usb/hid.h>

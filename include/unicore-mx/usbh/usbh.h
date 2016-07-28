@@ -17,8 +17,8 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBOPENCM3_USBH_H
-#define LIBOPENCM3_USBH_H
+#ifndef UNICOREMX_USBH_H
+#define UNICOREMX_USBH_H
 
 #include <stdint.h>
 #include <stddef.h>

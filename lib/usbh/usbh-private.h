@@ -17,8 +17,8 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBOPENCM3_USBH_PRIVATE_H
-#define LIBOPENCM3_USBH_PRIVATE_H
+#ifndef UNICOREMX_USBH_PRIVATE_H
+#define UNICOREMX_USBH_PRIVATE_H
 
 /*
  * The design is inspired from libusb and Linux Kernel.

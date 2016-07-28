@@ -1,4 +1,6 @@
 /*
+ * This file is part of the unicore-mx project.
+ *
  * Copyright (C) 2011 Gareth McMullin <gareth@blacksphere.co.nz>
  *
  * This library is free software: you can redistribute it and/or modify

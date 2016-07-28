@@ -19,7 +19,7 @@
 #define UNICOREMX_EFM32_USB_H
 
 #include <unicore-mx/cm3/common.h>
-#include <unicore-mx/usb/usbd.h>
+#include <unicore-mx/usbd/usbd.h>
 
 #define USB_CTRL			MMIO32(USB_BASE + 0x000)
 #define USB_STATUS			MMIO32(USB_BASE + 0x004)

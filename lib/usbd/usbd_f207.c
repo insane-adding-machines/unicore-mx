@@ -1,4 +1,6 @@
 /*
+ * This file is part of the unicore-mx project.
+ *
  * Copyright (C) 2011 Gareth McMullin <gareth@blacksphere.co.nz>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -19,9 +21,9 @@
 #include <unicore-mx/cm3/common.h>
 #include <unicore-mx/stm32/tools.h>
 #include <unicore-mx/stm32/otg_hs.h>
-#include <unicore-mx/usb/usbd.h>
-#include "usb_private.h"
-#include "usb_fx07_common.h"
+#include <unicore-mx/usbd/usbd.h>
+#include "usbd_private.h"
+#include "usbd_fx07_common.h"
 
 /* Receive FIFO size in 32-bit words. */
 #define RX_FIFO_SIZE 512

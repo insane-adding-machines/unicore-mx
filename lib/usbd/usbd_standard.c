@@ -15,6 +15,8 @@ LGPL License Terms @ref lgpl_license
 */
 
 /*
+ * This file is part of the unicore-mx project.
+ *
  * Copyright (C) 2010 Gareth McMullin <gareth@blacksphere.co.nz>
  *
  * This library is free software: you can redistribute it and/or modify
@@ -34,8 +36,8 @@ LGPL License Terms @ref lgpl_license
 /**@{*/
 
 #include <string.h>
-#include <unicore-mx/usb/usbd.h>
-#include "usb_private.h"
+#include <unicore-mx/usbd/usbd.h>
+#include "usbd_private.h"
 
 int usbd_register_set_config_callback(usbd_device *usbd_dev,
 				       usbd_set_config_callback callback)

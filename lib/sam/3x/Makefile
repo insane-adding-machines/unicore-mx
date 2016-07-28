@@ -30,7 +30,7 @@ TGT_CFLAGS      += $(DEBUG_FLAGS)
 ARFLAGS		= rcs
 OBJS		= gpio_common_all.o gpio_common_3a3u3x.o pmc.o usart_common_all.o usart_common_3.o
 
-VPATH += ../../usb:../../cm3:../common
+VPATH += ../../usbd:../../cm3:../common
 
 include ../../Makefile.include
 

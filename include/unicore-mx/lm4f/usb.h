@@ -345,6 +345,10 @@
 #define USB_RXCSRH_PIDERR		(1 << 4)
 /** DMA request mode */
 #define USB_RXCSRH_DMAMOD		(1 << 3)
+/** Data Toggle (DT) write enable */
+#define USB_RXCSRH_DTWE			(1 << 2)
+/** Data Toggle (DT) */
+#define USB_RXCSRH_DT			(1 << 1)
 
 /* =============================================================================
  * USB_DRRIS values

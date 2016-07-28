@@ -21,7 +21,7 @@
 #define UNICOREMX_USBH_CLASS_HID_H
 
 #include <unicore-mx/usbh/usbh.h>
-#include <unicore-mx/usb/hid.h>
+#include <unicore-mx/usb/class/hid.h>
 
 /**
  * Perform a SET_PROTOCOL @a protcol to @a dev on @a interface

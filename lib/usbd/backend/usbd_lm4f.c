@@ -2,6 +2,7 @@
  * This file is part of the unicore-mx project.
  *
  * Copyright (C) 2013 Alexandru Gagniuc <mr.nuke.me@gmail.com>
+ * Copyright (C) 2015 Kuldeep Singh Dhaka <kuldeepdhaka9@gmail.com>
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -27,23 +28,23 @@
  *
  * \brief <b>unicore-mx LM4F Universal Serial Bus controller </b>
  *
- * The LM4F USB driver is integrated with the unicore-mx USB stack. You should
+ * The LM4F USB backend is integrated with the unicore-mx USB stack. You should
  * use the generic stack.
  *
- * To use this driver, tell the linker to look for it:
+ * To use this backend, tell the linker to look for it:
  * @code{.c}
- *	extern usbd_driver lm4f_usb_driver;
+ *	extern usbd_backend usbd_lm4f;
  * @endcode
  *
- * And pass this driver as an argument when initializing the USB stack:
+ * And pass this backend as an argument when initializing the USB stack:
  * @code{.c}
  * usbd_device *usbd_dev;
- * usbd_dev = usbd_init(&lm4f_usb_driver, ...);
+ * usbd_dev = usbd_init(&usbd_lm4f, ...);
  * @endcode
  *
  * <b>Polling or interrupt-driven? </b>
  *
- * The LM4F USB driver will work fine regardless of whether it is called from an
+ * The LM4F USB backend will work fine regardless of whether it is called from an
  * interrupt service routine, or from the main program loop.
  *
  * Polling USB from the main loop requires calling @ref usbd_poll() from the
@@ -103,14 +104,15 @@
 #include <unicore-mx/lm4f/usb.h>
 #include <unicore-mx/lm4f/rcc.h>
 #include <unicore-mx/usbd/usbd.h>
-#include "../../lib/usbd/usbd_private.h"
-
+#include "../usbd_private.h"
+#include <stddef.h>
 #include <stdbool.h>
 
 
 #define MAX_FIFO_RAM	(4 * 1024)
 
-const struct _usbd_driver lm4f_usb_driver;
+uint16_t fifo_mem_top;
+uint16_t fifo_mem_top_ep0;
 
 /**
  * \brief Enable Specific USB Interrupts
@@ -185,8 +187,7 @@ static void lm4f_set_address(usbd_device *usbd_dev, uint8_t addr)
 }
 
 static void lm4f_ep_setup(usbd_device *usbd_dev, uint8_t addr, uint8_t type,
-			  uint16_t max_size,
-			  void (*callback) (usbd_device *usbd_dev, uint8_t ep))
+			  uint16_t max_size)
 {
 	(void)usbd_dev;
 	(void)type;
@@ -246,26 +247,23 @@ static void lm4f_ep_setup(usbd_device *usbd_dev, uint8_t addr, uint8_t type,
 		 * Regardless of how much we allocate, the first 64 bytes
 		 * are always reserved for EP0.
 		 */
-		usbd_dev->fifo_mem_top_ep0 = 64;
+		fifo_mem_top_ep0 = 64;
 		return;
 	}
 
 	/* Are we out of FIFO space? */
-	if (usbd_dev->fifo_mem_top + fifo_size > MAX_FIFO_RAM) {
+	if (fifo_mem_top + fifo_size > MAX_FIFO_RAM) {
 		return;
 	}
 
 	USB_EPIDX = addr & USB_EPIDX_MASK;
 
 	/* FIXME: What about double buffering? */
+	/* FIXME: enable endpoint interrupt */
 	if (dir_tx) {
 		USB_TXMAXP(ep) = max_size;
 		USB_TXFIFOSZ = reg8;
-		USB_TXFIFOADD = ((usbd_dev->fifo_mem_top) >> 3);
-		if (callback) {
-			usbd_dev->user_callback_ctr[ep][USB_TRANSACTION_IN] =
-			(void *)callback;
-		}
+		USB_TXFIFOADD = ((fifo_mem_top) >> 3);
 		if (type == USB_ENDPOINT_ATTR_ISOCHRONOUS) {
 			USB_TXCSRH(ep) |= USB_TXCSRH_ISO;
 		} else {
@@ -274,11 +272,7 @@ static void lm4f_ep_setup(usbd_device *usbd_dev, uint8_t addr, uint8_t type,
 	} else {
 		USB_RXMAXP(ep) = max_size;
 		USB_RXFIFOSZ = reg8;
-		USB_RXFIFOADD = ((usbd_dev->fifo_mem_top) >> 3);
-		if (callback) {
-			usbd_dev->user_callback_ctr[ep][USB_TRANSACTION_OUT] =
-			(void *)callback;
-		}
+		USB_RXFIFOADD = ((fifo_mem_top) >> 3);
 		if (type == USB_ENDPOINT_ATTR_ISOCHRONOUS) {
 			USB_RXCSRH(ep) |= USB_RXCSRH_ISO;
 		} else {
@@ -286,20 +280,103 @@ static void lm4f_ep_setup(usbd_device *usbd_dev, uint8_t addr, uint8_t type,
 		}
 	}
 
-	usbd_dev->fifo_mem_top += fifo_size;
+	fifo_mem_top += fifo_size;
+}
+
+static void lm4f_set_ep_type(usbd_device *usbd_dev, uint8_t addr,
+		uint8_t type)
+{
+	(void)usbd_dev;
+
+	const bool dir_tx = addr & 0x80;
+	const uint8_t ep = addr & 0x0f;
+
+	/* ep0 can only be control, and has already been setup'd */
+	if (!ep) {
+		return;
+	}
+
+	if (dir_tx) {
+		if (type == USB_ENDPOINT_ATTR_ISOCHRONOUS) {
+			USB_TXCSRH(ep) |= USB_TXCSRH_ISO;
+		} else {
+			USB_TXCSRH(ep) &= ~USB_TXCSRH_ISO;
+		}
+	} else {
+		if (type == USB_ENDPOINT_ATTR_ISOCHRONOUS) {
+			USB_RXCSRH(ep) |= USB_RXCSRH_ISO;
+		} else {
+			USB_RXCSRH(ep) &= ~USB_RXCSRH_ISO;
+		}
+	}
+}
+
+static void lm4f_set_ep_size(usbd_device *usbd_dev, uint8_t addr,
+			  uint16_t max_size)
+{
+	(void)usbd_dev;
+
+	uint8_t reg8;
+
+	const bool dir_tx = addr & 0x80;
+	const uint8_t ep = addr & 0x0f;
+
+	/* size of ep0 cannot be modified once it has been setup'd */
+	if (!ep) {
+		return;
+	}
+
+	/* requesting larger memory than assigned in setup? */
+	if (max_size > (dir_tx ? USB_TXMAXP(ep) : USB_RXMAXP(ep))) {
+		return;
+	}
+
+	/*
+	 * We do not mess with the maximum packet size, but we can only allocate
+	 * the FIFO in power-of-two increments.
+	 */
+	if (max_size > 1024) {
+		reg8 = USB_FIFOSZ_SIZE_2048;
+	} else if (max_size > 512) {
+		reg8 = USB_FIFOSZ_SIZE_1024;
+	} else if (max_size > 256) {
+		reg8 = USB_FIFOSZ_SIZE_512;
+	} else if (max_size > 128) {
+		reg8 = USB_FIFOSZ_SIZE_256;
+	} else if (max_size > 64) {
+		reg8 = USB_FIFOSZ_SIZE_128;
+	} else if (max_size > 32) {
+		reg8 = USB_FIFOSZ_SIZE_64;
+	} else if (max_size > 16) {
+		reg8 = USB_FIFOSZ_SIZE_32;
+	} else if (max_size > 8) {
+		reg8 = USB_FIFOSZ_SIZE_16;
+	} else {
+		reg8 = USB_FIFOSZ_SIZE_8;
+	}
+
+	USB_EPIDX = addr & USB_EPIDX_MASK;
+
+	/* FIXME: What about double buffering? */
+	if (dir_tx) {
+		USB_TXFIFOSZ = reg8;
+	} else {
+		USB_RXFIFOSZ = reg8;
+	}
 }
 
 static void lm4f_endpoints_reset(usbd_device *usbd_dev)
 {
+	(void)usbd_dev;
 	/*
 	 * The core resets the endpoints automatically on reset.
 	 * The first 64 bytes are always reserved for EP0
 	 */
-	usbd_dev->fifo_mem_top = 64;
+	fifo_mem_top = 64;
 }
 
-static void lm4f_ep_stall_set(usbd_device *usbd_dev, uint8_t addr,
-			      uint8_t stall)
+static void lm4f_set_ep_stall(usbd_device *usbd_dev, uint8_t addr,
+			      bool stall)
 {
 	(void)usbd_dev;
 
@@ -330,7 +407,7 @@ static void lm4f_ep_stall_set(usbd_device *usbd_dev, uint8_t addr,
 	}
 }
 
-static uint8_t lm4f_ep_stall_get(usbd_device *usbd_dev, uint8_t addr)
+static bool lm4f_get_ep_stall(usbd_device *usbd_dev, uint8_t addr)
 {
 	(void)usbd_dev;
 
@@ -338,17 +415,17 @@ static uint8_t lm4f_ep_stall_get(usbd_device *usbd_dev, uint8_t addr)
 	const bool dir_tx = addr & 0x80;
 
 	if (ep == 0) {
-		return USB_CSRL0 & USB_CSRL0_STALLED;
+		return !!(USB_CSRL0 & USB_CSRL0_STALLED);
 	}
 
 	if (dir_tx) {
-		return USB_TXCSRL(ep) & USB_TXCSRL_STALLED;
+		return !!(USB_TXCSRL(ep) & USB_TXCSRL_STALLED);
 	} else {
-		return USB_RXCSRL(ep) & USB_RXCSRL_STALLED;
+		return !!(USB_RXCSRL(ep) & USB_RXCSRL_STALLED);
 	}
 }
 
-static void lm4f_ep_nak_set(usbd_device *usbd_dev, uint8_t addr, uint8_t nak)
+static void lm4f_set_ep_nak(usbd_device *usbd_dev, uint8_t addr, bool nak)
 {
 	(void)usbd_dev;
 	(void)addr;
@@ -457,8 +534,6 @@ static uint16_t lm4f_ep_read_packet(usbd_device *usbd_dev, uint8_t addr,
 
 static void lm4f_poll(usbd_device *usbd_dev)
 {
-	void (*tx_cb)(usbd_device *usbd_dev, uint8_t ea);
-	void (*rx_cb)(usbd_device *usbd_dev, uint8_t ea);
 	int i;
 
 	/*
@@ -471,20 +546,20 @@ static void lm4f_poll(usbd_device *usbd_dev)
 	const uint8_t usb_txis = USB_TXIS;
 	const uint8_t usb_csrl0 = USB_CSRL0;
 
-	if ((usb_is & USB_IM_SUSPEND) && (usbd_dev->user_callback_suspend)) {
-		usbd_dev->user_callback_suspend();
+	if (usb_is & USB_IM_SUSPEND) {
+		USBD_INVOKE_SUSPEND_CALLBACK(usbd_dev)
 	}
 
-	if ((usb_is & USB_IM_RESUME) && (usbd_dev->user_callback_resume)) {
-		usbd_dev->user_callback_resume();
+	if (usb_is & USB_IM_RESUME) {
+		USBD_INVOKE_RESUME_CALLBACK(usbd_dev)
 	}
 
 	if (usb_is & USB_IM_RESET) {
-		_usbd_reset(usbd_dev);
+		USBD_INVOKE_RESET_CALLBACK(usbd_dev)
 	}
 
-	if ((usb_is & USB_IM_SOF) && (usbd_dev->user_callback_sof)) {
-		usbd_dev->user_callback_sof();
+	if (usb_is & USB_IM_SOF) {
+		USBD_INVOKE_SOF_CALLBACK(usbd_dev)
 	}
 
 	if (usb_txis & USB_EP0) {
@@ -498,22 +573,20 @@ static void lm4f_poll(usbd_device *usbd_dev)
 		 * "transmit complete" interrupt.
 		 */
 		if (usb_csrl0 & USB_CSRL0_RXRDY) {
-			enum _usbd_transaction type;
-			type = (usbd_dev->control_state.state != DATA_OUT &&
-				usbd_dev->control_state.state != LAST_DATA_OUT)
-				? USB_TRANSACTION_SETUP :
-				  USB_TRANSACTION_OUT;
+			unsigned type;
 
-			if (usbd_dev->user_callback_ctr[0][type]) {
-				usbd_dev->
-					user_callback_ctr[0][type](usbd_dev, 0);
+			/* select to the right callback */
+			switch(usbd_dev->ep0.state) {
+			case DATA_OUT:
+			case LAST_DATA_OUT:
+				type = USB_CALLBACK_OUT;
+				break;
+			default:
+				type = USB_CALLBACK_SETUP;
 			}
 
-
+			USBD_INVOKE_EP_CALLBACK(usbd_dev, type, 0)
 		} else {
-			tx_cb = usbd_dev->user_callback_ctr[0]
-							   [USB_TRANSACTION_IN];
-
 			/*
 			 * EP0 bit in TXIS is set not only when a packet is
 			 * finished transmitting, but also when RXRDY is set, or
@@ -528,29 +601,24 @@ static void lm4f_poll(usbd_device *usbd_dev)
 			 * this is. We need to work with the state machine to
 			 * figure it all out. See [1] for details.
 			 */
-			if ((usbd_dev->control_state.state != DATA_IN) &&
-			    (usbd_dev->control_state.state != LAST_DATA_IN) &&
-			    (usbd_dev->control_state.state != STATUS_IN)) {
+			if ((usbd_dev->ep0.state != DATA_IN) &&
+			    (usbd_dev->ep0.state != LAST_DATA_IN) &&
+			    (usbd_dev->ep0.state != STATUS_IN)) {
 				return;
 			}
 
-			if (tx_cb) {
-				tx_cb(usbd_dev, 0);
-			}
+			USBD_INVOKE_EP_CALLBACK(usbd_dev, USB_CALLBACK_IN, 0)
 		}
 	}
 
 	/* See which interrupt occurred */
 	for (i = 1; i < 8; i++) {
-		tx_cb = usbd_dev->user_callback_ctr[i][USB_TRANSACTION_IN];
-		rx_cb = usbd_dev->user_callback_ctr[i][USB_TRANSACTION_OUT];
-
-		if ((usb_txis & (1 << i)) && tx_cb) {
-			tx_cb(usbd_dev, i);
+		if (usb_txis & (1 << i)) {
+			USBD_INVOKE_EP_CALLBACK(usbd_dev, USB_CALLBACK_IN, i)
 		}
 
-		if ((usb_rxis & (1 << i)) && rx_cb) {
-			rx_cb(usbd_dev, i);
+		if (usb_rxis & (1 << i)) {
+			USBD_INVOKE_EP_CALLBACK(usbd_dev, USB_CALLBACK_OUT, i)
 		}
 	}
 
@@ -573,11 +641,77 @@ static void lm4f_disconnect(usbd_device *usbd_dev, bool disconnected)
 	}
 }
 
+static void lm4f_enable_sof(usbd_device *usbd_dev, bool enable)
+{
+	(void)usbd_dev;
+
+	/* note: USB_IM_* can be used for USB_IE */
+	if(enable) {
+		USB_IE |= USB_IM_SOF;
+	} else {
+		USB_IE &= ~USB_IM_SOF;
+	}
+}
+
+static void lm4f_ep_flush(usbd_device *usbd_dev, uint8_t addr)
+{
+	(void)usbd_dev;
+	uint8_t dir = addr & 0x80;
+	addr &= 0x7F;
+
+	if (dir) {
+		USB_TXMAXP(addr) = 0;
+		USB_TXCSRL(addr) |= USB_TXCSRL_FLUSH;
+	} else {
+		USB_RXCSRL(addr) |= USB_RXCSRL_FLUSH;
+	}
+}
+
+static void lm4f_set_ep_dtog(usbd_device *usbd_dev, uint8_t addr, bool dtog)
+{
+	(void)usbd_dev;
+	uint8_t dir = addr & 0x80;
+	addr &= 0x7F;
+
+	if (dir) {
+		if (dtog) {
+			USB_TXCSRH(addr) |= USB_TXCSRH_FDT;
+		} else {
+			USB_TXCSRL(addr) |= USB_TXCSRL_CLRDT;
+		}
+	} else {
+		if (dtog) {
+			USB_RXCSRH(addr) |= USB_RXCSRH_DTWE | USB_RXCSRH_DT;
+		} else {
+			USB_RXCSRL(addr) |= USB_RXCSRL_CLRDT;
+		}
+	}
+}
+
+static bool lm4f_get_ep_dtog(usbd_device *usbd_dev, uint8_t addr)
+{
+	(void)usbd_dev;
+	uint8_t dir = addr & 0x80;
+	addr &= 0x7F;
+
+	if (dir) {
+		return !!(USB_TXCSRH(addr) & USB_TXCSRH_FDT);
+	} else {
+		return !!(USB_RXCSRH(addr) & USB_RXCSRH_DT);
+	}
+}
+
+static uint16_t lm4f_frame_number(usbd_device *usbd_dev)
+{
+	(void)usbd_dev;
+	return (USB_FRAME & 0x7F);
+}
+
 /*
  * A static struct works as long as we have only one USB peripheral. If we
  * meet LM4Fs with more than one USB, then we need to rework this approach.
  */
-static struct _usbd_device usbd_dev;
+static struct usbd_device _usbd_dev;
 
 /** Initialize the USB device controller hardware of the LM4F. */
 static usbd_device *lm4f_usbd_init(void)
@@ -610,7 +744,7 @@ static usbd_device *lm4f_usbd_init(void)
 	while ((SYSCTL_RIS & SYSCTL_RIS_USBPLLLRIS) == 0) {
 		i++;
 		if (i > 0xffff) {
-			return 0;
+			return NULL;
 		}
 	}
 
@@ -618,29 +752,35 @@ static usbd_device *lm4f_usbd_init(void)
 	lm4f_usb_soft_connect();
 
 	/* No FIFO allocated yet, but the first 64 bytes are still reserved */
-	usbd_dev.fifo_mem_top = 64;
+	fifo_mem_top = 64;
 
-	return &usbd_dev;
+	/* FIXME: enable suspend, resume, reset interrupt */
+	return &_usbd_dev;
 }
 
 /* What is this thing even good for */
 #define RX_FIFO_SIZE 512
 
-const struct _usbd_driver lm4f_usb_driver = {
+const struct usbd_backend usbd_lm4f = {
 	.init = lm4f_usbd_init,
 	.set_address = lm4f_set_address,
 	.ep_setup = lm4f_ep_setup,
+	.set_ep_type = lm4f_set_ep_type,
+	.set_ep_size = lm4f_set_ep_size,
 	.ep_reset = lm4f_endpoints_reset,
-	.ep_stall_set = lm4f_ep_stall_set,
-	.ep_stall_get = lm4f_ep_stall_get,
-	.ep_nak_set = lm4f_ep_nak_set,
+	.set_ep_stall = lm4f_set_ep_stall,
+	.get_ep_stall = lm4f_get_ep_stall,
+	.set_ep_nak = lm4f_set_ep_nak,
 	.ep_write_packet = lm4f_ep_write_packet,
 	.ep_read_packet = lm4f_ep_read_packet,
 	.poll = lm4f_poll,
 	.disconnect = lm4f_disconnect,
-	.base_address = USB_BASE,
+	.enable_sof = lm4f_enable_sof,
 	.set_address_before_status = false,
-	.rx_fifo_size = RX_FIFO_SIZE,
+	.get_ep_dtog = lm4f_get_ep_dtog,
+	.set_ep_dtog = lm4f_set_ep_dtog,
+	.ep_flush = lm4f_ep_flush,
+	.frame_number = lm4f_frame_number,
 };
 /**
  * @endcond

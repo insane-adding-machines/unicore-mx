@@ -55,18 +55,19 @@ LGPL License Terms @ref lgpl_license
 /* --- USB general registers ----------------------------------------------- */
 
 /* USB Control register */
-#define USB_CNTR_REG		(&MMIO32(USB_DEV_FS_BASE + 0x40))
+#define USB_CNTR		MMIO32(USB_DEV_FS_BASE + 0x40)
 /* USB Interrupt status register */
-#define USB_ISTR_REG		(&MMIO32(USB_DEV_FS_BASE + 0x44))
+#define USB_ISTR		MMIO32(USB_DEV_FS_BASE + 0x44)
 /* USB Frame number register */
-#define USB_FNR_REG		(&MMIO32(USB_DEV_FS_BASE + 0x48))
+#define USB_FNR			MMIO32(USB_DEV_FS_BASE + 0x48)
 /* USB Device address register */
-#define USB_DADDR_REG		(&MMIO32(USB_DEV_FS_BASE + 0x4C))
+#define USB_DADDR		MMIO32(USB_DEV_FS_BASE + 0x4C)
 /* USB Buffer table address register */
-#define USB_BTABLE_REG		(&MMIO32(USB_DEV_FS_BASE + 0x50))
+#define USB_BTABLE		MMIO32(USB_DEV_FS_BASE + 0x50)
 
 /* USB EP register */
 #define USB_EP_REG(EP)		(&MMIO32(USB_DEV_FS_BASE) + (EP))
+#define USB_EP(ep)			MMIO32(USB_DEV_FS_BASE + (ep)*4)
 
 
 /*****************************************************************************/
@@ -270,11 +271,6 @@ LGPL License Terms @ref lgpl_license
 	SET_REG(USB_EP_REG(EP), \
 		GET_REG(USB_EP_REG(EP)) & \
 		(USB_EP_NTOGGLE_MSK | USB_EP_RX_DTOG))
-
-
-/* --- USB BTABLE registers ------------------------------------------------ */
-
-#define USB_GET_BTABLE		GET_REG(USB_BTABLE_REG)
 
 /* --- USB BTABLE manipulators --------------------------------------------- */
 

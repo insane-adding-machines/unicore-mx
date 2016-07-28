@@ -40,11 +40,12 @@ LGPL License Terms @ref lgpl_license
 #ifndef UNICOREMX_USBD_MSC_H
 #define UNICOREMX_USBD_MSC_H
 
-#include <unicore-mx/usb/msc.h>
+#include <unicore-mx/usbd/usbd.h>
+#include <unicore-mx/usb/class/msc.h>
 
 typedef struct _usbd_mass_storage usbd_mass_storage;
 
-usbd_mass_storage *usb_msc_init(usbd_device *usbd_dev,
+usbd_mass_storage *usbd_msc_init(usbd_device *usbd_dev,
 				 uint8_t ep_in, uint8_t ep_in_size,
 				 uint8_t ep_out, uint8_t ep_out_size,
 				 const char *vendor_id,
@@ -53,6 +54,13 @@ usbd_mass_storage *usb_msc_init(usbd_device *usbd_dev,
 				 const uint32_t block_count,
 				 int (*read_block)(uint32_t lba, uint8_t *copy_to),
 				 int (*write_block)(uint32_t lba, const uint8_t *copy_from));
+
+enum usbd_control_result
+usbd_msc_control(usbd_device *usbd_dev,
+				usbd_control_arg *arg);
+
+void usbd_msc_set_config(usbd_device *usbd_dev,
+				const struct usb_config_descriptor *cfg);
 
 #endif
 

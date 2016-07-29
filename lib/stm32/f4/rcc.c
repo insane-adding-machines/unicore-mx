@@ -53,6 +53,7 @@ const struct rcc_clock_scale rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_END] = {
 		.plln = 96,
 		.pllp = 2,
 		.pllq = 2,
+		.pllr = 0,
 		.hpre = RCC_CFGR_HPRE_DIV_NONE,
 		.ppre1 = RCC_CFGR_PPRE_DIV_4,
 		.ppre2 = RCC_CFGR_PPRE_DIV_2,
@@ -68,6 +69,7 @@ const struct rcc_clock_scale rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_END] = {
 		.plln = 336,
 		.pllp = 4,
 		.pllq = 7,
+		.pllr = 0,
 		.hpre = RCC_CFGR_HPRE_DIV_NONE,
 		.ppre1 = RCC_CFGR_PPRE_DIV_2,
 		.ppre2 = RCC_CFGR_PPRE_DIV_NONE,
@@ -82,6 +84,7 @@ const struct rcc_clock_scale rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_END] = {
 		.plln = 240,
 		.pllp = 2,
 		.pllq = 5,
+		.pllr = 0,
 		.hpre = RCC_CFGR_HPRE_DIV_NONE,
 		.ppre1 = RCC_CFGR_PPRE_DIV_4,
 		.ppre2 = RCC_CFGR_PPRE_DIV_2,
@@ -97,6 +100,7 @@ const struct rcc_clock_scale rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_END] = {
 		.plln = 336,
 		.pllp = 2,
 		.pllq = 7,
+		.pllr = 0,
 		.hpre = RCC_CFGR_HPRE_DIV_NONE,
 		.ppre1 = RCC_CFGR_PPRE_DIV_4,
 		.ppre2 = RCC_CFGR_PPRE_DIV_2,
@@ -114,6 +118,7 @@ const struct rcc_clock_scale rcc_hse_12mhz_3v3[RCC_CLOCK_3V3_END] = {
 		.plln = 96,
 		.pllp = 2,
 		.pllq = 2,
+		.pllr = 0,
 		.hpre = RCC_CFGR_HPRE_DIV_NONE,
 		.ppre1 = RCC_CFGR_PPRE_DIV_4,
 		.ppre2 = RCC_CFGR_PPRE_DIV_2,
@@ -129,6 +134,7 @@ const struct rcc_clock_scale rcc_hse_12mhz_3v3[RCC_CLOCK_3V3_END] = {
 		.plln = 336,
 		.pllp = 4,
 		.pllq = 7,
+		.pllr = 0,
 		.hpre = RCC_CFGR_HPRE_DIV_NONE,
 		.ppre1 = RCC_CFGR_PPRE_DIV_2,
 		.ppre2 = RCC_CFGR_PPRE_DIV_NONE,
@@ -143,6 +149,7 @@ const struct rcc_clock_scale rcc_hse_12mhz_3v3[RCC_CLOCK_3V3_END] = {
 		.plln = 240,
 		.pllp = 2,
 		.pllq = 5,
+		.pllr = 0,
 		.hpre = RCC_CFGR_HPRE_DIV_NONE,
 		.ppre1 = RCC_CFGR_PPRE_DIV_4,
 		.ppre2 = RCC_CFGR_PPRE_DIV_2,
@@ -158,6 +165,7 @@ const struct rcc_clock_scale rcc_hse_12mhz_3v3[RCC_CLOCK_3V3_END] = {
 		.plln = 336,
 		.pllp = 2,
 		.pllq = 7,
+		.pllr = 0,
 		.hpre = RCC_CFGR_HPRE_DIV_NONE,
 		.ppre1 = RCC_CFGR_PPRE_DIV_4,
 		.ppre2 = RCC_CFGR_PPRE_DIV_2,
@@ -175,6 +183,7 @@ const struct rcc_clock_scale rcc_hse_16mhz_3v3[RCC_CLOCK_3V3_END] = {
 		.plln = 96,
 		.pllp = 2,
 		.pllq = 2,
+		.pllr = 0,
 		.hpre = RCC_CFGR_HPRE_DIV_NONE,
 		.ppre1 = RCC_CFGR_PPRE_DIV_4,
 		.ppre2 = RCC_CFGR_PPRE_DIV_2,
@@ -190,6 +199,7 @@ const struct rcc_clock_scale rcc_hse_16mhz_3v3[RCC_CLOCK_3V3_END] = {
 		.plln = 336,
 		.pllp = 4,
 		.pllq = 7,
+		.pllr = 0,
 		.hpre = RCC_CFGR_HPRE_DIV_NONE,
 		.ppre1 = RCC_CFGR_PPRE_DIV_2,
 		.ppre2 = RCC_CFGR_PPRE_DIV_NONE,
@@ -204,6 +214,7 @@ const struct rcc_clock_scale rcc_hse_16mhz_3v3[RCC_CLOCK_3V3_END] = {
 		.plln = 240,
 		.pllp = 2,
 		.pllq = 5,
+		.pllr = 0,
 		.hpre = RCC_CFGR_HPRE_DIV_NONE,
 		.ppre1 = RCC_CFGR_PPRE_DIV_4,
 		.ppre2 = RCC_CFGR_PPRE_DIV_2,
@@ -219,6 +230,7 @@ const struct rcc_clock_scale rcc_hse_16mhz_3v3[RCC_CLOCK_3V3_END] = {
 		.plln = 336,
 		.pllp = 2,
 		.pllq = 7,
+		.pllr = 0,
 		.hpre = RCC_CFGR_HPRE_DIV_NONE,
 		.ppre1 = RCC_CFGR_PPRE_DIV_4,
 		.ppre2 = RCC_CFGR_PPRE_DIV_2,
@@ -236,6 +248,7 @@ const struct rcc_clock_scale rcc_hse_25mhz_3v3[RCC_CLOCK_3V3_END] = {
 		.plln = 96,
 		.pllp = 2,
 		.pllq = 2,
+		.pllr = 0,
 		.hpre = RCC_CFGR_HPRE_DIV_NONE,
 		.ppre1 = RCC_CFGR_PPRE_DIV_4,
 		.ppre2 = RCC_CFGR_PPRE_DIV_2,
@@ -251,6 +264,7 @@ const struct rcc_clock_scale rcc_hse_25mhz_3v3[RCC_CLOCK_3V3_END] = {
 		.plln = 336,
 		.pllp = 4,
 		.pllq = 7,
+		.pllr = 0,
 		.hpre = RCC_CFGR_HPRE_DIV_NONE,
 		.ppre1 = RCC_CFGR_PPRE_DIV_2,
 		.ppre2 = RCC_CFGR_PPRE_DIV_NONE,
@@ -265,6 +279,7 @@ const struct rcc_clock_scale rcc_hse_25mhz_3v3[RCC_CLOCK_3V3_END] = {
 		.plln = 240,
 		.pllp = 2,
 		.pllq = 5,
+		.pllr = 0,
 		.hpre = RCC_CFGR_HPRE_DIV_NONE,
 		.ppre1 = RCC_CFGR_PPRE_DIV_4,
 		.ppre2 = RCC_CFGR_PPRE_DIV_2,
@@ -280,6 +295,7 @@ const struct rcc_clock_scale rcc_hse_25mhz_3v3[RCC_CLOCK_3V3_END] = {
 		.plln = 336,
 		.pllp = 2,
 		.pllq = 7,
+		.pllr = 0,
 		.hpre = RCC_CFGR_HPRE_DIV_NONE,
 		.ppre1 = RCC_CFGR_PPRE_DIV_4,
 		.ppre2 = RCC_CFGR_PPRE_DIV_2,
@@ -309,6 +325,12 @@ void rcc_osc_ready_int_clear(enum rcc_osc osc)
 	case RCC_LSI:
 		RCC_CIR |= RCC_CIR_LSIRDYC;
 		break;
+	case RCC_PLLSAI:
+		RCC_CIR |= RCC_CIR_PLLSAIRDYC;
+		break;
+	case RCC_PLLI2S:
+		RCC_CIR |= RCC_CIR_PLLI2SRDYC;
+		break;
 	}
 }
 
@@ -329,6 +351,12 @@ void rcc_osc_ready_int_enable(enum rcc_osc osc)
 		break;
 	case RCC_LSI:
 		RCC_CIR |= RCC_CIR_LSIRDYIE;
+		break;
+	case RCC_PLLSAI:
+		RCC_CIR |= RCC_CIR_PLLSAIRDYIE;
+		break;
+	case RCC_PLLI2S:
+		RCC_CIR |= RCC_CIR_PLLI2SRDYIE;
 		break;
 	}
 }
@@ -351,6 +379,12 @@ void rcc_osc_ready_int_disable(enum rcc_osc osc)
 	case RCC_LSI:
 		RCC_CIR &= ~RCC_CIR_LSIRDYIE;
 		break;
+	case RCC_PLLSAI:
+		RCC_CIR &= ~RCC_CIR_PLLSAIRDYIE;
+		break;
+	case RCC_PLLI2S:
+		RCC_CIR &= ~RCC_CIR_PLLI2SRDYIE;
+		break;
 	}
 }
 
@@ -359,22 +393,20 @@ int rcc_osc_ready_int_flag(enum rcc_osc osc)
 	switch (osc) {
 	case RCC_PLL:
 		return ((RCC_CIR & RCC_CIR_PLLRDYF) != 0);
-		break;
 	case RCC_HSE:
 		return ((RCC_CIR & RCC_CIR_HSERDYF) != 0);
-		break;
 	case RCC_HSI:
 		return ((RCC_CIR & RCC_CIR_HSIRDYF) != 0);
-		break;
 	case RCC_LSE:
 		return ((RCC_CIR & RCC_CIR_LSERDYF) != 0);
-		break;
 	case RCC_LSI:
 		return ((RCC_CIR & RCC_CIR_LSIRDYF) != 0);
-		break;
+	case RCC_PLLSAI:
+		return ((RCC_CIR & RCC_CIR_PLLSAIRDYF) != 0);
+	case RCC_PLLI2S:
+		return ((RCC_CIR & RCC_CIR_PLLI2SRDYF) != 0);
 	}
-
-	cm3_assert_not_reached();
+	return 0;
 }
 
 void rcc_css_int_clear(void)
@@ -404,6 +436,12 @@ void rcc_wait_for_osc_ready(enum rcc_osc osc)
 		break;
 	case RCC_LSI:
 		while ((RCC_CSR & RCC_CSR_LSIRDY) == 0);
+		break;
+	case RCC_PLLSAI:
+		while ((RCC_CR & RCC_CR_PLLSAIRDY) == 0);
+		break;
+	case RCC_PLLI2S:
+		while ((RCC_CR & RCC_CR_PLLI2SRDY) == 0);
 		break;
 	}
 }
@@ -444,6 +482,12 @@ void rcc_osc_on(enum rcc_osc osc)
 	case RCC_LSI:
 		RCC_CSR |= RCC_CSR_LSION;
 		break;
+	case RCC_PLLSAI:
+		RCC_CR |= RCC_CR_PLLSAION;
+		break;
+	case RCC_PLLI2S:
+		RCC_CR |= RCC_CR_PLLI2SON;
+		break;
 	}
 }
 
@@ -464,6 +508,12 @@ void rcc_osc_off(enum rcc_osc osc)
 		break;
 	case RCC_LSI:
 		RCC_CSR &= ~RCC_CSR_LSION;
+		break;
+	case RCC_PLLSAI:
+		RCC_CR &= ~RCC_CR_PLLSAION;
+		break;
+	case RCC_PLLI2S:
+		RCC_CR &= ~RCC_CR_PLLI2SON;
 		break;
 	}
 }
@@ -490,6 +540,7 @@ void rcc_osc_bypass_enable(enum rcc_osc osc)
 	case RCC_PLL:
 	case RCC_HSI:
 	case RCC_LSI:
+	default:
 		/* Do nothing, only HSE/LSE allowed here. */
 		break;
 	}
@@ -507,6 +558,7 @@ void rcc_osc_bypass_disable(enum rcc_osc osc)
 	case RCC_PLL:
 	case RCC_HSI:
 	case RCC_LSI:
+	default:
 		/* Do nothing, only HSE/LSE allowed here. */
 		break;
 	}
@@ -567,22 +619,59 @@ void rcc_set_rtcpre(uint32_t rtcpre)
 }
 
 void rcc_set_main_pll_hsi(uint32_t pllm, uint32_t plln, uint32_t pllp,
-			  uint32_t pllq)
+			  uint32_t pllq, uint32_t pllr)
 {
-	RCC_PLLCFGR = (pllm << RCC_PLLCFGR_PLLM_SHIFT) |
+	uint32_t reg32 = RCC_PLLCFGR;
+	uint8_t		new_r;
+
+	/* If passed in value is legal, use it, else use version from register */
+	new_r = (pllr > 1) ? pllr :
+					     (reg32 >> RCC_PLLCFGR_PLLR_SHIFT) & RCC_PLLCFGR_PLLR_MASK;
+
+	/* mask out any previous values */
+	reg32 &= ~(
+		 RCC_PLLCFGR_PLLSRC |	/* 0 = HSI */
+		(RCC_PLLCFGR_PLLM_MASK << RCC_PLLCFGR_PLLM_SHIFT) |
+		(RCC_PLLCFGR_PLLN_MASK << RCC_PLLCFGR_PLLN_SHIFT) |
+		(RCC_PLLCFGR_PLLP_MASK << RCC_PLLCFGR_PLLP_SHIFT) |
+		(RCC_PLLCFGR_PLLQ_MASK << RCC_PLLCFGR_PLLQ_SHIFT) |
+		(RCC_PLLCFGR_PLLR_MASK << RCC_PLLCFGR_PLLR_SHIFT));
+		
+	/* add back new values, PLLSRC is HSI */
+	RCC_PLLCFGR = reg32 | (
+		(pllm << RCC_PLLCFGR_PLLM_SHIFT) |
 		(plln << RCC_PLLCFGR_PLLN_SHIFT) |
 		(((pllp >> 1) - 1) << RCC_PLLCFGR_PLLP_SHIFT) |
-		(pllq << RCC_PLLCFGR_PLLQ_SHIFT);
+		(pllq << RCC_PLLCFGR_PLLQ_SHIFT) |
+		(new_r << RCC_PLLCFGR_PLLR_SHIFT));
 }
 
+/* Note it adjusts PLLP */
 void rcc_set_main_pll_hse(uint32_t pllm, uint32_t plln, uint32_t pllp,
-			  uint32_t pllq)
+			  uint32_t pllq, uint32_t pllr)
 {
-	RCC_PLLCFGR = (pllm << RCC_PLLCFGR_PLLM_SHIFT) |
+	uint32_t reg32 = RCC_PLLCFGR;
+	uint8_t		new_r;
+
+	/* If passed in value is legal, use it, else use version from register */
+	new_r = (pllr > 1) ? pllr :
+						 (reg32 >> RCC_PLLCFGR_PLLR_SHIFT) & RCC_PLLCFGR_PLLR_MASK;
+
+	/* mask out any previous values */
+	reg32 &= ~(
+		(RCC_PLLCFGR_PLLM_MASK << RCC_PLLCFGR_PLLM_SHIFT) |
+		(RCC_PLLCFGR_PLLN_MASK << RCC_PLLCFGR_PLLN_SHIFT) |
+		(RCC_PLLCFGR_PLLP_MASK << RCC_PLLCFGR_PLLP_SHIFT) |
+		(RCC_PLLCFGR_PLLQ_MASK << RCC_PLLCFGR_PLLQ_SHIFT) |
+		(RCC_PLLCFGR_PLLR_MASK << RCC_PLLCFGR_PLLR_SHIFT));
+		
+	/* add in the new values + PLLSRC */
+	RCC_PLLCFGR = reg32 | RCC_PLLCFGR_PLLSRC | (
+		(pllm << RCC_PLLCFGR_PLLM_SHIFT) |
 		(plln << RCC_PLLCFGR_PLLN_SHIFT) |
 		(((pllp >> 1) - 1) << RCC_PLLCFGR_PLLP_SHIFT) |
-		RCC_PLLCFGR_PLLSRC |
-		(pllq << RCC_PLLCFGR_PLLQ_SHIFT);
+		(pllq << RCC_PLLCFGR_PLLQ_SHIFT) |
+		(new_r << RCC_PLLCFGR_PLLR_SHIFT));
 }
 
 uint32_t rcc_system_clock_source(void)
@@ -620,7 +709,7 @@ void rcc_clock_setup_hse_3v3(const struct rcc_clock_scale *clock)
 	rcc_set_ppre2(clock->ppre2);
 
 	rcc_set_main_pll_hse(clock->pllm, clock->plln,
-			clock->pllp, clock->pllq);
+			clock->pllp, clock->pllq, clock->pllr);
 
 	/* Enable PLL oscillator and wait for it to stabilize. */
 	rcc_osc_on(RCC_PLL);

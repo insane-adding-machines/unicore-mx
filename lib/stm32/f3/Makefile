@@ -43,9 +43,13 @@ OBJS            += gpio_common_all.o gpio_common_f0234.o \
 		   flash.o exti_common_all.o rcc_common_all.o spi_common_f03.o
 OBJS		+= adc_common_v2.o adc_common_v2_multi.o
 OBJS		+= usart_common_v2.o usart_common_all.o
-OBJS		+= usbd.o usbd_control.o usbd_standard.o
-OBJS		+= st_usbfs_core.o st_usbfs_v1.o
 
-VPATH += ../../usbd:../:../../cm3:../common
+OBJS		+= usbd.o usbd_control.o usbd_standard.o
+OBJS		+= usbd_stm32_fsdev.o usbd_stm32_fsdev_v1.o
+OBJS		+= usbd_msc.o
+OBJS		+= usbd_control.o usbd_string.o
+
+VPATH += ../:../../cm3:../common
+VPATH += ../../usbd:../../usbd/class:../../usbd/backend:../../usbd/misc
 
 include ../../Makefile.include

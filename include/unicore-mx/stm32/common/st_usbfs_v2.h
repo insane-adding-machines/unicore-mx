@@ -39,8 +39,8 @@
 /* Register definitions                                                      */
 /*****************************************************************************/
 
-#define USB_LPMCSR_REG		(&MMIO32(USB_DEV_FS_BASE + 0x54))
-#define USB_BCDR_REG		(&MMIO32(USB_DEV_FS_BASE + 0x58))
+#define USB_LPMCSR		MMIO32(USB_DEV_FS_BASE + 0x54)
+#define USB_BCDR		MMIO32(USB_DEV_FS_BASE + 0x58)
 
 /*****************************************************************************/
 /* Register values                                                           */
@@ -79,16 +79,16 @@
 /* --- USB BTABLE registers ------------------------------------------------ */
 
 #define USB_EP_TX_ADDR(ep) \
-	((uint16_t *)(USB_PMA_BASE + (USB_GET_BTABLE + (ep) * 8 + 0) * 1))
+	((uint16_t *)(USB_PMA_BASE + (USB_BTABLE + (ep) * 8 + 0) * 1))
 
 #define USB_EP_TX_COUNT(ep) \
-	((uint16_t *)(USB_PMA_BASE + (USB_GET_BTABLE + (ep) * 8 + 2) * 1))
+	((uint16_t *)(USB_PMA_BASE + (USB_BTABLE + (ep) * 8 + 2) * 1))
 
 #define USB_EP_RX_ADDR(ep) \
-	((uint16_t *)(USB_PMA_BASE + (USB_GET_BTABLE + (ep) * 8 + 4) * 1))
+	((uint16_t *)(USB_PMA_BASE + (USB_BTABLE + (ep) * 8 + 4) * 1))
 
 #define USB_EP_RX_COUNT(ep) \
-	((uint16_t *)(USB_PMA_BASE + (USB_GET_BTABLE + (ep) * 8 + 6) * 1))
+	((uint16_t *)(USB_PMA_BASE + (USB_BTABLE + (ep) * 8 + 6) * 1))
 
 /* --- USB BTABLE manipulators --------------------------------------------- */
 

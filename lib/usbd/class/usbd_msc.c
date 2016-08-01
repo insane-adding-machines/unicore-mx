@@ -23,8 +23,8 @@
 #include <string.h>
 #include <unicore-mx/cm3/common.h>
 #include <unicore-mx/usbd/usbd.h>
-#include <unicore-mx/usbd/msc.h>
-#include "usbd_private.h"
+#include <unicore-mx/usbd/class/msc.h>
+#include "../usbd_private.h"
 
 /* Definitions of Mass Storage Class from:
  *
@@ -153,9 +153,8 @@ struct usb_msc_trans {
 
 	uint32_t bytes_to_read;
 	uint32_t bytes_to_write;
-	uint32_t byte_count;		/* Either read until equal to
-					   bytes_to_read or write until equal
-					   to bytes_to_write. */
+	uint32_t byte_count;		/* Either read until equal to bytes_to_read or
+					   write until equal to bytes_to_write. */
 	uint32_t lba_start;
 	uint32_t block_count;
 	uint32_t current_block;
@@ -289,8 +288,7 @@ static void scsi_write_6(usbd_mass_storage *ms,
 
 		buf = get_cbw_buf(trans);
 
-		trans->lba_start = ((0x1f & buf[1]) << 16)
-				    | (buf[2] << 8) | buf[3];
+		trans->lba_start = ((0x1f & buf[1]) << 16) | (buf[2] << 8) | buf[3];
 		trans->block_count = buf[4];
 		trans->current_block = 0;
 
@@ -327,8 +325,7 @@ static void scsi_read_10(usbd_mass_storage *ms,
 
 		buf = get_cbw_buf(trans);
 
-		trans->lba_start = (buf[2] << 24) | (buf[3] << 16)
-				   | (buf[4] << 8) | buf[5];
+		trans->lba_start = (buf[2] << 24) | (buf[3] << 16) | (buf[4] << 8) | buf[5];
 		trans->block_count = (buf[7] << 8) | buf[8];
 
 		/* TODO: Check the lba & block_count for range. */
@@ -388,7 +385,7 @@ static void scsi_request_sense(usbd_mass_storage *ms,
 
 		trans->bytes_to_write = buf[4];	/* allocation length */
 		memcpy(trans->msd_buf, _spc3_request_sense,
-		       sizeof(_spc3_request_sense));
+			sizeof(_spc3_request_sense));
 
 		trans->msd_buf[2] = ms->sense.key;
 		trans->msd_buf[12] = ms->sense.asc;
@@ -449,8 +446,7 @@ static void scsi_inquiry(usbd_mass_storage *ms,
 		if (0 == evpd) {
 			size_t len;
 			trans->bytes_to_write = sizeof(_spc3_inquiry_response);
-			memcpy(trans->msd_buf, _spc3_inquiry_response,
-			       sizeof(_spc3_inquiry_response));
+			memcpy(trans->msd_buf, _spc3_inquiry_response, sizeof(_spc3_inquiry_response));
 
 			len = strlen(ms->vendor_id);
 			len = MIN(len, 8);
@@ -462,11 +458,9 @@ static void scsi_inquiry(usbd_mass_storage *ms,
 
 			len = strlen(ms->product_revision_level);
 			len = MIN(len, 4);
-			memcpy(&trans->msd_buf[32], ms->product_revision_level,
-			       len);
+			memcpy(&trans->msd_buf[32], ms->product_revision_level, len);
 
-			trans->csw.csw.dCSWDataResidue =
-				sizeof(_spc3_inquiry_response);
+			trans->csw.csw.dCSWDataResidue = sizeof(_spc3_inquiry_response);
 
 			set_sbc_status_good(ms);
 		} else {
@@ -571,7 +565,7 @@ static void msc_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 
 	if (trans->byte_count < trans->bytes_to_read) {
 		if (0 < trans->block_count) {
-			if ((0 == trans->byte_count) && (NULL != ms->lock)) {
+			if ((0 == trans->byte_count) && (NULL != ms->lock)){
 				(*ms->lock)();
 			}
 		}
@@ -587,8 +581,7 @@ static void msc_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 				uint32_t lba;
 
 				lba = trans->lba_start + trans->current_block;
-				if (0 != (*ms->write_block)(lba,
-							    trans->msd_buf)) {
+				if (0 != (*ms->write_block)(lba, trans->msd_buf)) {
 					/* Error */
 				}
 				trans->current_block++;
@@ -604,8 +597,7 @@ static void msc_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 				uint32_t lba;
 
 				lba = trans->lba_start + trans->current_block;
-				if (0 != (*ms->read_block)(lba,
-							   trans->msd_buf)) {
+				if (0 != (*ms->read_block)(lba, trans->msd_buf)) {
 					/* Error */
 				}
 				trans->current_block++;
@@ -623,13 +615,12 @@ static void msc_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 				uint32_t lba;
 
 				lba = trans->lba_start + trans->current_block;
-				if (0 != (*ms->write_block)(lba,
-							    trans->msd_buf)) {
+				if (0 != (*ms->write_block)(lba, trans->msd_buf)) {
 					/* Error */
 				}
 
 				trans->current_block = 0;
-				if (NULL != ms->unlock) {
+				if (NULL != ms->unlock){
 					(*ms->unlock)();
 				}
 			}
@@ -643,8 +634,7 @@ static void msc_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 		if (0 < left) {
 			max_len = MIN(ms->ep_out_size, left);
 			p = &trans->csw.buf[trans->csw_sent];
-			len = usbd_ep_write_packet(usbd_dev, ms->ep_in, p,
-						   max_len);
+			len = usbd_ep_write_packet(usbd_dev, ms->ep_in, p, max_len);
 			trans->csw_sent += len;
 		}
 	}
@@ -667,8 +657,7 @@ static void msc_data_tx_cb(usbd_device *usbd_dev, uint8_t ep)
 				uint32_t lba;
 
 				lba = trans->lba_start + trans->current_block;
-				if (0 != (*ms->read_block)(lba,
-							   trans->msd_buf)) {
+				if (0 != (*ms->read_block)(lba, trans->msd_buf)) {
 					/* Error */
 				}
 				trans->current_block++;
@@ -684,7 +673,7 @@ static void msc_data_tx_cb(usbd_device *usbd_dev, uint8_t ep)
 		if (0 < trans->block_count) {
 			if (trans->current_block == trans->block_count) {
 				trans->current_block = 0;
-				if (NULL != ms->unlock) {
+				if (NULL != ms->unlock){
 					(*ms->unlock)();
 				}
 			}
@@ -718,45 +707,42 @@ static void msc_data_tx_cb(usbd_device *usbd_dev, uint8_t ep)
 /** @brief Handle various control requests related to the msc storage
  *	   interface.
  */
-static int msc_control_request(usbd_device *usbd_dev,
-			       struct usb_setup_data *req, uint8_t **buf,
-			       uint16_t *len,
-			       usbd_control_complete_callback *complete)
+enum usbd_control_result
+usbd_msc_control(usbd_device *usbd_dev, struct usbd_control_arg *arg)
 {
-	(void)complete;
 	(void)usbd_dev;
 
-	switch (req->bRequest) {
-	case USB_MSC_REQ_BULK_ONLY_RESET:
-		/* Do any special reset code here. */
-		return USBD_REQ_HANDLED;
-	case USB_MSC_REQ_GET_MAX_LUN:
-		/* Return the number of LUNs.  We use 0. */
-		*buf[0] = 0;
-		*len = 1;
-		return USBD_REQ_HANDLED;
-	}
+	const uint8_t mask = USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT;
+	const uint8_t value = USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE;
 
-	return USBD_REQ_NOTSUPP;
+	if((arg->setup.bmRequestType & mask) == value) {
+		switch (arg->setup.bRequest) {
+		case USB_MSC_REQ_BULK_ONLY_RESET:
+			/* Do any special reset code here. */
+			return USBD_REQ_HANDLED;
+		case USB_MSC_REQ_GET_MAX_LUN:
+			/* Return the number of LUNs.  We use 0. */
+			arg->buf[0] = 0;
+			arg->len = 1;
+			return USBD_REQ_HANDLED;
+		}
+ 	}
+
+	return USBD_REQ_NEXT;
 }
 
 /** @brief Setup the endpoints to be bulk & register the callbacks. */
-static void msc_set_config(usbd_device *usbd_dev, uint16_t wValue)
+void usbd_msc_set_config(usbd_device *usbd_dev,
+		const struct usb_config_descriptor *cfg)
 {
 	usbd_mass_storage *ms = &_mass_storage;
 
-	(void)wValue;
+	(void)cfg;
 
 	usbd_ep_setup(usbd_dev, ms->ep_in, USB_ENDPOINT_ATTR_BULK,
-		      ms->ep_in_size, msc_data_tx_cb);
+			ms->ep_in_size, msc_data_tx_cb);
 	usbd_ep_setup(usbd_dev, ms->ep_out, USB_ENDPOINT_ATTR_BULK,
-		      ms->ep_out_size, msc_data_rx_cb);
-
-	usbd_register_control_callback(
-				usbd_dev,
-				USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE,
-				USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
-				msc_control_request);
+			ms->ep_out_size, msc_data_rx_cb);
 }
 
 /** @addtogroup usb_msc */
@@ -783,17 +769,15 @@ static void msc_set_config(usbd_device *usbd_dev, uint16_t wValue)
 
 @return Pointer to the usbd_mass_storage struct.
 */
-usbd_mass_storage *usb_msc_init(usbd_device *usbd_dev,
+usbd_mass_storage *usbd_msc_init(usbd_device *usbd_dev,
 				 uint8_t ep_in, uint8_t ep_in_size,
 				 uint8_t ep_out, uint8_t ep_out_size,
 				 const char *vendor_id,
 				 const char *product_id,
 				 const char *product_revision_level,
 				 const uint32_t block_count,
-				 int (*read_block)(uint32_t lba,
-						   uint8_t *copy_to),
-				 int (*write_block)(uint32_t lba,
-						    const uint8_t *copy_from))
+				 int (*read_block)(uint32_t lba, uint8_t *copy_to),
+				 int (*write_block)(uint32_t lba, const uint8_t *copy_from))
 {
 	_mass_storage.usbd_dev = usbd_dev;
 	_mass_storage.ep_in = ep_in;
@@ -820,8 +804,6 @@ usbd_mass_storage *usb_msc_init(usbd_device *usbd_dev,
 	_mass_storage.trans.csw_sent = 0;
 
 	set_sbc_status_good(&_mass_storage);
-
-	usbd_register_set_config_callback(usbd_dev, msc_set_config);
 
 	return &_mass_storage;
 }

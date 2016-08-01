@@ -37,16 +37,16 @@
 /* --- USB BTABLE Registers ------------------------------------------------ */
 
 #define USB_EP_TX_ADDR(EP) \
-	((uint32_t *)(USB_PMA_BASE + (USB_GET_BTABLE + EP * 8 + 0) * 2))
+	((uint32_t *)(USB_PMA_BASE + (USB_BTABLE + EP * 8 + 0) * 2))
 
 #define USB_EP_TX_COUNT(EP) \
-	((uint32_t *)(USB_PMA_BASE + (USB_GET_BTABLE + EP * 8 + 2) * 2))
+	((uint32_t *)(USB_PMA_BASE + (USB_BTABLE + EP * 8 + 2) * 2))
 
 #define USB_EP_RX_ADDR(EP) \
-	((uint32_t *)(USB_PMA_BASE + (USB_GET_BTABLE + EP * 8 + 4) * 2))
+	((uint32_t *)(USB_PMA_BASE + (USB_BTABLE + EP * 8 + 4) * 2))
 
 #define USB_EP_RX_COUNT(EP) \
-	((uint32_t *)(USB_PMA_BASE + (USB_GET_BTABLE + EP * 8 + 6) * 2))
+	((uint32_t *)(USB_PMA_BASE + (USB_BTABLE + EP * 8 + 6) * 2))
 
 /* --- USB BTABLE manipulators --------------------------------------------- */
 

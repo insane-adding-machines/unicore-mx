@@ -33,8 +33,8 @@ LGPL License Terms @ref lgpl_license
 
 /**@{*/
 
-#ifndef __HID_H
-#define __HID_H
+#ifndef UNICORE_USB_CLASS_HID_H
+#define UNICORE_USB_CLASS_HID_H
 
 #include <stdint.h>
 

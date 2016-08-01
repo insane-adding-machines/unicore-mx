@@ -33,8 +33,8 @@ LGPL License Terms @ref lgpl_license
 
 /**@{*/
 
-#ifndef UNICOREMX_USB_MIDI_H
-#define UNICOREMX_USB_MIDI_H
+#ifndef UNICOREMX_USB_CLASS_MIDI_H
+#define UNICOREMX_USB_CLASS_MIDI_H
 
 /*
  * Definitions from the USB_MIDI_ or usb_midi_ namespace come from:

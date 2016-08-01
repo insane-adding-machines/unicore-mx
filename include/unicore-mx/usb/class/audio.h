@@ -33,8 +33,8 @@ LGPL License Terms @ref lgpl_license
 
 /**@{*/
 
-#ifndef UNICOREMX_USB_AUDIO_H
-#define UNICOREMX_USB_AUDIO_H
+#ifndef UNICOREMX_USB_CLASS_AUDIO_H
+#define UNICOREMX_USB_CLASS_AUDIO_H
 
 /*
  * Definitions from the USB_AUDIO_ or usb_audio_ namespace come from:

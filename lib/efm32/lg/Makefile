@@ -38,9 +38,15 @@ ARFLAGS		= rcs
 OBJS		=
 
 OBJS		= gpio.o cmu.o prs.o adc.o dma.o timer.o dac.o
-OBJS		+= usbd.o usbd_control.o usbd_standard.o usbd_efm32lg.o
+OBJS		+= usbd.o usbd_control.o usbd_standard.o
+OBJS		+= usbd_dwc_otg.o usbd_efm32lg.o
+OBJS		+= usbd_msc.o
+OBJS		+= usbd_control.o usbd_string.o
 
-VPATH += ../../usbd:../:../../cm3
+# FIXME: usb host not being compiled
+
+VPATH += ../:../../cm3
+VPATH += ../../usbd:../../usbd/class:../../usbd/backend:../../usbd/misc
 
 include ../../Makefile.include
 

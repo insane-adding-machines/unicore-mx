@@ -35,8 +35,8 @@ LGPL License Terms @ref lgpl_license
 
 /**@{*/
 
-#ifndef __MSC_H
-#define __MSC_H
+#ifndef UNICORE_USB_CLASS_MSC_H
+#define UNICORE_USB_CLASS_MSC_H
 
 /* Definitions of Mass Storage Class from:
  *

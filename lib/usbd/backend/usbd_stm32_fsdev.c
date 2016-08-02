@@ -179,23 +179,6 @@ void stm32_fsdev_set_ep_size(usbd_device *usbd_dev, uint8_t addr,
 	uint8_t dir = addr & 0x80;
 	addr &= 0x7f;
 
-	if ((USB_EP(addr) & USB_EP_TYPE) == USB_EP_TYPE_ISO) {
-		uint16_t count_reg;
-		if (!dir) {
-			count_reg = stm32_fsdev_calc_ep_rx_bufsize(&max_size);
-		} else {
-			if (max_size & 1) {
-				max_size += 1;
-			}
-			count_reg = max_size;
-		}
-
-		USB_SET_EP_RX_ADDR(addr, USB_GET_EP_TX_ADDR(addr) + max_size);
-		USB_SET_EP_TX_COUNT(addr, count_reg);
-		USB_SET_EP_RX_COUNT(addr, count_reg);
-		return;
-	}
-
 	/* note: for TX, their is no method to store max_size.
 	 *   it is assumed that application will never send buffer
 	 *    larger than max_size of TX.

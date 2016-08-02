@@ -596,11 +596,6 @@ extern uint32_t rcc_ahb_frequency;
 extern uint32_t rcc_apb1_frequency;
 extern uint32_t rcc_apb2_frequency;
 
-typedef enum {
-	RCC_CLOCK_3V3_216MHZ,
-	RCC_CLOCK_3V3_END
-} clock_3v3_t;
-
 struct rcc_clock_scale {
 	uint8_t pllm;
 	uint16_t plln;
@@ -616,7 +611,8 @@ struct rcc_clock_scale {
 	uint32_t apb2_frequency;
 };
 
-extern const struct rcc_clock_scale hse_25mhz_3v3[RCC_CLOCK_3V3_END];
+extern const struct rcc_clock_scale hse_25mhz_3v3;
+extern const struct rcc_clock_scale hse_8mhz_3v3;
 
 enum rcc_osc {
 	RCC_PLL, RCC_HSE, RCC_HSI, RCC_LSE, RCC_LSI

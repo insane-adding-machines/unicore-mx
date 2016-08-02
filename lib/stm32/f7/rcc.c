@@ -7,8 +7,11 @@ uint32_t rcc_ahb_frequency  = 16000000;
 uint32_t rcc_apb1_frequency = 16000000;
 uint32_t rcc_apb2_frequency = 16000000;
 
-const struct rcc_clock_scale hse_25mhz_3v3[RCC_CLOCK_3V3_END] = {
-	{ /* 216MHz */
+
+/* All clocks produce 216MHz, from a different 
+ * source. STM32F746NGH6 (like in discovery
+ * has a 25MHz crystal. Nucleo-144 has 8MHz*/
+const struct rcc_clock_scale hse_25mhz_3v3 = {
 		.pllm = 25,
 		.plln = 432,
 		.pllp = 2,
@@ -21,7 +24,21 @@ const struct rcc_clock_scale hse_25mhz_3v3[RCC_CLOCK_3V3_END] = {
 		.ahb_frequency  = 216000000,
 		.apb1_frequency = 108000000,
 		.apb2_frequency = 216000000,
-	},
+};
+
+const struct rcc_clock_scale hse_8mhz_3v3 = {
+		.pllm = 8,
+		.plln = 432,
+		.pllp = 2,
+		.pllq = 9,
+		.hpre = RCC_CFGR_HPRE_DIV_NONE,
+		.ppre1 = RCC_CFGR_PPRE_DIV_4,
+		.ppre2 = RCC_CFGR_PPRE_DIV_2,
+		.flash_config = FLASH_ACR_ICE | FLASH_ACR_DCE |
+				FLASH_ACR_LATENCY_7WS,
+		.ahb_frequency  = 216000000,
+		.apb1_frequency = 108000000,
+		.apb2_frequency = 216000000,
 };
 
 void rcc_osc_ready_int_clear(enum rcc_osc osc)

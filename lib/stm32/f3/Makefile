@@ -44,7 +44,7 @@ OBJS            += gpio_common_all.o gpio_common_f0234.o \
 OBJS		+= adc_common_v2.o adc_common_v2_multi.o
 OBJS		+= usart_common_v2.o usart_common_all.o
 
-OBJS		+= usbd.o usbd_control.o usbd_standard.o
+OBJS		+= usbd.o usbd_ep0.o usbd_standard.o
 OBJS		+= usbd_stm32_fsdev.o usbd_stm32_fsdev_v1.o
 OBJS		+= usbd_msc.o
 OBJS		+= usbd_control.o usbd_string.o

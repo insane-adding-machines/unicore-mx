@@ -38,7 +38,7 @@ ARFLAGS		= rcs
 OBJS		=
 
 OBJS		= gpio.o cmu.o prs.o adc.o dma.o timer.o dac.o
-OBJS		+= usbd.o usbd_control.o usbd_standard.o
+OBJS		+= usbd.o usbd_ep0.o usbd_standard.o
 OBJS		+= usbd_dwc_otg.o usbd_efm32lg.o
 OBJS		+= usbd_msc.o
 OBJS		+= usbd_control.o usbd_string.o

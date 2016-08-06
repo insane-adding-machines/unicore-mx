@@ -39,6 +39,9 @@
 #elif defined(LPC43XX_M0)
 #	include <unicore-mx/lpc43xx/m0/nvic.h>
 
+#elif defined(NRF51)
+#	include <unicore-mx/nrf/51/nvic.h>
+
 #elif defined(SAM3A)
 #	include <unicore-mx/sam/3a/nvic.h>
 #elif defined(SAM3N)

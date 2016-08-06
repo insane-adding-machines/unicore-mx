@@ -13,6 +13,7 @@ Currently (at least partly) supported microcontrollers:
  - TI (Tiva) LM4F series (continuing as TM4F, pin and peripheral compatible)
  - EFM32 Gecko series (only core support)
  - NXP Vybrid VF6xx (formerly Freescale)
+ - Nordic Semiconductor nRF51
 
 The library is a fork of [libopencm3](https://github.com/libopencm3/libopencm3).
 We highly value all the work done in libopencm3, but for our projects we need a higher

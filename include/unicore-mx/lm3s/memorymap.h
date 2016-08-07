@@ -61,5 +61,13 @@
 #define ETH_MAC_TR			MMIO32(ETHERNET_BASE + 0x0038)
 #define ETH_MAC_TS			MMIO32(ETHERNET_BASE + 0x003C)
 
+/* Internal Flash programming           */
+#define FLASH_BASE			(0x400FD000)
+#define FLASH_FMA			MMIO32(FLASH_BASE)
+#define FLASH_FMD			MMIO32(FLASH_BASE + 0x0004)
+#define FLASH_FMC			MMIO32(FLASH_BASE + 0x0008)
+
+
+
 
 #endif

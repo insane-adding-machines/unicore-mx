@@ -32,7 +32,7 @@ TGT_CFLAGS	= -Os \
 TGT_CFLAGS      += $(DEBUG_FLAGS)
 # ARFLAGS	= rcsv
 ARFLAGS		= rcs
-OBJS		= gpio.o vector.o assert.o rcc.o usart.o mac_lm3s.o
+OBJS		= gpio.o vector.o assert.o rcc.o usart.o mac_lm3s.o flash.o
 
 VPATH += ../cm3
 VPATH += ../ethernet

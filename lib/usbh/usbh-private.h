@@ -243,21 +243,18 @@ void usbh_device_ep_dtog_toggle(usbh_device *host, uint8_t ep);
 extern void usbh_log_puts(const char *arg);
 extern void usbh_log_printf(const char *fmt, ...)
 	__attribute__((format(printf, 1, 2)));
-#include <inttypes.h>
-#define NEW_LINE "\n"
-#define LOG(str) usbh_log_puts(str)
-#define LOG_LN(str) LOG(str); LOG(NEW_LINE)
-#define LOG_CALL LOG("inside "); LOG(__func__); LOG(NEW_LINE);
-#define LOGF(fmt,...) usbh_log_printf(fmt, ##__VA_ARGS__)
-#define LOGF_LN(fmt,...) LOGF(fmt, __VA_ARGS__); LOG(NEW_LINE)
+# include <inttypes.h>
+# define LOG(str) usbh_log_puts(str)
+# define LOGF(fmt,...) usbh_log_printf(fmt, ##__VA_ARGS__)
 #else
-#define NEW_LINE
-#define LOG(str)
-#define LOG_LN(str)
-#define LOG_CALL
-#define LOGF(fmt,...)
-#define LOGF_LN(fmt,...)
+# define LOG(str)
+# define LOGF(fmt,...)
 #endif
+
+#define NEW_LINE "\n"
+#define LOG_LN(str) LOG(str); LOG(NEW_LINE)
+#define LOGF_LN(fmt,...) LOGF(fmt, __VA_ARGS__); LOG(NEW_LINE)
+#define LOG_CALL LOG("inside "); LOG_LN(__func__);
 
 #define INVALID_BACKEND_TAG 0xFF
 

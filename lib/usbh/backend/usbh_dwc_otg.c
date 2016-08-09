@@ -395,7 +395,7 @@ void usbh_dwc_otg_poll(usbh_host *host, uint64_t now)
 	if (REBASE(OTG_GINTSTS) & OTG_GINTSTS_IPXFR) {
 		REBASE(OTG_GINTSTS) = OTG_GINTSTS_IPXFR;
 		PREFIX_FRAME_NUM
-		LOG_LN("WARNING: IPXFR (Incomplete Periodic transfer)");
+		LOG_LN("WARN: IPXFR (Incomplete Periodic transfer)");
 	}
 #endif
 }
@@ -1018,6 +1018,16 @@ static void handle_rxflvl_interrupt(usbh_host *host)
 	}
 
 	usbh_dwc_otg_chan *ch = CHANNELS_ITEM(i);
+	if (ch->state == USBH_DWC_OTG_CHAN_STATE_FREE) {
+		LOG_LN("WARN: channel is in free state, IN packet is not expected");
+		return;
+	}
+
+	if (ch->state == USBH_DWC_OTG_CHAN_STATE_CANCELLED) {
+		LOG_LN("WARN: channel is in cancelled state, IN packet is not expected");
+		return;
+	}
+
 	usbh_urb *urb = ch->urb;
 	usbh_transfer *transfer = &urb->transfer;
 

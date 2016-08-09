@@ -42,7 +42,7 @@ usbh_urb_id usbh_transfer_submit(const usbh_transfer *transfer)
 			/* Control IN with no data do not make sense
 			 *  and is not valid as per specs!
 			 * usb_20.pdf p226 "Figure 8-37. Control Read and Write Sequences" */
-			LOG_LN("Warning: device-to-host bit set for wLength = 0");
+			LOG_LN("WARN: device-to-host bit set for wLength = 0");
 			TRANSFER_INVALID(transfer);
 			return USBH_INVALID_URB_ID;
 		}
@@ -52,7 +52,7 @@ usbh_urb_id usbh_transfer_submit(const usbh_transfer *transfer)
 		transfer->ep_type == USBH_EP_ISOCHRONOUS) {
 		if (!transfer->interval) {
 			/* Interval = 0 do not make any sense! */
-			LOG_LN("Warning: interval should be greater than 0 "
+			LOG_LN("WARN: interval should be greater than 0 "
 				"for isochronous/interrupt endpoints");
 			TRANSFER_INVALID(transfer);
 			return USBH_INVALID_URB_ID;
@@ -83,7 +83,7 @@ usbh_urb_id usbh_transfer_submit(const usbh_transfer *transfer)
 
 	/* check if got any URB free */
 	if (urb == NULL) {
-		LOG_LN("problem, all urb in use");
+		LOG_LN("WARN: all urb in use");
 		TRANSFER_NO_RES(transfer);
 		return USBH_INVALID_URB_ID;
 	}
@@ -120,5 +120,5 @@ void usbh_transfer_cancel(usbh_host *host, usbh_urb_id urb_id)
 		}
 	}
 
-	LOGF_LN("WARNING: urb with id = %"PRIu64" not found", urb_id);
+	LOGF_LN("WARN: urb with id = %"PRIu64" not found", urb_id);
 }

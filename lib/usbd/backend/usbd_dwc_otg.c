@@ -38,23 +38,22 @@
 
 void dwc_otg_init(usbd_device *usbd_dev)
 {
-	unsigned i;
-	uint16_t ep_msk;
-
-	REBASE(DWC_OTG_GINTSTS) = DWC_OTG_GINTSTS_MMIS;
-
 	REBASE(DWC_OTG_GUSBCFG) |= DWC_OTG_GUSBCFG_PHYSEL;
-	/* Enable VBUS sensing in device mode and power down the PHY. */
-	REBASE(DWC_OTG_GCCFG) |= DWC_OTG_GCCFG_VBUSBSEN | DWC_OTG_GCCFG_PWRDWN;
 
 	/* Wait for AHB idle. */
 	while (!(REBASE(DWC_OTG_GRSTCTL) & DWC_OTG_GRSTCTL_AHBIDL));
+
 	/* Do core soft reset. */
 	REBASE(DWC_OTG_GRSTCTL) |= DWC_OTG_GRSTCTL_CSRST;
 	while (REBASE(DWC_OTG_GRSTCTL) & DWC_OTG_GRSTCTL_CSRST);
 
+	/* Clear SDIS because newer version have set by default */
+	REBASE(DWC_OTG_DCTL) &= ~DWC_OTG_DCTL_SDIS;
+
 	/* Force peripheral only mode. */
 	REBASE(DWC_OTG_GUSBCFG) |= DWC_OTG_GUSBCFG_FDMOD | DWC_OTG_GUSBCFG_TRDT_MASK;
+
+	REBASE(DWC_OTG_GINTSTS) = DWC_OTG_GINTSTS_MMIS;
 
 	/* Full speed device. */
 	REBASE(DWC_OTG_DCFG) |= DWC_OTG_DCFG_DSPD;
@@ -72,13 +71,7 @@ void dwc_otg_init(usbd_device *usbd_dev)
 					DWC_OTG_GINTMSK_USBSUSPM |
 					DWC_OTG_GINTMSK_WUIM;
 
-	/* generate mask for endpoints */
-	ep_msk = 0x00;
-	for (i = 0; i < private_data->ep_count; i++) {
-		ep_msk |= (1 << i);
-	}
-
-	REBASE(DWC_OTG_DAINTMSK) = ep_msk;
+	REBASE(DWC_OTG_DAINTMSK) = (1 << (private_data->ep_count + 1)) - 1;
 	REBASE(DWC_OTG_DIEPMSK) = DWC_OTG_DIEPMSK_XFRCM;
 }
 

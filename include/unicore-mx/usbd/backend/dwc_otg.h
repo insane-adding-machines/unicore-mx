@@ -42,7 +42,7 @@
 #define DWC_OTG_GRXFSIZ(base)		MMIO32((base) + 0x024)
 #define DWC_OTG_GNPTXFSIZ(base)		MMIO32((base) + 0x028)
 #define DWC_OTG_GNPTXSTS(base)		MMIO32((base) + 0x02C)
-#define DWC_OTG_GCCFG(base)			MMIO32((base) + 0x038)
+#define DWC_OTG_GGPIO(base)			MMIO32((base) + 0x038)
 #define DWC_OTG_CID(base)			MMIO32((base) + 0x03C)
 #define DWC_OTG_HPTXFSIZ(base)		MMIO32((base) + 0x100)
 #define DWC_OTG_DIEPxTXF(base, x)	MMIO32((base) + 0x104 + 4*((x)-1))
@@ -117,6 +117,10 @@
 #define DWC_OTG_GOTGCTL_HSHNPEN		(1 << 10)
 #define DWC_OTG_GOTGCTL_HNPRQ		(1 << 9)
 #define DWC_OTG_GOTGCTL_HNGSCS		(1 << 8)
+#define DWC_OTG_GOTGCTL_BVALOVAL	(1 << 7)
+#define DWC_OTG_GOTGCTL_BVALOEN		(1 << 6)
+#define DWC_OTG_GOTGCTL_AVALOVAL	(1 << 5)
+#define DWC_OTG_GOTGCTL_AVALOEN		(1 << 4)
 #define DWC_OTG_GOTGCTL_SRQ			(1 << 1)
 #define DWC_OTG_GOTGCTL_SRQSCS		(1 << 0)
 
@@ -229,16 +233,6 @@
 #define DWC_OTG_GRXSTSP_DPID_MDATA				(0x3 << 15)
 #define DWC_OTG_GRXSTSP_BCNT_MASK				(0x7ff << 4)
 #define DWC_OTG_GRXSTSP_EPNUM_MASK				(0xf << 0)
-
-/* OTG general core configuration register (DWC_OTG_GCCFG) */
-/* Bits 31:22 - Reserved */
-#define DWC_OTG_GCCFG_NOVBUSSENS		(1 << 21)
-#define DWC_OTG_GCCFG_SOFOUTEN			(1 << 20)
-#define DWC_OTG_GCCFG_VBUSBSEN			(1 << 19)
-#define DWC_OTG_GCCFG_VBUSASEN			(1 << 18)
-/* Bit 17 - Reserved */
-#define DWC_OTG_GCCFG_PWRDWN			(1 << 16)
-/* Bits 15:0 - Reserved */
 
 /* Device-mode CSRs */
 /* OTG device control register (DWC_OTG_DCTL) */

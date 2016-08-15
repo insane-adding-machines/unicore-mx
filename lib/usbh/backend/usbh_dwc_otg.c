@@ -140,8 +140,6 @@ void usbh_dwc_otg_init(usbh_host *host)
 	REBASE(OTG_PCGCCTL) = 0; /* Restart the PHY clock. */
 	REBASE(OTG_GINTSTS) = 0xFFFFFFFF;
 	REBASE(OTG_HPRT) |= OTG_HPRT_PPWR;
-	REBASE(OTG_GCCFG) = OTG_GCCFG_PWRDWN | OTG_GCCFG_NOVBUSSENS |
-						OTG_GCCFG_VBUSASEN | OTG_GCCFG_VBUSBSEN;
 
 	LOG_LN("DWC_OTG init complete");
 }

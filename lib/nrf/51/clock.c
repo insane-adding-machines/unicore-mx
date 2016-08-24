@@ -31,12 +31,18 @@
  *
  * @param[in] wait bool: If true, will busy wait for the clock to start.
  */
-void clock_lfclk_start(bool wait)
+void clock_start_lfclk(bool wait)
 {
 	CLOCK_TASK_LFCLKSTART = 1;
 	if (wait) {
 		while(!(CLOCK_LFCLKSTAT & CLOCK_LFCLKSTAT_STATE));
 	}
+}
+
+/** @brief Stop Low Frequency Clock */
+void clock_stop_lfclk()
+{
+	CLOCK_TASK_LFCLKSTOP = 1;
 }
 
 /** @brief Start High Frequency Crystal Oscillator.
@@ -45,12 +51,18 @@ void clock_lfclk_start(bool wait)
  *
  * @param[in] wait bool If true, will busy wait for the clock to start.
  */
-void clock_hfclk_start(bool wait)
+void clock_start_hfclk(bool wait)
 {
 	CLOCK_TASK_HFCLKSTART = 1;
 	if (wait) {
 		while(!(CLOCK_HFCLKSTAT & CLOCK_HFCLKSTAT_STATE));
 	}
+}
+
+/** @brief Stop High Frequency Crystal Oscillator */
+void clock_stop_hfclk()
+{
+	CLOCK_TASK_HFCLKSTOP = 1;
 }
 
 /** @brief Select nominal frequency of external crystal for HFCLK.

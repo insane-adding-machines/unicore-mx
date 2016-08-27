@@ -2,7 +2,7 @@
  * This file is part of the unicore-mx project.
  *
  * Copyright (C) 2010 Gareth McMullin <gareth@blacksphere.co.nz>
- * Copyright (C) 2015 Kuldeep Singh Dhaka <kuldeepdhaka9@gmail.com>
+ * Copyright (C) 2015, 2016 Kuldeep Singh Dhaka <kuldeepdhaka9@gmail.com>
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -18,54 +18,59 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "stm32_fsdev_private.h"
+#include "../usbd_private.h"
+
 #include <unicore-mx/cm3/common.h>
 #include <unicore-mx/stm32/rcc.h>
-#include <unicore-mx/stm32/tools.h>
 #include <unicore-mx/stm32/st_usbfs.h>
 #include <unicore-mx/usbd/usbd.h>
-#include "../usbd_private.h"
-#include "stm32_fsdev_private.h"
 
-/* Number of endpoints */
-#define ENDPOINT_COUNTS 8
-
-static struct stm32_fsdev_private_data private_data;
 static struct usbd_device _usbd_dev;
 
-static usbd_device *stm32f103_usbd_init(void);
+static usbd_device *init(const usbd_backend_config *config);
 static void copy_from_pm(void *buf, const volatile void *vPM, uint16_t len);
 static void copy_to_pm(volatile void *vPM, const void *buf, uint16_t len);
 
 const struct usbd_backend usbd_stm32_fsdev_v1 = {
-	.init = stm32f103_usbd_init,
+	.init = init,
 	.set_address = stm32_fsdev_set_address,
-	.ep_setup = stm32_fsdev_ep_setup,
-	.set_ep_type = stm32_fsdev_set_ep_type,
-	.set_ep_size = stm32_fsdev_set_ep_size,
-	.ep_reset = stm32_fsdev_endpoints_reset,
-	.set_ep_stall = stm32_fsdev_set_ep_stall,
-	.get_ep_stall = stm32_fsdev_get_ep_stall,
-	.set_ep_nak = stm32_fsdev_set_ep_nak,
-	.ep_write_packet = stm32_fsdev_ep_write_packet,
-	.ep_read_packet = stm32_fsdev_ep_read_packet,
-	.enable_sof = stm32_fsdev_enable_sof,
-	.poll = stm32_fsdev_poll,
+	.get_address = stm32_fsdev_get_address,
+	.ep_prepare_start = stm32_fsdev_ep_prepare_start,
+	.ep_prepare = stm32_fsdev_ep_prepare,
 	.get_ep_dtog = stm32_fsdev_get_ep_dtog,
 	.set_ep_dtog = stm32_fsdev_set_ep_dtog,
-	.ep_flush = stm32_fsdev_ep_flush,
-	.frame_number = stm32_fsdev_frame_number
+	.set_ep_stall = stm32_fsdev_set_ep_stall,
+	.get_ep_stall = stm32_fsdev_get_ep_stall,
+	.poll = stm32_fsdev_poll,
+	.enable_sof = stm32_fsdev_enable_sof,
+	.get_speed = stm32_fsdev_get_speed,
+	.urb_submit = stm32_fsdev_urb_submit,
+	.urb_cancel = stm32_fsdev_urb_cancel,
+	.frame_number = stm32_fsdev_frame_number,
+
+	.copy_from_pm = copy_from_pm,
+	.copy_to_pm = copy_to_pm
+};
+
+static const usbd_backend_config _config = {
+	.ep_count = 8,
+	.priv_mem = 512,
+	.speed = USBD_SPEED_FULL,
+	.feature = USBD_FEATURE_NONE
 };
 
 /** Initialize the USB device controller hardware of the STM32. */
-static usbd_device *stm32f103_usbd_init(void)
+static usbd_device *init(const usbd_backend_config *config)
 {
 	rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_USBEN);
 
-	private_data.ep_count = ENDPOINT_COUNTS;
-	private_data.copy_from_pm = copy_from_pm;
-	private_data.copy_to_pm = copy_to_pm;
-	_usbd_dev.backend_data = &private_data;
+	if (config == NULL) {
+		config = &_config;
+	}
 
+	_usbd_dev.backend = &usbd_stm32_fsdev_v1;
+	_usbd_dev.config = config;
 	stm32_fsdev_init(&_usbd_dev);
 
 	return &_usbd_dev;
@@ -76,27 +81,32 @@ static usbd_device *stm32f103_usbd_init(void)
  *  the core (Cortex M3) used on the f1 support unaligned access.
  */
 
-static void copy_to_pm(volatile void *vPM, const void *buf, uint16_t len)
+static void copy_to_pm(volatile void *vPM, const void *vBuf, uint16_t len)
 {
-	const uint16_t *lbuf = buf;
-	volatile uint16_t *PM = vPM;
+	const uint16_t *hBuf = vBuf;
+	volatile uint16_t *hPM = vPM;
 
-	for (len = (len + 1) >> 1; len; PM += 2, lbuf++, len--) {
-		*PM = *lbuf;
+	len = DIVIDE_AND_CEIL(len, 2);
+
+	while (len--) {
+		*hPM = *hBuf++;
+		hPM += 2; /* 32bit space */
 	}
 }
 
-static void copy_from_pm(void *buf, const volatile void *vPM, uint16_t len)
+static void copy_from_pm(void *vBuf, const volatile void *vPM, uint16_t len)
 {
-	uint16_t *lbuf = buf;
-	const volatile uint16_t *PM = vPM;
-	uint8_t odd = len & 1;
+	uint16_t *hBuf = vBuf;
+	const volatile uint16_t *hPM = vPM;
+	bool odd = !!(len & 1);
 
-	for (len >>= 1; len; PM += 2, lbuf++, len--) {
-		*lbuf = *PM;
+	len /= 2;
+	while (len) {
+		*hBuf++ = *hPM;
+		hPM += 2; /* 32bit space */
 	}
 
 	if (odd) {
-		*(uint8_t *) lbuf = *(uint8_t *) PM;
+		*(uint8_t *) hBuf = *(uint8_t *) hPM;
 	}
 }

@@ -35,12 +35,7 @@ TGT_CFLAGS      += $(DEBUG_FLAGS)
 # ARFLAGS	= rcsv
 ARFLAGS		= rcs
 OBJS		= gpio.o vector.o assert.o systemcontrol.o rcc.o uart.o
-OBJS		+= usbd.o usbd_ep0.o usbd_standard.o
-OBJS		+= usbd_lm4f.o
-OBJS		+= usbd_msc.o
-OBJS		+= usbd_control.o usbd_string.o
 
 VPATH += ../cm3
-VPATH += ../usbd:../usbd/class:../usbd/backend:../usbd/misc
 
 include ../Makefile.include

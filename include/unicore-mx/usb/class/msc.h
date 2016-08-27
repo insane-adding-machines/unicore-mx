@@ -74,6 +74,65 @@ LGPL License Terms @ref lgpl_license
 #define USB_MSC_REQ_BULK_ONLY_RESET	0xFF
 #define USB_MSC_REQ_GET_MAX_LUN		0xFE
 
+/* Command Block Wrapper */
+#define USB_MSC_CBW_SIGNATURE				0x43425355
+#define USB_MSC_CBW_STATUS_SUCCESS			0
+#define USB_MSC_CBW_STATUS_FAILED			1
+#define USB_MSC_CBW_STATUS_PHASE_ERROR		2
+
+/* Command Status Wrapper */
+#define USB_MSC_CSW_SIGNATURE				0x53425355
+#define USB_MSC_CSW_STATUS_SUCCESS			0
+#define USB_MSC_CSW_STATUS_FAILED			1
+#define USB_MSC_CSW_STATUS_PHASE_ERROR		2
+
+/* Implemented SCSI Commands */
+#define USB_MSC_SCSI_TEST_UNIT_READY		0x00
+#define USB_MSC_SCSI_REQUEST_SENSE			0x03
+#define USB_MSC_SCSI_FORMAT_UNIT			0x04
+#define USB_MSC_SCSI_READ_6					0x08
+#define USB_MSC_SCSI_WRITE_6				0x0A
+#define USB_MSC_SCSI_INQUIRY				0x12
+#define USB_MSC_SCSI_MODE_SENSE_6			0x1A
+#define USB_MSC_SCSI_SEND_DIAGNOSTIC		0x1D
+#define USB_MSC_SCSI_READ_CAPACITY			0x25
+#define USB_MSC_SCSI_READ_10				0x28
+
+
+/* Required SCSI Commands */
+
+/* Optional SCSI Commands */
+#define USB_MSC_SCSI_REPORT_LUNS					0xA0
+#define USB_MSC_SCSI_PREVENT_ALLOW_MEDIUM_REMOVAL	0x1E
+#define USB_MSC_SCSI_MODE_SELECT_6					0x15
+#define USB_MSC_SCSI_MODE_SELECT_10					0x55
+#define USB_MSC_SCSI_MODE_SENSE_10					0x5A
+#define USB_MSC_SCSI_READ_12						0xA8
+#define USB_MSC_SCSI_READ_FORMAT_CAPACITIES		0x23
+#define USB_MSC_SCSI_READ_TOC_PMA_ATIP				0x43
+#define USB_MSC_SCSI_START_STOP_UNIT				0x1B
+#define USB_MSC_SCSI_SYNCHRONIZE_CACHE				0x35
+#define USB_MSC_SCSI_VERIFY							0x2F
+#define USB_MSC_SCSI_WRITE_10						0x2A
+#define USB_MSC_SCSI_WRITE_12						0xAA
+
+struct usb_msc_cbw {
+	uint32_t dCBWSignature;
+	uint32_t dCBWTag;
+	uint32_t dCBWDataTransferLength;
+	uint8_t  bmCBWFlags;
+	uint8_t  bCBWLUN;
+	uint8_t  bCBWCBLength;
+	uint8_t  CBWCB[16];
+} __attribute__((packed));
+
+struct usb_msc_csw {
+	uint32_t dCSWSignature;
+	uint32_t dCSWTag;
+	uint32_t dCSWDataResidue;
+	uint8_t  bCSWStatus;
+} __attribute__((packed));
+
 #endif
 
 /**@}*/

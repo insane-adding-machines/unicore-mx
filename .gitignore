@@ -33,6 +33,10 @@ include/libopencmsis/sam/
 include/libopencmsis/stm32/
 include/libopencmsis/vf6xx/
 include/libopencmsis/nrf/
+include/unicore-mx/common/dwc_otg.h
+include/unicore-mx/stm32/common/st_usbfs_common.h
+include/unicore-mx/stm32/common/st_usbfs_v1.h
+include/unicore-mx/stm32/common/st_usbfs_v2.h
 
 # netbeans, intellij, eclipse project files
 nbproject/

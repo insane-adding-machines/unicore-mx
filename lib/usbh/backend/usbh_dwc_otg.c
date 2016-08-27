@@ -19,7 +19,7 @@
 
 #include "dwc_otg-private.h"
 #include "../usbh-private.h"
-#include <unicore-mx/stm32/otg_common.h>
+#include <unicore-mx/common/dwc_otg.h>
 #include <unicore-mx/cm3/common.h>
 #include <string.h>
 
@@ -32,14 +32,13 @@
 #define CHANNELS_ITEM(i) (&BACKEND_DATA->channels[i])
 
 
-#define REBASE(x)        MMIO32(BASE_ADDRESS + (x))
-#define REBASE_FIFO(i)   (&REBASE(OTG_FIFO(i)))
+#define REBASE(REG, ...)		REG(BASE_ADDRESS, ##__VA_ARGS__)
 
 /* as per specs, 10ms to 20ms */
 #define RESET_HOLD_DURATION (MS2US(10))  /* unit: microseconds (us) */
 
 #define PREFIX_FRAME_NUM LOGF("[FRAME %"PRIu16"]: ",					\
-	(uint16_t)REBASE(OTG_HFNUM) & OTG_HFNUM_FRNUM_MASK);			\
+	(uint16_t)REBASE(DWC_OTG_HFNUM) & DWC_OTG_HFNUM_FRNUM_MASK);			\
 
 /**
  * Calculate packet count from data length ( @a len) and endpoint size ( @a ep_size)
@@ -123,23 +122,23 @@ const char *chan_state[] = {
 static void core_reset(usbh_host *host)
 {
 	/* Wait AHB idle condition.*/
-	while (!(REBASE(OTG_GRSTCTL) & OTG_GRSTCTL_AHBIDL));
+	while (!(REBASE(DWC_OTG_GRSTCTL) & DWC_OTG_GRSTCTL_AHBIDL));
 
 	/* Core reset and delay of at least 3 PHY cycles.*/
-	REBASE(OTG_GRSTCTL) = OTG_GRSTCTL_CSRST;
-	while (REBASE(OTG_GRSTCTL) & OTG_GRSTCTL_CSRST);
+	REBASE(DWC_OTG_GRSTCTL) = DWC_OTG_GRSTCTL_CSRST;
+	while (REBASE(DWC_OTG_GRSTCTL) & DWC_OTG_GRSTCTL_CSRST);
 
 	/* Wait AHB idle condition.*/
-	while (!(REBASE(OTG_GRSTCTL) & OTG_GRSTCTL_AHBIDL));
+	while (!(REBASE(DWC_OTG_GRSTCTL) & DWC_OTG_GRSTCTL_AHBIDL));
 }
 
 void usbh_dwc_otg_init(usbh_host *host)
 {
 	core_reset(host);
-	REBASE(OTG_GUSBCFG) = OTG_GUSBCFG_FHMOD | OTG_GUSBCFG_PHYSEL;
-	REBASE(OTG_PCGCCTL) = 0; /* Restart the PHY clock. */
-	REBASE(OTG_GINTSTS) = 0xFFFFFFFF;
-	REBASE(OTG_HPRT) |= OTG_HPRT_PPWR;
+	REBASE(DWC_OTG_GUSBCFG) = DWC_OTG_GUSBCFG_FHMOD | DWC_OTG_GUSBCFG_PHYSEL;
+	REBASE(DWC_OTG_PCGCCTL) = 0; /* Restart the PHY clock. */
+	REBASE(DWC_OTG_GINTSTS) = 0xFFFFFFFF;
+	REBASE(DWC_OTG_HPRT) |= DWC_OTG_HPRT_PPWR;
 
 	LOG_LN("DWC_OTG init complete");
 }
@@ -162,10 +161,11 @@ static void reset_channels(usbh_host *host)
 			ch->urb = NULL;
 		}
 
-		REBASE(OTG_HCINTMSK(i)) = OTG_HCINTMSK_CHHM;
-		REBASE(OTG_HCINT(i)) = 0xFFF;
-		REBASE(OTG_HCTSIZ(i)) = 0;
-		REBASE(OTG_HCCHAR(i)) = OTG_HCCHAR_CHENA | OTG_HCCHAR_CHDIS;
+		REBASE(DWC_OTG_HCxINTMSK, i) = DWC_OTG_HCINTMSK_CHHM;
+		REBASE(DWC_OTG_HCxINT, i) = 0xFFF;
+		REBASE(DWC_OTG_HCxTSIZ, i) = 0;
+		REBASE(DWC_OTG_HCxCHAR, i) = DWC_OTG_HCCHAR_CHENA |
+									DWC_OTG_HCCHAR_CHDIS;
 	}
 }
 
@@ -178,14 +178,15 @@ static void prepare_fifo(usbh_host *host)
 	LOG_LN("Preparing FIFO");
 
 	/* Configure FIFO */
-	REBASE(OTG_GRXFSIZ) = RX_FIFO_SIZE;
-	REBASE(OTG_GNPTXFSIZ) = (TX_NP_FIFO_SIZE << 16) | RX_FIFO_SIZE;
-	REBASE(OTG_HPTXFSIZ) = (TX_P_FIFO_SIZE << 16) | (RX_FIFO_SIZE + TX_NP_FIFO_SIZE);
+	REBASE(DWC_OTG_GRXFSIZ) = RX_FIFO_SIZE;
+	REBASE(DWC_OTG_GNPTXFSIZ) = (TX_NP_FIFO_SIZE << 16) | RX_FIFO_SIZE;
+	REBASE(DWC_OTG_HPTXFSIZ) = (TX_P_FIFO_SIZE << 16) | (RX_FIFO_SIZE + TX_NP_FIFO_SIZE);
 
 	/* Flush RX, TX FIFO */
-	REBASE(OTG_GRSTCTL) = OTG_GRSTCTL_RXFFLSH |
-		(OTG_GRSTCTL_TXFFLSH | OTG_GRSTCTL_TXFNUM_ALL);
-	while (REBASE(OTG_GRSTCTL) & (OTG_GRSTCTL_RXFFLSH | OTG_GRSTCTL_TXFFLSH));
+	REBASE(DWC_OTG_GRSTCTL) = DWC_OTG_GRSTCTL_RXFFLSH |
+		(DWC_OTG_GRSTCTL_TXFFLSH | DWC_OTG_GRSTCTL_TXFNUM_ALL);
+	while (REBASE(DWC_OTG_GRSTCTL) &
+				(DWC_OTG_GRSTCTL_RXFFLSH | DWC_OTG_GRSTCTL_TXFFLSH));
 }
 
 /**
@@ -241,7 +242,8 @@ static void schedule_channels(usbh_host *host)
 			low = low ? (low - 1) : 0x3FFF;
 		}
 
-		uint16_t current_frame = REBASE(OTG_HFNUM) & OTG_HFNUM_FRNUM_MASK;
+		uint16_t current_frame = REBASE(DWC_OTG_HFNUM) &
+									DWC_OTG_HFNUM_FRNUM_MASK;
 		bool perform_enable = false;
 
 		/* check if the current frame falls in the range of low and upper */
@@ -263,7 +265,7 @@ static void schedule_channels(usbh_host *host)
 			LOGF_LN("re-enabling channel %"PRIu8 " in frame %"PRIu16, i,
 				current_frame);
 			ch->need_scheduling = false;
-			REBASE(OTG_HCCHAR(i)) |= OTG_HCCHAR_CHENA;
+			REBASE(DWC_OTG_HCxCHAR, i) |= DWC_OTG_HCCHAR_CHENA;
 		}
 	}
 }
@@ -273,19 +275,19 @@ void usbh_dwc_otg_poll(usbh_host *host, uint64_t now)
 {
 	/* Check if a new device has been connected.
 	 * If yes, then enable reset sequence for duration between 10ms to 20ms */
-	if (REBASE(OTG_HPRT) & OTG_HPRT_PCDET) {
+	if (REBASE(DWC_OTG_HPRT) & DWC_OTG_HPRT_PCDET) {
 		/* Clear PCDET bit and turn reset on */
 		BACKEND_DATA->wait_till = now + RESET_HOLD_DURATION;
-		REBASE(OTG_HPRT) |= OTG_HPRT_PCDET | OTG_HPRT_PRST;
+		REBASE(DWC_OTG_HPRT) |= DWC_OTG_HPRT_PCDET | DWC_OTG_HPRT_PRST;
 		LOG_LN("reset sequence enabled");
 	}
 
 	/* Check if reset in progress
 	 * If yes, after the duration is over, disable the reset */
-	if (REBASE(OTG_HPRT) & OTG_HPRT_PRST) {
+	if (REBASE(DWC_OTG_HPRT) & DWC_OTG_HPRT_PRST) {
 		if (now >= BACKEND_DATA->wait_till) {
 			/* Disable reset sequence */
-			REBASE(OTG_HPRT) &= ~OTG_HPRT_PRST;
+			REBASE(DWC_OTG_HPRT) &= ~DWC_OTG_HPRT_PRST;
 			LOG_LN("reset sequence disabled");
 		} else {
 			LOG_LN("reset sequence is in progress");
@@ -295,31 +297,31 @@ void usbh_dwc_otg_poll(usbh_host *host, uint64_t now)
 
 	/* Port enable for communication.
 	 *  We are ready to communicate with the device! */
-	if (REBASE(OTG_HPRT) & OTG_HPRT_PENCHNG) {
+	if (REBASE(DWC_OTG_HPRT) & DWC_OTG_HPRT_PENCHNG) {
 		LOG_LN("HPRT.PENCHING bit set");
 
 		/* INCORRECT HARDWARE DOCUMENTATION (STM32F407)
 		 * Writing PENA = 1 actually disable the port.
 		 * Be cautious while working with HPRT register! */
 
-		if (REBASE(OTG_HPRT) & OTG_HPRT_PENA) {
+		if (REBASE(DWC_OTG_HPRT) & DWC_OTG_HPRT_PENA) {
 			/* clear any previous interrupts */
-			REBASE(OTG_GINTSTS) = 0xFFFFFFFF;
+			REBASE(DWC_OTG_GINTSTS) = 0xFFFFFFFF;
 
-			switch (REBASE(OTG_HPRT) & OTG_HPRT_PSPD_MASK) {
+			switch (REBASE(DWC_OTG_HPRT) & DWC_OTG_HPRT_PSPD_MASK) {
 				uint32_t hcfg, fslspcs, hfir;
 				usbh_speed speed;
-			case OTG_HPRT_PSPD_FULL:
+			case DWC_OTG_HPRT_PSPD_FULL:
 				LOG_LN("FULL SPEED device connected");
 				speed = USBH_SPEED_FULL;
-				fslspcs = OTG_HCFG_FSLSPCS_48MHz;
+				fslspcs = DWC_OTG_HCFG_FSLSPCS_48MHz;
 				hfir = 48000;
 				goto next_step;
 			break;
-			case OTG_HPRT_PSPD_LOW:
+			case DWC_OTG_HPRT_PSPD_LOW:
 				LOG_LN("LOW SPEED device connected");
 				speed = USBH_SPEED_LOW;
-				fslspcs = OTG_HCFG_FSLSPCS_6MHz;
+				fslspcs = DWC_OTG_HCFG_FSLSPCS_6MHz;
 				hfir = 6000;
 				goto next_step;
 			break;
@@ -327,15 +329,15 @@ void usbh_dwc_otg_poll(usbh_host *host, uint64_t now)
 				LOG_LN("unknown speed device connected");
 			break;
 			next_step:
-				hcfg = REBASE(OTG_HCFG);
-				if ((hcfg & OTG_HCFG_FSLSPCS_MASK) == fslspcs) {
+				hcfg = REBASE(DWC_OTG_HCFG);
+				if ((hcfg & DWC_OTG_HCFG_FSLSPCS_MASK) == fslspcs) {
 					goto process_device;
 				} else {
 					goto change_speed;
 				}
 			break;
 			process_device:
-				REBASE(OTG_HPRT) &= ~OTG_HPRT_PENA; /* Clear PENCHNG */
+				REBASE(DWC_OTG_HPRT) &= ~DWC_OTG_HPRT_PENA; /* Clear PENCHNG */
 				prepare_fifo(host);
 				reset_channels(host);
 				LOG_LN("Passing the root device to frontend");
@@ -343,27 +345,28 @@ void usbh_dwc_otg_poll(usbh_host *host, uint64_t now)
 			break;
 			change_speed:
 				LOGF_LN("Changing speed, going for HFIR = %"PRIu32, hfir);
-				REBASE(OTG_HCFG) = (hcfg & ~OTG_HCFG_FSLSPCS_MASK) | fslspcs;
-				REBASE(OTG_HFIR) = hfir;
+				REBASE(DWC_OTG_HCFG) =
+					(hcfg & ~DWC_OTG_HCFG_FSLSPCS_MASK) | fslspcs;
+				REBASE(DWC_OTG_HFIR) = hfir;
 
 				/* Perform reset **without** clearing PENCHNG or PENA bit.
 				 *  So, that after reset we can process the same interrupt! */
-				REBASE(OTG_HPRT) =
-					(REBASE(OTG_HPRT) & ~(OTG_HPRT_PENA | OTG_HPRT_PENCHNG)) |
-					OTG_HPRT_PRST;
+				REBASE(DWC_OTG_HPRT) = (REBASE(DWC_OTG_HPRT) &
+					~(DWC_OTG_HPRT_PENA | DWC_OTG_HPRT_PENCHNG)) |
+						DWC_OTG_HPRT_PRST;
 				BACKEND_DATA->wait_till = now + RESET_HOLD_DURATION;
 			break;
 			}
 		} else {
 			/* Clear - port has been disabled due to disconnect
 			 *   (or whatever reason) */
-			REBASE(OTG_HPRT) &= ~OTG_HPRT_PENA; /* Clear PENCHNG */
+			REBASE(DWC_OTG_HPRT) &= ~DWC_OTG_HPRT_PENA; /* Clear PENCHNG */
 		}
 	}
 
 	/* Check if device has disconnected */
-	if (REBASE(OTG_GINTSTS) & OTG_GINTSTS_DISCINT) {
-		REBASE(OTG_GINTSTS) = OTG_GINTSTS_DISCINT;
+	if (REBASE(DWC_OTG_GINTSTS) & DWC_OTG_GINTSTS_DISCINT) {
+		REBASE(DWC_OTG_GINTSTS) = DWC_OTG_GINTSTS_DISCINT;
 		LOG_LN("GINTSTS.DISCINT bit set, device disconnected");
 
 		reset_channels(host);
@@ -375,23 +378,23 @@ void usbh_dwc_otg_poll(usbh_host *host, uint64_t now)
 	schedule_channels(host);
 
 	/* process channel rx data */
-	while (REBASE(OTG_GINTSTS) & OTG_GINTSTS_RXFLVL) {
+	while (REBASE(DWC_OTG_GINTSTS) & DWC_OTG_GINTSTS_RXFLVL) {
 		handle_rxflvl_interrupt(host);
 	}
 
 	/* process channel events */
-	if (REBASE(OTG_GINTSTS) & OTG_GINTSTS_HCINT) {
+	if (REBASE(DWC_OTG_GINTSTS) & DWC_OTG_GINTSTS_HCINT) {
 		unsigned i;
 		for (i = 0; i < CHANNELS_COUNT; i++) {
-			if (REBASE(OTG_HAINT) & (1 << i)) {
+			if (REBASE(DWC_OTG_HAINT) & (1 << i)) {
 				process_channel_interrupt(host, i);
 			}
 		}
 	}
 
 #if defined(USBH_DEBUG)
-	if (REBASE(OTG_GINTSTS) & OTG_GINTSTS_IPXFR) {
-		REBASE(OTG_GINTSTS) = OTG_GINTSTS_IPXFR;
+	if (REBASE(DWC_OTG_GINTSTS) & DWC_OTG_GINTSTS_IPXFR) {
+		REBASE(DWC_OTG_GINTSTS) = DWC_OTG_GINTSTS_IPXFR;
 		PREFIX_FRAME_NUM
 		LOG_LN("WARN: IPXFR (Incomplete Periodic transfer)");
 	}
@@ -403,10 +406,10 @@ usbh_speed usbh_dwc_otg_speed(usbh_host *host)
 {
 	LOG_CALL
 
-	switch (REBASE(OTG_HPRT) & OTG_HPRT_PSPD_MASK) {
-	case OTG_HPRT_PSPD_LOW: return USBH_SPEED_LOW;
-	case OTG_HPRT_PSPD_FULL: return USBH_SPEED_FULL;
-	case OTG_HPRT_PSPD_HIGH: return USBH_SPEED_HIGH;
+	switch (REBASE(DWC_OTG_HPRT) & DWC_OTG_HPRT_PSPD_MASK) {
+	case DWC_OTG_HPRT_PSPD_LOW: return USBH_SPEED_LOW;
+	case DWC_OTG_HPRT_PSPD_FULL: return USBH_SPEED_FULL;
+	case DWC_OTG_HPRT_PSPD_HIGH: return USBH_SPEED_HIGH;
 	default: return USBH_SPEED_UNKNOWN;
 	}
 }
@@ -416,7 +419,7 @@ void usbh_dwc_otg_reset(usbh_host *host)
 {
 	LOG_CALL
 
-	REBASE(OTG_HPRT) |= OTG_HPRT_PRST;
+	REBASE(DWC_OTG_HPRT) |= DWC_OTG_HPRT_PRST;
 	BACKEND_DATA->wait_till = host->last_poll + RESET_HOLD_DURATION;
 }
 
@@ -465,7 +468,9 @@ static void push_packet_to_fifo(usbh_dwc_otg_chan *ch)
 	}
 
 	void *data = usbh_urb_get_data_pointer(urb, len);
-	volatile uint32_t *fifo = REBASE_FIFO(urb->backend_tag) + RX_FIFO_SIZE;
+	volatile uint32_t *fifo = &REBASE(DWC_OTG_FIFO, urb->backend_tag);
+
+	fifo += RX_FIFO_SIZE;
 
 	/* Periodic */
 	if (transfer->ep_type == USBH_EP_INTERRUPT ||
@@ -494,22 +499,23 @@ static void control_setup_stage(usbh_host *host, uint8_t i)
 
 	ch->state = USBH_DWC_OTG_CHAN_STATE_CTRL_SETUP;
 	ch->need_scheduling = false;
-	ch->submit_frame = REBASE(OTG_HFNUM) & OTG_HFNUM_FRNUM_MASK;
+	ch->submit_frame = REBASE(DWC_OTG_HFNUM) & DWC_OTG_HFNUM_FRNUM_MASK;
 
-	REBASE(OTG_HCINT(i)) = 0xFFF;
-	REBASE(OTG_HCINTMSK(i)) = 0xFFF;
-	REBASE(OTG_HCTSIZ(i)) = OTG_HCTSIZ_DPID_MDATA | (1 << 19) | 8;
-	REBASE(OTG_HCCHAR(i)) =
-		OTG_HCCHAR_CHENA |
-		(OTG_HCCHAR_DAD_MASK & (dev->address << 22)) |
-		OTG_HCCHAR_MCNT_1 |
-		OTG_HCCHAR_EPTYP_CONTROL |
-		(dev->speed == USBH_SPEED_LOW ? OTG_HCCHAR_LSDEV : 0x00) |
-		OTG_HCCHAR_EPDIR_OUT |
-		(OTG_HCCHAR_EPNUM_MASK & (transfer->ep_addr << 11)) |
-		(OTG_HCCHAR_MPSIZ_MASK & transfer->ep_size);
+	REBASE(DWC_OTG_HCxINT, i) = 0xFFF;
+	REBASE(DWC_OTG_HCxINTMSK, i) = 0xFFF;
+	REBASE(DWC_OTG_HCxTSIZ, i) = DWC_OTG_HCTSIZ_DPID_MDATA | (1 << 19) | 8;
+	REBASE(DWC_OTG_HCxCHAR, i) =
+		DWC_OTG_HCCHAR_CHENA |
+		(DWC_OTG_HCCHAR_DAD_MASK & (dev->address << 22)) |
+		DWC_OTG_HCCHAR_MCNT_1 |
+		DWC_OTG_HCCHAR_EPTYP_CONTROL |
+		(dev->speed == USBH_SPEED_LOW ? DWC_OTG_HCCHAR_LSDEV : 0x00) |
+		DWC_OTG_HCCHAR_EPDIR_OUT |
+		(DWC_OTG_HCCHAR_EPNUM_MASK & (transfer->ep_addr << 11)) |
+		(DWC_OTG_HCCHAR_MPSIZ_MASK & transfer->ep_size);
 
-	volatile uint32_t *fifo = REBASE_FIFO(i) + RX_FIFO_SIZE;
+	volatile uint32_t *fifo = &REBASE(DWC_OTG_FIFO, i);
+	fifo += RX_FIFO_SIZE;
 	memory_to_fifo(setup, fifo, 8);
 }
 
@@ -532,25 +538,25 @@ static void control_data_stage(usbh_host *host, uint8_t i)
 		USBH_DWC_OTG_CHAN_STATE_CTRL_DATA_OUT :
 		USBH_DWC_OTG_CHAN_STATE_CTRL_DATA_IN;
 	ch->need_scheduling = false;
-	ch->submit_frame = REBASE(OTG_HFNUM) & OTG_HFNUM_FRNUM_MASK;
+	ch->submit_frame = REBASE(DWC_OTG_HFNUM) & DWC_OTG_HFNUM_FRNUM_MASK;
 
 	uint16_t pktcnt = CALC_PKTCNT(transfer->length, transfer->ep_size);
 	uint32_t xfrsiz = CALC_XFRSIZ(out, pktcnt, transfer->length, transfer->ep_size);
 
-	REBASE(OTG_HCTSIZ(i)) =
-		OTG_HCTSIZ_DPID_DATA1 |
-		(OTG_HCTSIZ_PKTCNT_MASK & (pktcnt << 19)) |
-		(OTG_HCTSIZ_XFRSIZ_MASK & xfrsiz);
+	REBASE(DWC_OTG_HCxTSIZ, i) =
+		DWC_OTG_HCTSIZ_DPID_DATA1 |
+		(DWC_OTG_HCTSIZ_PKTCNT_MASK & (pktcnt << 19)) |
+		(DWC_OTG_HCTSIZ_XFRSIZ_MASK & xfrsiz);
 
-	REBASE(OTG_HCCHAR(i)) =
-		OTG_HCCHAR_CHENA |
-		(OTG_HCCHAR_DAD_MASK & (dev->address << 22)) |
-		OTG_HCCHAR_MCNT_1 |
-		OTG_HCCHAR_EPTYP_CONTROL |
-		(dev->speed == USBH_SPEED_LOW ? OTG_HCCHAR_LSDEV : 0x00) |
-		(host2dev ? OTG_HCCHAR_EPDIR_OUT : OTG_HCCHAR_EPDIR_IN) |
-		(OTG_HCCHAR_EPNUM_MASK & (transfer->ep_addr << 11)) |
-		(OTG_HCCHAR_MPSIZ_MASK & transfer->ep_size);
+	REBASE(DWC_OTG_HCxCHAR, i) =
+		DWC_OTG_HCCHAR_CHENA |
+		(DWC_OTG_HCCHAR_DAD_MASK & (dev->address << 22)) |
+		DWC_OTG_HCCHAR_MCNT_1 |
+		DWC_OTG_HCCHAR_EPTYP_CONTROL |
+		(dev->speed == USBH_SPEED_LOW ? DWC_OTG_HCCHAR_LSDEV : 0x00) |
+		(host2dev ? DWC_OTG_HCCHAR_EPDIR_OUT : DWC_OTG_HCCHAR_EPDIR_IN) |
+		(DWC_OTG_HCCHAR_EPNUM_MASK & (transfer->ep_addr << 11)) |
+		(DWC_OTG_HCCHAR_MPSIZ_MASK & transfer->ep_size);
 
 	if (host2dev) {
 		push_packet_to_fifo(ch);
@@ -575,20 +581,20 @@ static void control_status_stage(usbh_host *host, uint8_t i)
 	ch->state = host2dev ?
 		USBH_DWC_OTG_CHAN_STATE_CTRL_STATUS_IN :
 		USBH_DWC_OTG_CHAN_STATE_CTRL_STATUS_OUT;
-	ch->submit_frame = REBASE(OTG_HFNUM) & OTG_HFNUM_FRNUM_MASK;
+	ch->submit_frame = REBASE(DWC_OTG_HFNUM) & DWC_OTG_HFNUM_FRNUM_MASK;
 	ch->need_scheduling = false;
 
-	REBASE(OTG_HCTSIZ(i)) = OTG_HCTSIZ_DPID_DATA1 | 1 << 19 | 0;
+	REBASE(DWC_OTG_HCxTSIZ, i) = DWC_OTG_HCTSIZ_DPID_DATA1 | 1 << 19 | 0;
 
-	REBASE(OTG_HCCHAR(i)) =
-		OTG_HCCHAR_CHENA |
-		(OTG_HCCHAR_DAD_MASK & (dev->address << 22)) |
-		OTG_HCCHAR_MCNT_1 |
-		OTG_HCCHAR_EPTYP_CONTROL |
-		(dev->speed == USBH_SPEED_LOW ? OTG_HCCHAR_LSDEV : 0x00) |
-		(!host2dev ? OTG_HCCHAR_EPDIR_OUT : OTG_HCCHAR_EPDIR_IN) |
-		(OTG_HCCHAR_EPNUM_MASK & (transfer->ep_addr << 11)) |
-		(OTG_HCCHAR_MPSIZ_MASK & transfer->ep_size);
+	REBASE(DWC_OTG_HCxCHAR, i) =
+		DWC_OTG_HCCHAR_CHENA |
+		(DWC_OTG_HCCHAR_DAD_MASK & (dev->address << 22)) |
+		DWC_OTG_HCCHAR_MCNT_1 |
+		DWC_OTG_HCCHAR_EPTYP_CONTROL |
+		(dev->speed == USBH_SPEED_LOW ? DWC_OTG_HCCHAR_LSDEV : 0x00) |
+		(!host2dev ? DWC_OTG_HCCHAR_EPDIR_OUT : DWC_OTG_HCCHAR_EPDIR_IN) |
+		(DWC_OTG_HCCHAR_EPNUM_MASK & (transfer->ep_addr << 11)) |
+		(DWC_OTG_HCCHAR_MPSIZ_MASK & transfer->ep_size);
 }
 
 /**
@@ -610,7 +616,7 @@ static void bulk_transfer(usbh_host *host, uint8_t i)
 
 	ch->state = USBH_DWC_OTG_CHAN_STATE_CALLBACK;
 	ch->need_scheduling = false;
-	ch->submit_frame = REBASE(OTG_HFNUM) & OTG_HFNUM_FRNUM_MASK;
+	ch->submit_frame = REBASE(DWC_OTG_HFNUM) & DWC_OTG_HFNUM_FRNUM_MASK;
 
 	/* Check if we need to transmit a ZLP (Zero Length Packet) */
 	if (out && transfer->length) {
@@ -622,22 +628,22 @@ static void bulk_transfer(usbh_host *host, uint8_t i)
 		}
 	}
 
-	REBASE(OTG_HCINT(i)) = 0xFFF;
-	REBASE(OTG_HCINTMSK(i)) = 0xFFF;
-	REBASE(OTG_HCTSIZ(i)) =
-		(dtog ? OTG_HCTSIZ_DPID_DATA1 : OTG_HCTSIZ_DPID_DATA0) |
-		(OTG_HCTSIZ_PKTCNT_MASK & (pktcnt << 19)) |
-		(OTG_HCTSIZ_XFRSIZ_MASK & xfrsiz);
+	REBASE(DWC_OTG_HCxINT, i) = 0xFFF;
+	REBASE(DWC_OTG_HCxINTMSK, i) = 0xFFF;
+	REBASE(DWC_OTG_HCxTSIZ, i) =
+		(dtog ? DWC_OTG_HCTSIZ_DPID_DATA1 : DWC_OTG_HCTSIZ_DPID_DATA0) |
+		(DWC_OTG_HCTSIZ_PKTCNT_MASK & (pktcnt << 19)) |
+		(DWC_OTG_HCTSIZ_XFRSIZ_MASK & xfrsiz);
 
-	REBASE(OTG_HCCHAR(i)) =
-		OTG_HCCHAR_CHENA |
-		(OTG_HCCHAR_DAD_MASK & (dev->address << 22)) |
-		OTG_HCCHAR_MCNT_1 |
-		OTG_HCCHAR_EPTYP_BULK |
-		(dev->speed == USBH_SPEED_LOW ? OTG_HCCHAR_LSDEV : 0x00) |
-		(out ? OTG_HCCHAR_EPDIR_OUT : OTG_HCCHAR_EPDIR_IN) |
-		(OTG_HCCHAR_EPNUM_MASK & (transfer->ep_addr << 11)) |
-		(OTG_HCCHAR_MPSIZ_MASK & transfer->ep_size);
+	REBASE(DWC_OTG_HCxCHAR, i) =
+		DWC_OTG_HCCHAR_CHENA |
+		(DWC_OTG_HCCHAR_DAD_MASK & (dev->address << 22)) |
+		DWC_OTG_HCCHAR_MCNT_1 |
+		DWC_OTG_HCCHAR_EPTYP_BULK |
+		(dev->speed == USBH_SPEED_LOW ? DWC_OTG_HCCHAR_LSDEV : 0x00) |
+		(out ? DWC_OTG_HCCHAR_EPDIR_OUT : DWC_OTG_HCCHAR_EPDIR_IN) |
+		(DWC_OTG_HCCHAR_EPNUM_MASK & (transfer->ep_addr << 11)) |
+		(DWC_OTG_HCCHAR_MPSIZ_MASK & transfer->ep_size);
 
 	if (out) {
 		push_packet_to_fifo(ch);
@@ -663,27 +669,27 @@ static void interrupt_transfer(usbh_host *host, uint8_t i)
 
 	ch->state = USBH_DWC_OTG_CHAN_STATE_CALLBACK;
 	ch->need_scheduling = false;
-	ch->submit_frame = REBASE(OTG_HFNUM) & OTG_HFNUM_FRNUM_MASK;
+	ch->submit_frame = REBASE(DWC_OTG_HFNUM) & DWC_OTG_HFNUM_FRNUM_MASK;
 	ch->submit_frame += 1; /* transferred in next frame for first time */
 	ch->submit_frame &= 0x3FFF;
 
-	REBASE(OTG_HCINT(i)) = 0xFFF;
-	REBASE(OTG_HCINTMSK(i)) = 0xFFF;
-	REBASE(OTG_HCTSIZ(i)) =
-		(dtog ? OTG_HCTSIZ_DPID_DATA1 : OTG_HCTSIZ_DPID_DATA0) |
-		(OTG_HCTSIZ_PKTCNT_MASK & (pktcnt << 19)) |
-		(OTG_HCTSIZ_XFRSIZ_MASK & xfrsiz);
+	REBASE(DWC_OTG_HCxINT, i) = 0xFFF;
+	REBASE(DWC_OTG_HCxINTMSK, i) = 0xFFF;
+	REBASE(DWC_OTG_HCxTSIZ, i) =
+		(dtog ? DWC_OTG_HCTSIZ_DPID_DATA1 : DWC_OTG_HCTSIZ_DPID_DATA0) |
+		(DWC_OTG_HCTSIZ_PKTCNT_MASK & (pktcnt << 19)) |
+		(DWC_OTG_HCTSIZ_XFRSIZ_MASK & xfrsiz);
 
-	REBASE(OTG_HCCHAR(i)) =
-		OTG_HCCHAR_CHENA |
-		(OTG_HCCHAR_DAD_MASK & (dev->address << 22)) |
-		OTG_HCCHAR_MCNT_1 |
-		((ch->submit_frame & 0x1) ? OTG_HCCHAR_ODDFRM : 0x00) |
-		OTG_HCCHAR_EPTYP_INTERRUPT |
-		(dev->speed == USBH_SPEED_LOW ? OTG_HCCHAR_LSDEV : 0x00) |
-		(out ? OTG_HCCHAR_EPDIR_OUT : OTG_HCCHAR_EPDIR_IN) |
-		(OTG_HCCHAR_EPNUM_MASK & (transfer->ep_addr << 11)) |
-		(OTG_HCCHAR_MPSIZ_MASK & transfer->ep_size);
+	REBASE(DWC_OTG_HCxCHAR, i) =
+		DWC_OTG_HCCHAR_CHENA |
+		(DWC_OTG_HCCHAR_DAD_MASK & (dev->address << 22)) |
+		DWC_OTG_HCCHAR_MCNT_1 |
+		((ch->submit_frame & 0x1) ? DWC_OTG_HCCHAR_ODDFRM : 0x00) |
+		DWC_OTG_HCCHAR_EPTYP_INTERRUPT |
+		(dev->speed == USBH_SPEED_LOW ? DWC_OTG_HCCHAR_LSDEV : 0x00) |
+		(out ? DWC_OTG_HCCHAR_EPDIR_OUT : DWC_OTG_HCCHAR_EPDIR_IN) |
+		(DWC_OTG_HCCHAR_EPNUM_MASK & (transfer->ep_addr << 11)) |
+		(DWC_OTG_HCCHAR_MPSIZ_MASK & transfer->ep_size);
 
 	if (out) {
 		push_packet_to_fifo(ch);
@@ -752,10 +758,10 @@ void usbh_dwc_otg_transfer_cancel(usbh_host *host, usbh_urb *urb)
 	ch->state = USBH_DWC_OTG_CHAN_STATE_CANCELLED;
 	ch->need_scheduling = false;
 
-	REBASE(OTG_HCINTMSK(i)) = OTG_HCINTMSK_CHHM;
-	REBASE(OTG_HCINT(i)) = 0xFFF;
-	REBASE(OTG_HCTSIZ(i)) = 0;
-	REBASE(OTG_HCCHAR(i)) = OTG_HCCHAR_CHENA | OTG_HCCHAR_CHDIS;
+	REBASE(DWC_OTG_HCxINTMSK, i) = DWC_OTG_HCINTMSK_CHHM;
+	REBASE(DWC_OTG_HCxINT, i) = 0xFFF;
+	REBASE(DWC_OTG_HCxTSIZ, i) = 0;
+	REBASE(DWC_OTG_HCxCHAR, i) = DWC_OTG_HCCHAR_CHENA | DWC_OTG_HCCHAR_CHDIS;
 }
 
 /**
@@ -771,10 +777,10 @@ static void process_channel_interrupt(usbh_host *host, uint8_t i)
 
 	usbh_dwc_otg_chan *ch = CHANNELS_ITEM(i);
 
-	if (REBASE(OTG_HCINT(i)) & OTG_HCINT_CHH) {
+	if (REBASE(DWC_OTG_HCxINT, i) & DWC_OTG_HCINT_CHH) {
 		LOGF_LN("got CHH for channel %"PRIu8, i);
 
-		REBASE(OTG_HCINT(i)) = OTG_HCINT_CHH;
+		REBASE(DWC_OTG_HCxINT, i) = DWC_OTG_HCINT_CHH;
 
 		if (ch->state != USBH_DWC_OTG_CHAN_STATE_CANCELLED) {
 			PREFIX_FRAME_NUM
@@ -786,7 +792,7 @@ static void process_channel_interrupt(usbh_host *host, uint8_t i)
 
 		LOGF_LN("channel %"PRIu8" marked as free", i);
 		ch->state = USBH_DWC_OTG_CHAN_STATE_FREE;
-		REBASE(OTG_HCINTMSK(i)) = 0;
+		REBASE(DWC_OTG_HCxINTMSK, i) = 0;
 		return;
 	}
 
@@ -801,7 +807,7 @@ static void process_channel_interrupt(usbh_host *host, uint8_t i)
 	break;
 	}
 
-	if (REBASE(OTG_HCINT(i)) & OTG_HCINT_NAK) {
+	if (REBASE(DWC_OTG_HCxINT, i) & DWC_OTG_HCINT_NAK) {
 		/* retry, we only got NAK */
 
 		usbh_transfer *transfer = &ch->urb->transfer;
@@ -809,7 +815,7 @@ static void process_channel_interrupt(usbh_host *host, uint8_t i)
 		case USBH_EP_BULK:
 		case USBH_EP_CONTROL:
 			/* enable the channel for retry */
-			REBASE(OTG_HCCHAR(i)) |= OTG_HCCHAR_CHENA;
+			REBASE(DWC_OTG_HCxCHAR, i) |= DWC_OTG_HCCHAR_CHENA;
 		break;
 		case USBH_EP_INTERRUPT:
 		case USBH_EP_ISOCHRONOUS:
@@ -817,9 +823,9 @@ static void process_channel_interrupt(usbh_host *host, uint8_t i)
 			ch->submit_frame &= 0x3FFF;
 
 			if (ch->submit_frame & 0x1) {
-				REBASE(OTG_HCCHAR(i)) |= OTG_HCCHAR_ODDFRM;
+				REBASE(DWC_OTG_HCxCHAR, i) |= DWC_OTG_HCCHAR_ODDFRM;
 			} else {
-				REBASE(OTG_HCCHAR(i)) &= ~OTG_HCCHAR_ODDFRM;
+				REBASE(DWC_OTG_HCxCHAR, i) &= ~DWC_OTG_HCCHAR_ODDFRM;
 			}
 
 			if (transfer->interval > 1) {
@@ -836,17 +842,17 @@ static void process_channel_interrupt(usbh_host *host, uint8_t i)
 				 *  be transferred on next frame.
 				 * ODD/EVEN frame bit will make sure that the transfer is done
 				 *  in next frame. */
-				REBASE(OTG_HCCHAR(i)) |= OTG_HCCHAR_CHENA;
+				REBASE(DWC_OTG_HCxCHAR, i) |= DWC_OTG_HCCHAR_CHENA;
 			}
 		break;
 		}
 
-		REBASE(OTG_HCINT(i)) = OTG_HCINT_NAK;
+		REBASE(DWC_OTG_HCxINT, i) = DWC_OTG_HCINT_NAK;
 		LOGF_LN("got NAK for channel %"PRIu8, i);
 		return;
 	}
 
-	if (REBASE(OTG_HCINT(i)) & OTG_HCINT_ACK) {
+	if (REBASE(DWC_OTG_HCxINT, i) & DWC_OTG_HCINT_ACK) {
 		usbh_transfer *transfer = &ch->urb->transfer;
 
 		/* toggle the dtog */
@@ -874,14 +880,14 @@ static void process_channel_interrupt(usbh_host *host, uint8_t i)
 			ch->submit_frame += transfer->interval;
 			ch->submit_frame &= 0x3FFF;
 			if (ch->submit_frame & 0x1) {
-				REBASE(OTG_HCCHAR(i)) |= OTG_HCCHAR_ODDFRM;
+				REBASE(DWC_OTG_HCxCHAR, i) |= DWC_OTG_HCCHAR_ODDFRM;
 			} else {
-				REBASE(OTG_HCCHAR(i)) &= ~OTG_HCCHAR_ODDFRM;
+				REBASE(DWC_OTG_HCxCHAR, i) &= ~DWC_OTG_HCCHAR_ODDFRM;
 			}
 
 			if (transfer->interval > 1 &&
 					/* we have more packets to send? */
-					REBASE(OTG_HCTSIZ(i)) & OTG_HCTSIZ_PKTCNT_MASK) {
+					REBASE(DWC_OTG_HCxTSIZ, i) & DWC_OTG_HCTSIZ_PKTCNT_MASK) {
 				/* we need to wait for the appropriate frame to come.
 				 *  till then, the channel is disabled and is marked for
 				 *  scheduling. */
@@ -890,7 +896,8 @@ static void process_channel_interrupt(usbh_host *host, uint8_t i)
 				LOGF_LN("channel %"PRIu8" got ACK, resume transfer after "
 					"interval = %"PRIu16" and at frame = %"PRIu16, i,
 					transfer->interval, ch->submit_frame);
-				REBASE(OTG_HCCHAR(i)) |= OTG_HCCHAR_CHENA | OTG_HCCHAR_CHDIS;
+				REBASE(DWC_OTG_HCxCHAR, i) |= DWC_OTG_HCCHAR_CHENA |
+												DWC_OTG_HCCHAR_CHDIS;
 			}
 
 			/* We are submitting data here so that on the next applicable frame
@@ -904,7 +911,7 @@ static void process_channel_interrupt(usbh_host *host, uint8_t i)
 		break;
 		}
 
-		REBASE(OTG_HCINT(i)) = OTG_HCINT_ACK;
+		REBASE(DWC_OTG_HCxINT, i) = DWC_OTG_HCINT_ACK;
 		LOGF_LN("got ACK for channel %"PRIu8, i);
 		return;
 	}
@@ -914,20 +921,20 @@ static void process_channel_interrupt(usbh_host *host, uint8_t i)
 		usbh_transfer_status status;
 		const char *name;
 	} error_cond[] = {
-		{OTG_HCINT_STALL, USBH_ERR_STALL, "STALL"},
-		{OTG_HCINT_DTERR, USBH_ERR_DTOG, "DTERR"},
-		{OTG_HCINT_BBERR, USBH_ERR_BABBLE, "BBERR"},
-		{OTG_HCINT_FRMOR, USBH_ERR_IO, "FRMOR"},
-		{OTG_HCINT_TXERR, USBH_ERR_IO, "TXERR"},
+		{DWC_OTG_HCINT_STALL, USBH_ERR_STALL, "STALL"},
+		{DWC_OTG_HCINT_DTERR, USBH_ERR_DTOG, "DTERR"},
+		{DWC_OTG_HCINT_BBERR, USBH_ERR_BABBLE, "BBERR"},
+		{DWC_OTG_HCINT_FRMOR, USBH_ERR_IO, "FRMOR"},
+		{DWC_OTG_HCINT_TXERR, USBH_ERR_IO, "TXERR"},
 		{0}
 	};
 
 	/* handle multiple error bits with same code */
 	unsigned j;
 	for (j = 0; error_cond[j].bit_mask; j++) {
-		if (REBASE(OTG_HCINT(i)) & error_cond[j].bit_mask) {
+		if (REBASE(DWC_OTG_HCxINT, i) & error_cond[j].bit_mask) {
 			LOGF_LN("got %s for channel %"PRIu8, error_cond[j].name, i);
-			REBASE(OTG_HCINT(i)) = error_cond[j].bit_mask;
+			REBASE(DWC_OTG_HCxINT, i) = error_cond[j].bit_mask;
 			usbh_urb_free(ch->urb, error_cond[j].status);
 			return;
 		}
@@ -937,7 +944,7 @@ static void process_channel_interrupt(usbh_host *host, uint8_t i)
 
 	LOGF_LN("success, channel %"PRIu8" in %s state. "
 		"now we will move to next state", i, chan_state[ch->state]);
-	REBASE(OTG_HCINT(i)) = OTG_HCINT_XFRC;
+	REBASE(DWC_OTG_HCxINT, i) = DWC_OTG_HCINT_XFRC;
 
 	/* lets move the channel to next state! */
 	switch (ch->state) {
@@ -983,9 +990,9 @@ static void handle_rxflvl_interrupt(usbh_host *host)
 {
 	LOG_CALL
 
-	uint32_t rxstsp = REBASE(OTG_GRXSTSP);
-	uint8_t i = rxstsp & OTG_GRXSTSP_EPNUM_MASK;
-	uint16_t len = (rxstsp & OTG_GRXSTSP_BCNT_MASK) >> 4;
+	uint32_t rxstsp = REBASE(DWC_OTG_GRXSTSP);
+	uint8_t i = rxstsp & DWC_OTG_GRXSTSP_EPNUM_MASK;
+	uint16_t len = (rxstsp & DWC_OTG_GRXSTSP_BCNT_MASK) >> 4;
 
 #if defined(USBH_DEBUG)
 	const char *map_pktsts[] = {
@@ -1008,10 +1015,11 @@ static void handle_rxflvl_interrupt(usbh_host *host)
 	};
 	PREFIX_FRAME_NUM
 	LOGF_LN("GRXSTSP: rxstsp = %s, epnum = %"PRIu8", bcnt = %"PRIu16,
-		map_pktsts[(rxstsp & OTG_GRXSTSP_PKTSTS_MASK) >> 17], i, len);
+		map_pktsts[(rxstsp & DWC_OTG_GRXSTSP_PKTSTS_MASK) >> 17], i, len);
 #endif
 
-	if ((rxstsp & OTG_GRXSTSP_PKTSTS_MASK) != OTG_GRXSTSP_PKTSTS_IN || !len) {
+	if ((rxstsp & DWC_OTG_GRXSTSP_PKTSTS_MASK) != DWC_OTG_GRXSTSP_PKTSTS_IN ||
+			!len) {
 		return;
 	}
 
@@ -1038,10 +1046,9 @@ static void handle_rxflvl_interrupt(usbh_host *host)
 			" and NO_SHORT_PACKET flag is set", i);
 
 		/* TODO: We need to manually flush these? */
-		volatile uint32_t *fifo = REBASE_FIFO(i);
 		unsigned j;
 		for (j = 0; j < len; j += 4) {
-			*fifo;
+			(void)REBASE(DWC_OTG_FIFO, i);
 		}
 
 		usbh_urb_free(urb, USBH_ERR_SHORT_PACKET);
@@ -1049,13 +1056,13 @@ static void handle_rxflvl_interrupt(usbh_host *host)
 	}
 
 	/* If transfer not complete, Enable channel to continue. */
-	if (REBASE(OTG_HCTSIZ(i)) & OTG_HCTSIZ_PKTCNT_MASK) {
-		REBASE(OTG_HCCHAR(i)) |= OTG_HCCHAR_CHENA;
+	if (REBASE(DWC_OTG_HCxTSIZ, i) & DWC_OTG_HCTSIZ_PKTCNT_MASK) {
+		REBASE(DWC_OTG_HCxCHAR, i) |= DWC_OTG_HCCHAR_CHENA;
 	}
 
 	/* read from FIFO and copy to data */
 	void *data = usbh_urb_get_data_pointer(urb, len);
-	volatile uint32_t *fifo = REBASE_FIFO(i);
+	volatile uint32_t *fifo = &REBASE(DWC_OTG_FIFO, i);
 	fifo_to_memory(fifo, data, len);
 	usbh_urb_inc_data_pointer(urb, len);
 
@@ -1085,12 +1092,7 @@ static void fifo_to_memory(volatile uint32_t *fifo, void *mem,
 	if (bytes) {
 		/* remaining data (less than 4bytes) */
 		uint32_t extra = *fifo;
-		uint8_t *extra8 = (uint8_t *) &extra;
-		uint8_t *mem8 = (uint8_t *) mem32;
-		while (bytes > 0) {
-			bytes -= 1;
-			*mem8++ = *extra8++;
-		}
+		memcpy(mem32, &extra, bytes);
 	}
 }
 

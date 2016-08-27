@@ -1,7 +1,7 @@
 /*
  * This file is part of the unicore-mx project.
  *
- * Copyright (C) 2015 Kuldeep Singh Dhaka <kuldeepdhaka9@gmail.com>
+ * Copyright (C) 2015, 2016 Kuldeep Singh Dhaka <kuldeepdhaka9@gmail.com>
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -17,24 +17,26 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "dwc_otg_private.h"
+#include "../usbd_private.h"
+
 #include <unicore-mx/efm32/memorymap.h>
 #include <unicore-mx/efm32/cmu.h>
 #include <unicore-mx/efm32/usb.h>
 #include <unicore-mx/usbd/usbd.h>
-#include "../usbd_private.h"
-#include "dwc_otg_private.h"
 
-/* Receive FIFO size in 32-bit words. */
-#define RX_FIFO_SIZE 256
-
-#define ENDPOINTS_COUNT 6
-
-static uint32_t doeptsiz[ENDPOINTS_COUNT];
-static struct dwc_otg_private_data private_data;
 static struct usbd_device _usbd_dev;
 
-/** Initialize the USB_FS device controller hardware of the STM32. */
-static usbd_device *efm32lg_usbd_init(void)
+static const usbd_backend_config _config = {
+	.ep_count = 6,
+	.priv_mem = 2048, /* 2KB * 1024 */
+	.speed = USBD_SPEED_FULL,
+	.feature = USBD_FEATURE_NONE
+};
+
+#define REBASE(REG, ...)	REG(usbd_efm32lg.base_address, ##__VA_ARGS__)
+
+static usbd_device *init(const usbd_backend_config *config)
 {
 	/* Enable clock */
 	CMU_HFCORECLKEN0 |= CMU_HFCORECLKEN0_USB | CMU_HFCORECLKEN0_USBC;
@@ -45,15 +47,24 @@ static usbd_device *efm32lg_usbd_init(void)
 
 	USB_ROUTE = USB_ROUTE_DMPUPEN | USB_ROUTE_PHYPEN;
 
-	DWC_OTG_GOTGCTL(USB_OTG_BASE) |= DWC_OTG_GOTGCTL_BVALOEN |
-									DWC_OTG_GOTGCTL_BVALOVAL;
+	if (config == NULL) {
+		config = &_config;
+	}
 
-	private_data.base_address = USB_OTG_BASE;
-	private_data.rx_fifo_size = RX_FIFO_SIZE;
-	private_data.fifo_mem_top = RX_FIFO_SIZE;
-	private_data.doeptsiz = doeptsiz;
-	private_data.ep_count = ENDPOINTS_COUNT;
-	_usbd_dev.backend_data = &private_data;
+	if (!(config->feature & USBD_VBUS_SENSE)) {
+		REBASE(DWC_OTG_GOTGCTL) |= DWC_OTG_GOTGCTL_BVALOEN |
+										DWC_OTG_GOTGCTL_BVALOVAL;
+	}
+
+	/* Internal PHY */
+	REBASE(DWC_OTG_GUSBCFG) |= DWC_OTG_GUSBCFG_PHYSEL;
+
+	/* Full speed device. */
+	REBASE(DWC_OTG_DCFG) |= (REBASE(DWC_OTG_DCFG) & ~DWC_OTG_DCFG_DSPD_MASK) |
+								DWC_OTG_DCFG_DSPD_FULL_1_1;
+
+	_usbd_dev.backend = &usbd_efm32lg;
+	_usbd_dev.config = config;
 
 	dwc_otg_init(&_usbd_dev);
 
@@ -61,23 +72,23 @@ static usbd_device *efm32lg_usbd_init(void)
 }
 
 const struct usbd_backend usbd_efm32lg = {
-	.init = efm32lg_usbd_init,
+	.init = init,
 	.set_address = dwc_otg_set_address,
-	.ep_setup = dwc_otg_ep_setup,
-	.set_ep_type = dwc_otg_set_ep_type,
-	.set_ep_size = dwc_otg_set_ep_size,
-	.ep_reset = dwc_otg_endpoints_reset,
+	.get_address = dwc_otg_get_address,
+	.ep_prepare_start = dwc_otg_ep_prepare_start,
+	.ep_prepare = dwc_otg_ep_prepare,
+	.ep_prepare_end = dwc_otg_ep_prepare_end,
+	.set_ep_dtog = dwc_otg_set_ep_dtog,
+	.get_ep_dtog = dwc_otg_get_ep_dtog,
 	.set_ep_stall = dwc_otg_set_ep_stall,
 	.get_ep_stall = dwc_otg_get_ep_stall,
-	.set_ep_nak = dwc_otg_set_ep_nak,
-	.ep_write_packet = dwc_otg_ep_write_packet,
-	.ep_read_packet = dwc_otg_ep_read_packet,
+	.urb_submit = dwc_otg_urb_submit,
+	.urb_cancel = dwc_otg_urb_cancel,
 	.poll = dwc_otg_poll,
-	.disconnect = dwc_otg_disconnect,
 	.enable_sof = dwc_otg_enable_sof,
-	.get_ep_dtog = dwc_otg_get_ep_dtog,
-	.set_ep_dtog = dwc_otg_set_ep_dtog,
-	.ep_flush = dwc_otg_ep_flush,
-	.frame_number = dwc_otg_frame_number,
+	.disconnect = dwc_otg_disconnect,
+	.frame_number  = dwc_otg_frame_number,
+	.get_speed = dwc_otg_get_speed,
 	.set_address_before_status = true,
+	.base_address = USB_OTG_BASE,
 };

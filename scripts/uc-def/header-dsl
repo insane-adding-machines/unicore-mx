@@ -1,0 +1,205 @@
+Copyright (C) 2016 Kuldeep Singh Dhaka <kuldeepdhaka9@gmail.com>
+Licence: GNU Free Documentation License Version 1.3
+  (with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts)
+
+name of the language: uc-def
+________________________________________________________________________________
+
+enclose the uc-def code inside
+#if defined(__UCD__)
+... bla bla ...
+#endif
+
+anything that  start with '%'  (first character is a comment) in the uc-def language
+no line should contain any '#'
+________________________________________________________________________________
+access flags
+     r = reading permitted
+     w = writing permitted
+     h = modified by hardware
+     c = write 1 to clear, writing 0 has no affect
+     s = write 1 to set, writing 0 has no affect
+     t = write 1 to toggle, writing 0 has no affect
+
+________________________________________________________________________________
+
+~~~~~~~~~~~~~~~~
+family
+ name <name>
+ instance <address>
+ instance_by_id <id> <address>
+ register <size> <stride>
+ internal_only <bool>
+~~~~~~~~~~~~~~~~
+
+short hand:
+~~~~~~~~~~~~~~~~
+fam <name> <address>
+~~~~~~~~~~~~~~~~
+
+example: <name> = SPI
+
+note: for [instance <address>], it will output.
+  #define <name>_<register> (....)
+
+note: for [instance <id> <address>], it will output.
+  #define <name><id>_<register>(...) <name>_<register>(<address>, ...)
+
+note: there can only be one "instance <address>"
+note: there can be multiple "instance <id> <address>" is used
+note: instance is optional  (so, that means for short hand, <address> is optional too)
+
+note: "register <size> <stride>" tell the default
+    register size (in bits) and
+    register stride <stride> (in bits)
+
+note: "register <size> <stride>" is optional.
+   default: <size> = 32
+   default: <stride> = <size>     [<stide> is again optional inside the register]
+
+note: <internal_only> mean that the family has already been defined,
+   (by default false)
+   only generate register. useful when the registers are added
+________________________________________________________________________________
+
+~~~~~~~~~~~~~~~~
+register
+ name <name>
+ offset <offset>
+ offset_by_id <id> <offset>
+ size <size>
+ access <access>
+ bit_name <bit-name>
+ bits_name <bits-name>
+ variable <name> <equation>
+ internal_only <bool>
+~~~~~~~~~~~~~~~~
+
+short hand:
+~~~~~~~~~~~~~~~~
+reg <name> <offset> <size>
+~~~~~~~~~~~~~~~~
+
+example: <name> = CFG
+note: <name> can be multiple times, and the non-first will be considered alias of first
+note: <size> is in bits and tell the number of bits in the register
+note: <offset> (optional) and is calculated from last register (size + offset).
+        offset tell the number of bits away from the family
+        if the register is first in the family, this value is assumed 0
+note: " offset_by_id <id> <offset>" can be used multiple times to specify several type of same register
+note: " offset_by_id <id> <offset>" or " offset <offset>" . only one type can be used at a time
+
+note: <bit-name> is same as <name> if not provided
+
+note: <size> not given, then taken from family.
+
+note: <access> is like global access
+note: <access> if not provided, "r", "w" is assumed
+
+note: <internal_only> mean that the register has already been defined,
+   (by default false)
+   only generate bit and bits. useful when the register bits/bit are added
+
+
+note: <access-macro> = MMIO<size>
+	example:
+		for <size> = 8, <access-macro> = MMIO8
+		for <size> = 16, <access-macro> = MMIO16
+		for <size> = 32, <access-macro> = MMIO32
+
+output: if multiple not given.
+  #define <family>_<name>(...) <access-macro>(... + <offset>)
+
+output: if multiple given
+   FOR ALL i IN [0...<num>)
+   #define <family>_<name><i>(..., i) <access-macro>(... + <offset> + (<stride> * i))
+
+output: if variable given
+  #define <family>_<name>(...., var1_name, var2_name, varN_name) <access-macro>(... + <offset> + (var1_equ) + (var2_equ) + (varN_equ))
+
+variable thing usecase:
+
+#define DWC_OTG_HCxCHAR(base,x) (base + 0x500 + 0x20*(x))
+#define DWC_OTG_HCCHAR_CHENA   (1 << 31)
+by giving
+
+"""
+register
+ name HCxCHAR
+ offset 0x500
+ bit_name HCCHAR
+ bits_name HCCHAR
+ variable x 0x20*(x)
+
+bit CHENA 31
+"""
+________________________________________________________________________________
+
+~~~~~~~~~~~~~~~~
+bit
+ name <name>
+ offset <offset>
+ access <access>
+ variable <name> <equation>
+~~~~~~~~~~~~~~~~
+
+short hand
+~~~~~~~~~~~~~~~~
+bit <name> <offset>
+~~~~~~~~~~~~~~~~
+
+example: <name> = EN
+note: <name> can be multiple times, and the non-first will be considered alias of first
+note: <offset> is the offset of the bit in number-of-bits
+note: <offset> (optional) is not provided, it calculated from using.
+                 - just after "register": <offset> = 0
+                 - after another "bit": <offset> = <last-bit-offset> + 1
+                 - after another "bits": <offset> = <last-bits-offset> + <last-bits-size>
+output:
+ #define <family>_<register>_<name>_SHIFT (<offset>)
+ #define <family>_<register>_<name>(...)  (1 << <family>_<register>_<name>_SHIFT)
+note: <access> is like global access
+note: <access> if not provided, "r", "w" is assumed
+
+if "variable" is provided, variable argument is taken and the equation is added to offset
+________________________________________________________________________________
+
+~~~~~~~~~~~~~~~~
+bits
+ name <name>
+ offset <offset>
+ offset <id> <offset>
+ access <access>
+ size <size>
+ variable <name> <equation>
+ value <value-name> <value-value>
+~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~
+bits <name> <size> <offset>
+~~~~~~~~~~~~~~~~
+
+note: <name>, <offset> and <access>  are same in docs like "bit"
+note: <size> is the value of the span of the bits. (in number-of-bits)
+note: "value <value-name> <value-value>" is used to define some kind of special value (multiple)
+   example:
+     for spi, MODE = 0, MODE1 = 1, MODE2 = 2, MODE3 = MODE3
+   using "value MODE0 0", "value MODE1 1" ... we can get the special values
+note: <mask> = MASK_BIT0 << 0 | MASK_BIT1 |... MASK_BITn
+     where MASK_BITx = (1 << x)  IF x IN [0, <size>)
+     or MASK_BITx = (0 << x) IF x NOT IN [0, <size>)
+output:
+  #define <family>_<register>_<name>_SHIFT  (<offset>)
+  #define <family>_<register>_<name>_MASK  ((<mask>) << <family>_<register>_<name>_SHIFT)
+  #define <family>_<register>_<name>(..., v)    \
+      (((v) << <family>_<register>_<name>_SHIFT) & <family>_<register>_<name>_MASK)
+
+note:
+ <value-value> if missing, is infered from last value.
+  and for the first one in the data-structure, 0 is asssumed (because it do not have any previous to refer)
+
+if "value" exists  (for each "value")
+   #define <family>_<register>_<name>_<value-name>(...)    \
+                    <family>_<register>_<name>(..., <value-value>)
+
+if "variable" is provided, variable argument is taken and the equation is added to offset

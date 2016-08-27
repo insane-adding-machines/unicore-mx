@@ -42,6 +42,7 @@ LGPL License Terms @ref lgpl_license
 #define UNICOREMX_USB_USBSTD_H
 
 #include <stdint.h>
+#include <string.h>
 #include <unicore-mx/cm3/common.h>
 
 /*
@@ -135,6 +136,9 @@ struct usb_device_descriptor {
 	uint8_t bNumConfigurations;
 
 	const struct usb_config_descriptor *config;
+
+	/* Data for GET_DESCRIPTOR(string) before SET_CONFIG */
+	const struct usb_string_utf8_data *string;
 } __attribute__((packed));
 
 #define USB_DT_DEVICE_SIZE 18
@@ -172,6 +176,9 @@ struct usb_config_descriptor {
 		const struct usb_iface_assoc_descriptor *iface_assoc;
 		const struct usb_interface_descriptor *altsetting;
 	} *interface;
+
+	/* Data for GET_DESCRIPTOR(string) after SET_CONFIG */
+	const struct usb_string_utf8_data *string;
 } __attribute__((packed));
 #define USB_DT_CONFIGURATION_SIZE		9
 
@@ -582,6 +589,12 @@ struct usb_iface_assoc_descriptor {
 #define USB_LANGID_UZBEK_LATIN 0x0443
 #define USB_LANGID_UZBEK_CYRILLIC 0x0843
 #define USB_LANGID_VIETNAMESE 0x042A
+
+struct usb_string_utf8_data {
+	const uint8_t **data; /**< Pointer to string array (NULL = end-of-list) */
+	size_t count; /**< Number of item in @a data */
+	uint16_t lang_id; /**< Language ID */
+};
 
 #endif
 

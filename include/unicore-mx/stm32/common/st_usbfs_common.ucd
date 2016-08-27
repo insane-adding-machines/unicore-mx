@@ -1,0 +1,137 @@
+/*
+ * Copyright (C) 2009 Piotr Esden-Tempski <piotr@esden.net>
+ * Copyright (C) 2016 Kuldeep Singh Dhaka <kuldeepdhaka9@gmail.com>
+ *
+ * This library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/* THIS FILE SHOULD NOT BE INCLUDED DIRECTLY !
+ Use top-level <unicore-mx/stm32/st_usbfs.h> */
+
+#ifdef UNICOREMX_ST_USBFS_H
+
+#ifndef UNICOREMX_ST_USBFS_COMMON_H
+#define UNICOREMX_ST_USBFS_COMMON_H
+
+#include <unicore-mx/stm32/memorymap.h>
+
+#if defined(__UCD__)
+
+family
+ name USB
+ register 16 32
+ instance USB_DEV_FS_BASE
+
+% USB EP register
+register
+ name EP
+ offset 0
+ variable x (x)*4
+
+bit CTR_RX 15
+bit DTOG_RX 14
+bits
+ name STAT_RX
+ offset 12
+ size 2
+ value DISABLED 0
+ value STALL 1
+ value NAK 2
+ value VALID 3
+
+bit SETUP 11
+
+bits
+ name TYPE
+ offset 9
+ size 2
+ value BULK 0
+ value CONTROL 1
+ value ISO 2
+ value INTERRUPT 3
+
+bit
+ name KIND
+ name DBL_BUF
+ name STATUS_OUT
+ offset 8
+
+bit CTR_TX 7
+bit DTOG_TX 6
+bits
+ name STAT_TX
+ offset 4
+ size 2
+ value DISABLED 0
+ value STALL 1
+ value NAK 2
+ value VALID 3
+
+bits EA 4 0
+
+% USB Control register
+reg CNTR 0x40
+
+bit CTRM 15
+bit PMAOVRM 14
+bit ERRM 13
+bit WKUPM 12
+bit SUSPM 11
+bit RESETM 10
+bit SOFM 9
+bit ESOFM 8
+bit FSUSP 3
+bit LP_MODE 2
+bit PDWN 1
+bit FRES 0
+
+% USB Interrupt status register
+reg ISTR 0x44
+
+bit CTR 15
+bit PMAOVR 14
+bit ERR 13
+bit WKUP 12
+bit SUSP 11
+bit RESET 10
+bit SOF 9
+bit ESOF 8
+
+bit DIR 4
+bits EP_ID 4 0
+
+% USB Frame number register
+reg FNR 0x48
+
+bit RXDP 15
+bit RXDM 14
+bit LCK 13
+bit LSOF 2 11
+bits FN 11 0
+
+% USB Device address register
+reg DADDR 0x4C
+
+bit EF 7
+bits ADD 7 0
+
+% USB Buffer table address register
+reg BTABLE 0x50
+
+#endif /* defined(__UCD__) */
+
+#endif
+#else
+#error "st_usbfs_common.h should not be included explicitly, only via st_usbfs.h"
+#endif

@@ -41,6 +41,7 @@ MAKEFLAGS += --no-print-directory
 endif
 
 IRQ_DEFN_FILES	:= $(shell find . -name 'irq.json')
+UC_DEFN_FILES	:= $(shell find . -name '*.ucd')
 STYLECHECKFILES := $(shell find . -name '*.[ch]')
 
 all: build
@@ -55,8 +56,16 @@ build: lib
 	@printf "  CLNHDR  $*\n";
 	@./scripts/irq2nvic_h --remove ./$*
 
+%.h: %.ucd
+	@printf "  GENUCH  $@\n";
+	@./scripts/uc-def/uc-def ./$< ./$@
+
+%.h.clean: %.ucd
+	@printf "  CLNUCH  $*.h\n";
+	@-rm ./$*.h
+
 LIB_DIRS:=$(wildcard $(addprefix lib/,$(TARGETS)))
-$(LIB_DIRS): $(IRQ_DEFN_FILES:=.genhdr)
+$(LIB_DIRS): $(IRQ_DEFN_FILES:=.genhdr) $(UC_DEFN_FILES:.ucd=.h)
 	@printf "  BUILD   $@\n";
 	$(Q)$(MAKE) --directory=$@ SRCLIBDIR="$(SRCLIBDIR)"
 
@@ -66,7 +75,7 @@ lib: $(LIB_DIRS)
 html doc:
 	$(Q)$(MAKE) -C doc html
 
-clean: $(IRQ_DEFN_FILES:=.cleanhdr) $(LIB_DIRS:=.clean) $(EXAMPLE_DIRS:=.clean) doc.clean styleclean
+clean: $(IRQ_DEFN_FILES:=.cleanhdr) $(UC_DEFN_FILES:.ucd=.h.clean) $(LIB_DIRS:=.clean) $(EXAMPLE_DIRS:=.clean) doc.clean styleclean
 
 %.clean:
 	$(Q)if [ -d $* ]; then \

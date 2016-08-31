@@ -174,7 +174,7 @@ bool eth_rx(uint8_t *ppkt, uint32_t *len, uint32_t maxlen)
                 pkt_ptr = ppkt + l;
                 maxlen -= l;
             } else {
-                *len = l - 4;
+                *len = l;
             }
 		}
 
@@ -222,7 +222,7 @@ void eth_init(uint8_t phy, enum eth_clk clock)
 	ETH_MACMIIAR = clock;
 	phy_reset(phy);
 
-	ETH_MACCR = ETH_MACCR_FES | ETH_MACCR_DM | ETH_MACCR_RD;
+	ETH_MACCR = ETH_MACCR_FES | ETH_MACCR_DM | ETH_MACCR_CSTF | ETH_MACCR_APCS;
 	ETH_MACFFR = ETH_MACFFR_RA | ETH_MACFFR_PM;
 	ETH_MACHTHR = 0; /* pass all frames */
 	ETH_MACHTLR = 0;

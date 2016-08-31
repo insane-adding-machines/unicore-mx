@@ -158,6 +158,7 @@ bool eth_rx(uint8_t *ppkt, uint32_t *len, uint32_t maxlen)
 	bool ls = false;
 	bool overrun = false;
 	uint32_t l = 0;
+    uint8_t *pkt_ptr = ppkt;
 
 	while (!(ETH_DES0(RxBD) & ETH_RDES0_OWN) && !ls) {
 		l = (ETH_DES0(RxBD) & ETH_RDES0_FL) >> ETH_RDES0_FL_SHIFT;
@@ -167,11 +168,14 @@ bool eth_rx(uint8_t *ppkt, uint32_t *len, uint32_t maxlen)
 		/* frame buffer overrun ?*/
 		overrun |= fs && (maxlen < l);
 
-		if (fs && !overrun) {
-			memcpy(ppkt, (void *)ETH_DES2(RxBD), l);
-			ppkt += l;
-			*len += l;
-			maxlen -= l;
+		if (!overrun) {
+			memcpy(pkt_ptr, (void *)ETH_DES2(RxBD), l);
+            if (!ls) {
+                pkt_ptr = ppkt + l;
+                maxlen -= l;
+            } else {
+                *len = l - 4;
+            }
 		}
 
 		ETH_DES0(RxBD) = ETH_RDES0_OWN;
@@ -218,8 +222,7 @@ void eth_init(uint8_t phy, enum eth_clk clock)
 	ETH_MACMIIAR = clock;
 	phy_reset(phy);
 
-	ETH_MACCR = ETH_MACCR_CSTF | ETH_MACCR_FES | ETH_MACCR_DM |
-		ETH_MACCR_APCS | ETH_MACCR_RD;
+	ETH_MACCR = ETH_MACCR_FES | ETH_MACCR_DM | ETH_MACCR_RD;
 	ETH_MACFFR = ETH_MACFFR_RA | ETH_MACFFR_PM;
 	ETH_MACHTHR = 0; /* pass all frames */
 	ETH_MACHTLR = 0;

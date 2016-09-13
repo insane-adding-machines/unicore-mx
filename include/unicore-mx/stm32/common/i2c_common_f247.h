@@ -43,7 +43,7 @@ specific memorymap.h header before including this header file.*/
 #endif
 /** @cond */
 #else
-#warning "i2c_common_f24.h should not be included explicitly, only via i2c.h"
+#warning "i2c_common_f247.h should not be included explicitly, only via i2c.h"
 #endif
 /** @endcond */
 

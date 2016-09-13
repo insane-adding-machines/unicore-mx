@@ -29,7 +29,7 @@ LGPL License Terms @ref lgpl_license
 #ifndef UNICOREMX_DMA_H
 #define UNICOREMX_DMA_H
 
-#include <unicore-mx/stm32/common/dma_common_f24.h>
+#include <unicore-mx/stm32/common/dma_common_f247.h>
 
 #endif
 

@@ -28,6 +28,8 @@
 #       include <unicore-mx/stm32/f3/i2c.h>
 #elif defined(STM32F4)
 #       include <unicore-mx/stm32/f4/i2c.h>
+#elif defined(STM32F7)
+#       include <unicore-mx/stm32/f7/i2c.h>
 #elif defined(STM32L1)
 #       include <unicore-mx/stm32/l1/i2c.h>
 #else

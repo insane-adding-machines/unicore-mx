@@ -1,12 +1,12 @@
-/** @defgroup i2c_defines I2C Defines
+/** @defgroup dma_defines DMA Defines
 
-@brief <b>Defined Constants and Types for the STM32F4xx I2C </b>
+@ingroup STM32F7xx_defines
 
-@ingroup STM32F4xx_defines
+@brief Defined Constants and Types for the STM32F7xx DMA Controller
 
 @version 1.0.0
 
-@date 12 October 2012
+@date 30 November 2012
 
 LGPL License Terms @ref lgpl_license
  */
@@ -26,10 +26,10 @@ LGPL License Terms @ref lgpl_license
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef UNICOREMX_I2C_H
-#define UNICOREMX_I2C_H
+#ifndef UNICOREMX_DMA_H
+#define UNICOREMX_DMA_H
 
-#include <unicore-mx/stm32/common/i2c_common_f247.h>
+#include <unicore-mx/stm32/common/dma_common_f247.h>
 
 #endif
 

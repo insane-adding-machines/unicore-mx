@@ -29,7 +29,7 @@ LGPL License Terms @ref lgpl_license
 #ifndef UNICOREMX_I2C_H
 #define UNICOREMX_I2C_H
 
-#include <unicore-mx/stm32/common/i2c_common_f24.h>
+#include <unicore-mx/stm32/common/i2c_common_f247.h>
 
 #endif
 

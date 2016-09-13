@@ -618,7 +618,7 @@ END_DECLS
 #endif
 /** @cond */
 #else
-#warning "dma_common_f24.h should not be included explicitly, only via dma.h"
+#warning "dma_common_f247.h should not be included explicitly, only via dma.h"
 #endif
 /** @endcond */
 

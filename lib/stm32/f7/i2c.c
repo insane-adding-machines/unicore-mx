@@ -1,8 +1,8 @@
 /** @defgroup i2c_file I2C
 
-@ingroup STM32F4xx
+@ingroup STM32F7xx
 
-@brief <b>unicore-mx STM32F4xx I2C</b>
+@brief <b>unicore-mx STM32F7xx I2C</b>
 
 @version 1.0.0
 

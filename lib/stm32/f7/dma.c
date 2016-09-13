@@ -1,8 +1,8 @@
 /** @defgroup dma_file DMA
 
-@ingroup STM32F4xx
+@ingroup STM32F7xx
 
-@brief <b>unicore-mx STM32F4xx DMA</b>
+@brief <b>unicore-mx STM32F7xx DMA</b>
 
 @version 1.0.0
 

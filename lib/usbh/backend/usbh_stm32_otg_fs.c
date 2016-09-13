@@ -18,6 +18,7 @@
  */
 
 #include "dwc_otg-private.h"
+#include <unicore-mx/stm32/otg_fs.h>
 #include <unicore-mx/stm32/memorymap.h>
 
 static usbh_host host;
@@ -44,6 +45,15 @@ static usbh_dwc_otg_priv private_data = {
 static usbh_host *init(void)
 {
 	host.backend_data = &private_data;
+
+	if (OTG_FS_CID >= 0x00002000) { /* 2.0 */
+		OTG_FS_GCCFG = OTG_GCCFG_VBDEN | OTG_GCCFG_PWRDWN;
+		OTG_FS_GOTGCTL |= OTG_GOTGCTL_AVALOEN |
+										OTG_GOTGCTL_AVALOVAL;
+	} else { /* 1.x */
+		OTG_FS_GCCFG = OTG_GCCFG_VBUSASEN | OTG_GCCFG_PWRDWN;
+	}
+
 	usbh_dwc_otg_init(&host);
 
 	return &host;

@@ -70,6 +70,16 @@ static usbd_device * stm32_otg_fs_usbd_init(void)
 	private_data.ep_count = ENDPOINT_COUNTS;
 	_usbd_dev.backend_data = &private_data;
 
+	if (OTG_FS_CID >= 0x00002000) { /* 2.0 */
+		/* Enable VBUS detection and power up the PHY. */
+		OTG_FS_GCCFG = OTG_GCCFG_VBDEN | OTG_GCCFG_PWRDWN;
+		DWC_OTG_GOTGCTL(USB_OTG_FS_BASE) |= DWC_OTG_GOTGCTL_BVALOEN |
+										DWC_OTG_GOTGCTL_BVALOVAL;
+	} else { /* 1.x */
+		/* Enable VBUS sensing in device mode and power up the PHY. */
+		OTG_FS_GCCFG = OTG_GCCFG_VBUSBSEN | OTG_GCCFG_PWRDWN;
+	}
+
 	dwc_otg_init(&_usbd_dev);
 
 	return &_usbd_dev;

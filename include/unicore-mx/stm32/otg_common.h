@@ -97,6 +97,10 @@
 #define OTG_GOTGCTL_HSHNPEN		(1 << 10)
 #define OTG_GOTGCTL_HNPRQ		(1 << 9)
 #define OTG_GOTGCTL_HNGSCS		(1 << 8)
+#define OTG_GOTGCTL_BVALOVAL	(1 << 7)
+#define OTG_GOTGCTL_BVALOEN		(1 << 6)
+#define OTG_GOTGCTL_AVALOVAL	(1 << 5)
+#define OTG_GOTGCTL_AVALOEN		(1 << 4)
 #define OTG_GOTGCTL_SRQ			(1 << 1)
 #define OTG_GOTGCTL_SRQSCS		(1 << 0)
 
@@ -219,7 +223,8 @@
 
 /* OTG general core configuration register (OTG_GCCFG) */
 /* Bits 31:22 - Reserved */
-#define OTG_GCCFG_NOVBUSSENS		(1 << 21)
+#define OTG_GCCFG_VBDEN			(1 << 21)
+#define OTG_GCCFG_NOVBUSSENS	(1 << 21)
 #define OTG_GCCFG_SOFOUTEN		(1 << 20)
 #define OTG_GCCFG_VBUSBSEN		(1 << 19)
 #define OTG_GCCFG_VBUSASEN		(1 << 18)

@@ -43,7 +43,12 @@ static usbd_device *efm32lg_usbd_init(void)
 	/* wait till clock not selected */
 	while (!(CMU_STATUS & CMU_STATUS_USBCHFCLKSEL));
 
-	private_data.base_address = USB_BASE;
+	USB_ROUTE = USB_ROUTE_DMPUPEN | USB_ROUTE_PHYPEN;
+
+	DWC_OTG_GOTGCTL(USB_OTG_BASE) |= DWC_OTG_GOTGCTL_BVALOEN |
+									DWC_OTG_GOTGCTL_BVALOVAL;
+
+	private_data.base_address = USB_OTG_BASE;
 	private_data.rx_fifo_size = RX_FIFO_SIZE;
 	private_data.fifo_mem_top = RX_FIFO_SIZE;
 	private_data.doeptsiz = doeptsiz;

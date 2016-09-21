@@ -9,6 +9,7 @@ Ken Sarkies <ksarkies@internode.on.net>
 /*
  * Copyright (C) 2011 Fergus Noble <fergusnoble@gmail.com>
  * Copyright (C) 2012 Ken Sarkies <ksarkies@internode.on.net>
+ * Copyright (C) 2016 Daniel Gröber <dxld@darkboxed.org>
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -611,6 +612,7 @@ void dma_disable_stream(uint32_t dma, uint8_t stream);
 void dma_set_peripheral_address(uint32_t dma, uint8_t stream, uint32_t address);
 void dma_set_memory_address(uint32_t dma, uint8_t stream, uint32_t address);
 void dma_set_memory_address_1(uint32_t dma, uint8_t stream, uint32_t address);
+uint16_t dma_get_number_of_data(uint32_t dma, uint8_t stream);
 void dma_set_number_of_data(uint32_t dma, uint8_t stream, uint16_t number);
 
 END_DECLS
@@ -621,4 +623,3 @@ END_DECLS
 #warning "dma_common_f247.h should not be included explicitly, only via dma.h"
 #endif
 /** @endcond */
-

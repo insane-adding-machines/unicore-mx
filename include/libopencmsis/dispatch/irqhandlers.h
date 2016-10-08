@@ -8,6 +8,8 @@
 #	include <libopencmsis/stm32/f3/irqhandlers.h>
 #elif defined(STM32F4)
 #	include <libopencmsis/stm32/f4/irqhandlers.h>
+#elif defined(STM32F7)
+#	include <libopencmsis/stm32/f7/irqhandlers.h>
 #elif defined(STM32L1)
 #	include <libopencmsis/stm32/l1/irqhandlers.h>
 

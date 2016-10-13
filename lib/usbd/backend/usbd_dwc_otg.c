@@ -47,6 +47,10 @@ void dwc_otg_init(usbd_device *usbd_dev)
 	REBASE(DWC_OTG_GRSTCTL) |= DWC_OTG_GRSTCTL_CSRST;
 	while (REBASE(DWC_OTG_GRSTCTL) & DWC_OTG_GRSTCTL_CSRST);
 
+	/* Ignore B-peripheral session valid */
+	REBASE(DWC_OTG_GOTGCTL) |= DWC_OTG_GOTGCTL_BVALOEN |
+								DWC_OTG_GOTGCTL_BVALOVAL;
+
 	/* Clear SDIS because newer version have set by default */
 	REBASE(DWC_OTG_DCTL) &= ~DWC_OTG_DCTL_SDIS;
 

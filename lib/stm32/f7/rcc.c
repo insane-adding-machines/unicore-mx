@@ -22,8 +22,8 @@ const struct rcc_clock_scale rcc_hse_25mhz_3v3 = {
 		.flash_config = FLASH_ACR_ICE | FLASH_ACR_DCE |
 				FLASH_ACR_LATENCY_7WS,
 		.ahb_frequency  = 216000000,
-		.apb1_frequency = 108000000,
-		.apb2_frequency = 216000000,
+		.apb1_frequency = 54000000,
+		.apb2_frequency = 108000000,
 };
 
 const struct rcc_clock_scale rcc_hse_8mhz_3v3 = {
@@ -37,8 +37,8 @@ const struct rcc_clock_scale rcc_hse_8mhz_3v3 = {
 		.flash_config = FLASH_ACR_ICE | FLASH_ACR_DCE |
 				FLASH_ACR_LATENCY_7WS,
 		.ahb_frequency  = 216000000,
-		.apb1_frequency = 108000000,
-		.apb2_frequency = 216000000,
+		.apb1_frequency = 54000000,
+		.apb2_frequency = 108000000,
 };
 
 void rcc_osc_ready_int_clear(enum rcc_osc osc)

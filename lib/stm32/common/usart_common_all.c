@@ -48,7 +48,7 @@ void usart_set_baudrate(uint32_t usart, uint32_t baud)
 {
 	uint32_t clock = rcc_apb1_frequency;
 
-#if defined STM32F2 || defined STM32F4
+#if defined STM32F2 || defined STM32F4 || defined STM32F7
 	if ((usart == USART1) ||
 	    (usart == USART6)) {
 		clock = rcc_apb2_frequency;

@@ -96,6 +96,22 @@ void uart_configure(uint32_t uart,
 	UART_BAUDRATE(uart) = br;
 }
 
+#define __uart_send_byte_sync(uart, byte) do {\
+	UART_TXD((uart)) = byte;\
+	while(!UART_EVENT_TXDRDY((uart)));\
+	UART_EVENT_TXDRDY((uart)) = 0;\
+} while (0)
+
+#define __uart_tx_start(uart) do {\
+	UART_EVENT_TXDRDY((uart)) = 0;\
+	UART_TASK_STARTTX((uart)) = 1;\
+} while (0)
+
+#define __uart_tx_stop(uart) do {\
+	UART_TASK_STOPTX((uart)) = 1;\
+} while (0)
+
+
 /** @brief Send buffer synchronously.
  *
  * @param[in] uart uint32_t uart base
@@ -104,12 +120,11 @@ void uart_configure(uint32_t uart,
  */
 void uart_send_buffer_blocking(uint32_t uart, const uint8_t *buffer, uint16_t len)
 {
-	UART_TASK_STARTTX(uart) = 1;
+	__uart_tx_start(uart);
 	for (; len; --len, ++buffer) {
-		UART_TXD(uart) = *buffer;
-		while(!UART_EVENT_TXDRDY(uart));
+		__uart_send_byte_sync(uart, *buffer);
 	}
-	UART_TASK_STOPTX(uart) = 1;
+	__uart_tx_stop(uart);
 }
 
 /** @brief Send zero terminated string synchronously.
@@ -119,11 +134,10 @@ void uart_send_buffer_blocking(uint32_t uart, const uint8_t *buffer, uint16_t le
  */
 void uart_send_string_blocking(uint32_t uart, const char *str)
 {
-	UART_TASK_STARTTX(uart) = 1;
+	__uart_tx_start(uart);
 	for (; *str; ++str) {
-		UART_TXD(uart) = *str;
-		while(!UART_EVENT_TXDRDY(uart));
+		__uart_send_byte_sync(uart, *str);
 	}
-	UART_TASK_STOPTX(uart) = 1;
+	__uart_tx_stop(uart);
 }
 

@@ -125,7 +125,7 @@ enum uart_baud {
 
 #define UART_PSEL_OFF			(0xff)
 #define UART_MAX_PIN			(31)
-#define UART_PSEL_VAL(p)		((p) < UART_MAX_PIN ? (p) : 0xffffffff)
+#define UART_PSEL_VAL(p)		((p) <= UART_MAX_PIN ? (p) : 0xffffffff)
 
 
 BEGIN_DECLS

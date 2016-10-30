@@ -29,7 +29,7 @@ LGPL License Terms @ref lgpl_license
 #ifndef UNICOREMX_SPI_H
 #define UNICOREMX_SPI_H
 
-#include <unicore-mx/stm32/common/spi_common_f24.h>
+#include <unicore-mx/stm32/common/spi_common_f247.h>
 
 #endif
 

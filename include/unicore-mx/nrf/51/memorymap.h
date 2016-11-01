@@ -49,10 +49,12 @@
 
 #define SPI0_BASE			(APB_BASE + 0x3000)
 #define TWI0_BASE			(APB_BASE + 0x3000)
+#define I2C0_BASE			(APB_BASE + 0x3000)
 
 #define SPI1_BASE			(APB_BASE + 0x4000)
 #define SPIS1_BASE			(APB_BASE + 0x4000)
 #define TWI1_BASE			(APB_BASE + 0x4000)
+#define I2C1_BASE			(APB_BASE + 0x4000)
 
 #define GPIOTE_BASE			(APB_BASE + 0x6000)
 

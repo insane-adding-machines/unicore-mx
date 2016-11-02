@@ -91,6 +91,27 @@ void gpio_setup_mode(uint32_t gpios, uint8_t dir, uint8_t pull)
 	}
 }
 
+/** @brief Set drive for gpios.
+ *
+ * Some peripherals require this to be configured in a certain way.
+ *
+ * @param[in] gpios uint32_t
+ * @param[in] drive uint8_t
+ */
+void gpio_set_drive(uint32_t gpios, uint8_t drive)
+{
+	uint8_t i = 0;
+	while (gpios) {
+		if (gpios & 1) {
+			uint32_t reg_pin_cnf = GPIO_PIN_CNF(i);
+			reg_pin_cnf &= ~PIN_CNF_DRIVE_MASK;
+			GPIO_PIN_CNF(i) = reg_pin_cnf | PIN_CNF_DRIVE_MASKED(drive);
+		}
+		++i;
+		gpios >>= 1;
+	}
+}
+
 /** @brief Configure Task in GPIO TE Module
  *
  * @param[in] task_num uint8_t Task number (0-3)

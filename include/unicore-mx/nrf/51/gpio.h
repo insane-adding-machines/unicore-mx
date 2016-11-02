@@ -173,6 +173,8 @@ uint32_t gpio_get(uint32_t gpios);
 
 void gpio_setup_mode(uint32_t gpios, uint8_t dir, uint8_t pull);
 
+void gpio_set_drive(uint32_t gpios, uint8_t drive);
+
 void gpio_configure_task(uint8_t task_num,
 		uint8_t pin_num, uint8_t polarity, uint8_t init);
 

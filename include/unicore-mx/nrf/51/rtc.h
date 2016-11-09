@@ -20,6 +20,7 @@
 
 #include <unicore-mx/cm3/common.h>
 #include <unicore-mx/nrf/memorymap.h>
+#include <unicore-mx/nrf/periph.h>
 
 /* Only two RTCs on this device. */
 #define RTC0			RTC0_BASE
@@ -65,15 +66,15 @@
 #define RTC1_EVENT_COMPARE3			RTC_EVENT_COMPARE(RTC1, 3)
 
 /* Registers */
-#define RTC_INTEN(rtc)			MMIO32((rtc) + 0x300)
+#define RTC_INTEN(rtc)			periph_inten(rtc)
 #define RTC0_INTEN			RTC_INTEN(RTC0)
 #define RTC1_INTEN			RTC_INTEN(RTC1)
 
-#define RTC_INTENSET(rtc)			MMIO32((rtc) + 0x304)
+#define RTC_INTENSET(rtc)			periph_intenset(rtc)
 #define RTC0_INTENSET			RTC_INTENSET(RTC0)
 #define RTC1_INTENSET			RTC_INTENSET(RTC1)
 
-#define RTC_INTENCLR(rtc)			MMIO32((rtc) + 0x308)
+#define RTC_INTENCLR(rtc)			periph_intenclr(rtc)
 #define RTC0_INTENCLR			RTC_INTENCLR(RTC0)
 #define RTC1_INTENCLR			RTC_INTENCLR(RTC1)
 
@@ -125,10 +126,11 @@
 
 BEGIN_DECLS
 
+#define rtc_enable_interrupts			periph_enable_interrupts
+#define rtc_disable_interrupts			periph_disable_interrupts
+
 void rtc_set_prescaler(uint32_t rtc, uint16_t presc);
 uint32_t rtc_get_counter(uint32_t rtc);
-void rtc_enable_interrupts(uint32_t rtc, uint32_t mask);
-void rtc_disable_interrupts(uint32_t rtc, uint32_t mask);
 void rtc_enable_events(uint32_t rtc, uint32_t mask);
 void rtc_disable_events(uint32_t rtc, uint32_t mask);
 void rtc_start(uint32_t rtc);

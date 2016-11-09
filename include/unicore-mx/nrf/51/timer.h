@@ -20,6 +20,7 @@
 
 #include <unicore-mx/cm3/common.h>
 #include <unicore-mx/nrf/memorymap.h>
+#include <unicore-mx/nrf/periph.h>
 
 /* Timer/Counter */
 
@@ -103,17 +104,17 @@
 
 /* Registers */
 
-#define TIMER_SHORTS(T)			MMIO32((T) + 0x200)
+#define TIMER_SHORTS(T)			periph_shorts(T)
 #define TIMER0_SHORTS			TIMER_SHORTS(TIMER0)
 #define TIMER1_SHORTS			TIMER_SHORTS(TIMER1)
 #define TIMER2_SHORTS			TIMER_SHORTS(TIMER2)
 
-#define TIMER_INTENSET(T)			MMIO32((T) + 0x304)
+#define TIMER_INTENSET(T)			periph_intenset(T)
 #define TIMER0_INTENSET			TIMER_INTENSET(TIMER0)
 #define TIMER1_INTENSET			TIMER_INTENSET(TIMER1)
 #define TIMER2_INTENSET			TIMER_INTENSET(TIMER2)
 
-#define TIMER_INTENCLR(T)			MMIO32((T) + 0x308)
+#define TIMER_INTENCLR(T)			periph_intenclr(T)
 #define TIMER0_INTENCLR			TIMER_INTENCLR(TIMER0)
 #define TIMER1_INTENCLR			TIMER_INTENCLR(TIMER1)
 #define TIMER2_INTENCLR			TIMER_INTENCLR(TIMER2)
@@ -191,6 +192,11 @@ enum timer_bitmode {
 
 BEGIN_DECLS
 
+#define timer_enable_shorts			periph_enable_shorts
+#define timer_disable_shorts			periph_disable_shorts
+#define timer_enable_interrupts			periph_enable_interrupts
+#define timer_disable_interrupts			periph_disable_interrupts
+
 void timer_set_mode(uint32_t timer, enum timer_mode mode);
 void timer_set_bitmode(uint32_t timer, enum timer_bitmode bitmode);
 void timer_start(uint32_t timer);
@@ -198,10 +204,6 @@ void timer_stop(uint32_t timer);
 void timer_clear(uint32_t timer);
 void timer_set_prescaler(uint32_t timer, uint8_t presc);
 void timer_set_compare(uint32_t timer, uint8_t compare_num, uint32_t compare_val);
-void timer_enable_shorts(uint32_t timer, uint32_t shorts);
-void timer_disable_shorts(uint32_t timer, uint32_t shorts);
-void timer_enable_interrupts(uint32_t timer, uint32_t interrupts);
-void timer_disable_interrupts(uint32_t timer, uint32_t interrupts);
 
 END_DECLS
 

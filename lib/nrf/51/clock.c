@@ -26,6 +26,7 @@
  */
 
 #include <unicore-mx/nrf/clock.h>
+#include <unicore-mx/nrf/periph.h>
 
 /** @brief Start Low Frequency Clock
  *
@@ -33,7 +34,7 @@
  */
 void clock_start_lfclk(bool wait)
 {
-	CLOCK_TASK_LFCLKSTART = 1;
+	periph_trigger_task(CLOCK_TASK_LFCLKSTART);
 	if (wait) {
 		while(!(CLOCK_LFCLKSTAT & CLOCK_LFCLKSTAT_STATE));
 	}
@@ -42,7 +43,7 @@ void clock_start_lfclk(bool wait)
 /** @brief Stop Low Frequency Clock */
 void clock_stop_lfclk()
 {
-	CLOCK_TASK_LFCLKSTOP = 1;
+	periph_trigger_task(CLOCK_TASK_LFCLKSTOP);
 }
 
 /** @brief Start High Frequency Crystal Oscillator.
@@ -53,7 +54,7 @@ void clock_stop_lfclk()
  */
 void clock_start_hfclk(bool wait)
 {
-	CLOCK_TASK_HFCLKSTART = 1;
+	periph_trigger_task(CLOCK_TASK_HFCLKSTART);
 	if (wait) {
 		while(!(CLOCK_HFCLKSTAT & CLOCK_HFCLKSTAT_STATE));
 	}
@@ -62,7 +63,7 @@ void clock_start_hfclk(bool wait)
 /** @brief Stop High Frequency Crystal Oscillator */
 void clock_stop_hfclk()
 {
-	CLOCK_TASK_HFCLKSTOP = 1;
+	periph_trigger_task(CLOCK_TASK_HFCLKSTOP);
 }
 
 /** @brief Select nominal frequency of external crystal for HFCLK.

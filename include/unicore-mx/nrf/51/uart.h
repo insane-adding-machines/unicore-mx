@@ -20,6 +20,7 @@
 
 #include <unicore-mx/cm3/common.h>
 #include <unicore-mx/nrf/memorymap.h>
+#include <unicore-mx/nrf/periph.h>
 
 /* Universal Asynchronous Receiver/Transmitter */
 
@@ -57,9 +58,9 @@
 
 /* Registers */
 
-#define UART_INTEN(uart)			MMIO32((uart) + 0x300)
-#define UART_INTENSET(uart)			MMIO32((uart) + 0x304)
-#define UART_INTENCLR(uart)			MMIO32((uart) + 0x308)
+#define UART_INTEN(uart)			periph_inten(uart)
+#define UART_INTENSET(uart)			periph_intenset(uart)
+#define UART_INTENCLR(uart)			periph_intenclr(uart)
 #define UART_ERRORSRC(uart)			MMIO32((uart) + 0x480)
 #define UART_ENABLE(uart)			MMIO32((uart) + 0x500)
 #define UART_PSELRTS(uart)			MMIO32((uart) + 0x508)
@@ -99,7 +100,8 @@
 #define UART_ERRORSRC_FRAMING			(1 << 2)
 #define UART_ERRORSRC_BREAK			(1 << 3)
 
-#define UART_ENABLE_ENABLE			(4)
+#define UART_ENABLE_ENABLED			(4)
+#define UART_ENABLE_DISABLED			(0)
 
 enum uart_baud {
 	UART_BAUD_1200 = 0x0004F000,
@@ -130,8 +132,9 @@ enum uart_baud {
 
 BEGIN_DECLS
 
-void uart_enable_interrupts(uint32_t uart, uint32_t mask);
-void uart_disable_interrupts(uint32_t uart, uint32_t mask);
+#define uart_enable_interrupts			periph_enable_interrupts
+#define uart_disable_interrupts			periph_disable_interrupts
+
 void uart_enable(uint32_t uart);
 void uart_disable(uint32_t uart);
 void uart_configure(uint32_t uart,

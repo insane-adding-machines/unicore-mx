@@ -119,13 +119,13 @@ void radio_disable_crc(void)
 /** @brief Enable the peripheral. */
 void radio_enable(void)
 {
-	RADIO_POWER = 1;
+	RADIO_POWER = RADIO_POWER_ENABLED;
 }
 
 /** @brief Disable the peripheral. */
 void radio_disable(void)
 {
-	RADIO_POWER = 0;
+	RADIO_POWER = RADIO_POWER_DISABLED;
 }
 
 
@@ -264,7 +264,7 @@ void radio_set_packet_ptr(uint8_t* packet_ptr)
  */
 void radio_enable_shorts(uint16_t shorts)
 {
-	RADIO_SHORTS |= shorts;
+	periph_enable_shorts(RADIO_BASE, shorts);
 }
 
 /* @brief Disable shortcuts
@@ -273,35 +273,35 @@ void radio_enable_shorts(uint16_t shorts)
  */
 void radio_disable_shorts(uint16_t shorts)
 {
-	RADIO_SHORTS &= ~shorts;
+	periph_disable_shorts(RADIO_BASE, shorts);
 }
 
 /* @brief Clear all shortcuts */
 void radio_clear_shorts(void)
 {
-	RADIO_SHORTS = 0;
+	periph_clear_shorts(RADIO_BASE);
 }
 
 /* @brief Enable radio Transmitter */
 void radio_enable_tx(void)
 {
-	RADIO_TASK_TXEN = 1;
+	periph_trigger_task(RADIO_TASK_TXEN);
 }
 
 /* @brief Enable radio Receiver */
 void radio_enable_rx(void)
 {
-	RADIO_TASK_RXEN = 1;
+	periph_trigger_task(RADIO_TASK_RXEN);
 }
 
 /* @brief Enable interrupts by mask */
 void radio_enable_interrupts(uint32_t interrupts)
 {
-	RADIO_INTENSET = interrupts;
+	periph_enable_interrupts(RADIO_BASE, interrupts);
 }
 
 /* @brief Disable interrupts by mask */
 void radio_disable_interrupts(uint32_t interrupts)
 {
-	RADIO_INTENCLR = interrupts;
+	periph_disable_interrupts(RADIO_BASE, interrupts);
 }

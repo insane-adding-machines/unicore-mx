@@ -7,6 +7,9 @@
 #include <unicore-mx/lm3s/memorymap.h>
 #include <unicore-mx/lm3s/systemcontrol.h>
 
+
+#define ETH_IRQMASK_RX (1)
+
 void eth_set_mac(uint8_t *mac)
 {
     ETH_MAC_ADDR0 = (mac[0] << 24) | (mac[1] << 16) | (mac[2] << 8) | (mac[3]);
@@ -137,32 +140,24 @@ void eth_start(void) {
 void eth_irq_enable(uint32_t reason) 
 {
     (void)reason; 
-    /* TODO */
+    ETH_MAC_IM |= reason;
 }
 
 void eth_irq_disable(uint32_t reason)
 {
     (void)reason; 
-    /* TODO */
+    ETH_MAC_IM &= (~reason);
 }
 
 bool eth_irq_is_pending(uint32_t reason) {
-    (void)reason; 
-    /* TODO */
+    if ((ETH_MAC_RISACK & reason) == reason)
+        return true;
     return false;
 }
-
 
 bool eth_irq_ack_pending(uint32_t reason)
 {
     (void)reason; 
-    /* TODO */
+    ETH_MAC_RISACK |= reason;
     return false;
-}
-
-void eth_isr(void)
-{
-
-
-
 }

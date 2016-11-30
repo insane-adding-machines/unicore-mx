@@ -36,9 +36,11 @@ specific memorymap.h header before including this header file.*/
 
 /* --- Convenience macros -------------------------------------------------- */
 
+#if !(__HAL_USE) && !(__CMSIS_USE)
 #define USART6				USART6_BASE
 #define UART7				UART7_BASE
 #define UART8				UART8_BASE
+#endif
 
 /* --- USART registers ----------------------------------------------------- */
 
@@ -79,6 +81,7 @@ specific memorymap.h header before including this header file.*/
 
 /* --- USART_CR1 values ---------------------------------------------------- */
 
+#if !(__HAL_USE) && !(__CMSIS_USE)
 /* OVER8: Oversampling mode */
 #define USART_CR1_OVER8			(1 << 15)
 
@@ -86,6 +89,8 @@ specific memorymap.h header before including this header file.*/
 
 /* ONEBIT: One sample bit method enable */
 #define USART_CR3_ONEBIT		(1 << 11)
+
+#endif  //(__HAL_USE) && !(__CMSIS_USE)
 
 #endif
 /** @cond */

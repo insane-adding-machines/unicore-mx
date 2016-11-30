@@ -54,7 +54,9 @@ specific memorymap.h header before including this header file.*/
 #define UART5_DR			USART_DR(UART5_BASE)
 
 /* Baud rate register (USARTx_BRR) */
+#if !(__HAL_USE) && !(__CMSIS_USE)
 #define USART_BRR(usart_base)		MMIO32((usart_base) + 0x08)
+#endif
 #define USART1_BRR			USART_BRR(USART1_BASE)
 #define USART2_BRR			USART_BRR(USART2_BASE)
 #define USART3_BRR			USART_BRR(USART3_BASE)
@@ -100,6 +102,7 @@ specific memorymap.h header before including this header file.*/
 
 @{*/
 
+#if !(__HAL_USE) && !(__CMSIS_USE)
 /** CTS: CTS flag */
 /** @note: undefined on UART4 and UART5 */
 #define USART_SR_CTS			(1 << 9)
@@ -131,6 +134,7 @@ specific memorymap.h header before including this header file.*/
 /** PE: Parity error */
 #define USART_SR_PE			(1 << 0)
 /**@}*/
+#endif
 
 /* --- USART_DR values ----------------------------------------------------- */
 
@@ -146,6 +150,7 @@ specific memorymap.h header before including this header file.*/
 
 /* --- USART_CR1 values ---------------------------------------------------- */
 
+#if !(__HAL_USE) && !(__CMSIS_USE)
 /* UE: USART enable */
 #define USART_CR1_UE			(1 << 13)
 
@@ -188,10 +193,14 @@ specific memorymap.h header before including this header file.*/
 /* SBK: Send break */
 #define USART_CR1_SBK			(1 << 0)
 
+#endif
+
 /* --- USART_CR2 values ---------------------------------------------------- */
 
 /* LINEN: LIN mode enable */
+#if !(__HAL_USE) && !(__CMSIS_USE)
 #define USART_CR2_LINEN			(1 << 14)
+#endif
 
 /* STOP[13:12]: STOP bits */
 #define USART_CR2_STOPBITS_1		(0x00 << 12)     /* 1 stop bit */
@@ -201,6 +210,7 @@ specific memorymap.h header before including this header file.*/
 #define USART_CR2_STOPBITS_MASK         (0x03 << 12)
 #define USART_CR2_STOPBITS_SHIFT        12
 
+#if !(__HAL_USE) && !(__CMSIS_USE)
 /* CLKEN: Clock enable */
 #define USART_CR2_CLKEN			(1 << 11)
 
@@ -218,12 +228,13 @@ specific memorymap.h header before including this header file.*/
 
 /* LBDL: LIN break detection length */
 #define USART_CR2_LBDL			(1 << 5)
-
+#endif
 /* ADD[3:0]: Address of the usart node */
 #define USART_CR2_ADD_MASK              0xF
 
 /* --- USART_CR3 values ---------------------------------------------------- */
 
+#if !(__HAL_USE) && !(__CMSIS_USE)
 /* CTSIE: CTS interrupt enable */
 /* Note: N/A on UART4 & UART5 */
 #define USART_CR3_CTSIE			(1 << 10)
@@ -263,6 +274,8 @@ specific memorymap.h header before including this header file.*/
 
 /* EIE: Error interrupt enable */
 #define USART_CR3_EIE			(1 << 0)
+
+#endif
 
 /* --- USART_GTPR values --------------------------------------------------- */
 

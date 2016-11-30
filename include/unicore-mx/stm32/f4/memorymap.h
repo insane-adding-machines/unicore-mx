@@ -22,6 +22,7 @@
 
 /* --- STM32F4 specific peripheral definitions ----------------------------- */
 
+#if !(__CMSIS_USE)
 /* Memory map for all busses */
 #define PERIPH_BASE			(0x40000000U)
 #define PERIPH_BASE_APB1		(PERIPH_BASE + 0x00000)
@@ -96,6 +97,7 @@
 #define SAI1_BASE			(PERIPH_BASE_APB2 + 0x5800)
 #define LTDC_BASE			(PERIPH_BASE_APB2 + 0x6800)
 /* PERIPH_BASE_APB2 + 0x6C00 (0x4001 6C00 - 0x4001 FFFF): Reserved */
+#endif //!(__CMSIS_USE)
 
 /* AHB1 */
 #define GPIO_PORT_A_BASE		(PERIPH_BASE_AHB1 + 0x0000)
@@ -110,6 +112,7 @@
 #define GPIO_PORT_J_BASE		(PERIPH_BASE_AHB1 + 0x2400)
 #define GPIO_PORT_K_BASE		(PERIPH_BASE_AHB1 + 0x2800)
 /* PERIPH_BASE_AHB1 + 0x2C00 (0x4002 2C00 - 0x4002 2FFF): Reserved */
+#if !(__CMSIS_USE)
 #define CRC_BASE			(PERIPH_BASE_AHB1 + 0x3000)
 /* PERIPH_BASE_AHB1 + 0x3400 (0x4002 3400 - 0x4002 37FF): Reserved */
 #define RCC_BASE			(PERIPH_BASE_AHB1 + 0x3800)
@@ -140,6 +143,7 @@
 
 /* PPIB */
 #define DBGMCU_BASE			(PPBI_BASE + 0x00042000)
+#endif
 
 /* Device Electronic Signature */
 #define DESIG_FLASH_SIZE_BASE		(0x1FFF7A22U)

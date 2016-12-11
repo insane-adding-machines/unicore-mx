@@ -44,13 +44,12 @@ OBJS		+= exti_common_all.o
 OBJS		+= rcc_common_all.o
 OBJS		+= adc.o adc_common_v1.o
 
-OBJS		+= usbd.o usbd_ep0.o usbd_standard.o
+OBJS		+= usbd.o usbd_ep0.o usbd_transfer.o
 OBJS		+= usbd_stm32_fsdev.o usbd_stm32_fsdev_v1.o
 OBJS		+= usbd_msc.o
-OBJS		+= usbd_control.o usbd_string.o
 
 VPATH += ../:../../cm3:../common
-VPATH += ../../usbd:../../usbd/class:../../usbd/backend:../../usbd/misc
+VPATH += ../../usbd:../../usbd/class:../../usbd/backend
 
 include ../../Makefile.include
 

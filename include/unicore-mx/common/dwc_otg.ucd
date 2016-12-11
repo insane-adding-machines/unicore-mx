@@ -1,0 +1,859 @@
+/*
+ * This file is part of the unicore-mx project.
+ *
+ * Copyright (C) 2010 Gareth McMullin <gareth@blacksphere.co.nz>
+ * Copyright (C) 2016 Kuldeep Singh Dhaka <kuldeepdhaka9@gmail.com>
+ *
+ * This library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*
+ * This file is intended to be included by either DWC_OTG_hs.h or DWC_OTG_fs.h
+ * Contains common definitions of Command and Status Registers (CSR) and their
+ * bit definitions.
+ */
+
+#ifndef UNICOREMX_COMMON_DWC_OTG_H
+#define UNICOREMX_COMMON_DWC_OTG_H
+
+#include <unicore-mx/cm3/common.h>
+#include <unicore-mx/usbd/usbd.h>
+
+#if defined(__UCD__)
+
+family
+ name DWC_OTG
+
+% Core Global Control and Status Registers
+
+reg GOTGCTL 0x000
+bit BSVLD 19
+bit ASVLD 18
+bit DBCT 17
+bit CIDSTS 16
+bit DHNPEN 11
+bit HSHNPEN 10
+bit HNPRQ 9
+bit HNGSCS 8
+bit BVALOVAL 7
+bit BVALOEN 6
+bit AVALOVAL 5
+bit AVALOEN 4
+bit VBVALOVAL 3
+bit VBVALOEN 2
+bit SRQ 1
+bit SRQSCS 0
+
+reg GOTGINT 0x004
+
+% OTG AHB configuration register
+reg GAHBCFG 0x008
+bit GINT 0
+bit TXFELVL 7
+bit PTXFELVL 8
+
+% OTG USB configuration register
+reg GUSBCFG 0x00C
+
+bit CTXPKT 31
+bit FDMOD 30
+bit FHMOD 29
+bit ULPIIPD 25
+bit PTCI 24
+bit PCCI 23
+bit TSDPS 22
+bit ULPIEVBUSI 21
+bit ULPIEVBUSD 20
+bit ULPICSM 19
+bit ULPIAR 18
+bit ULPIFSLS 17
+bit PHYLPCS 15
+
+bits
+ name TRDT
+ size 4
+ offset 10
+ value 16BIT 0x5
+ value 8BIT 0x9
+
+bit HNPCAP 9
+bit SRPCAP 8
+bit PHYSEL 6
+
+
+% OTG reset register
+reg GRSTCTL 0x010
+
+bit AHBIDL 31
+bits
+ name TXFNUM
+ size 5
+ offset 16
+ value ALL 0x10
+
+bit TXFFLSH 5
+bit RXFFLSH 4
+bit FCRST 2
+bit HSRST 1
+bit CSRST 0
+
+% OTG interrupt status register
+reg GINTSTS 0x014
+bit WKUPINT 31
+bit SRQINT 30
+bit DISCINT 29
+bit CIDSCHG 28
+bit PTXFE 26
+bit HCINT 25
+bit HPRTINT 24
+bit IPXFR 21
+bit INCOMPISOOUT 21
+bit IISOIXFR 20
+bit OEPINT 19
+bit IEPINT 18
+bit EOPF 15
+bit ISOODRP 14
+bit ENUMDNE 13
+bit USBRST 12
+bit USBSUSP 11
+bit ESUSP 10
+bit GONAKEFF 7
+bit GINAKEFF 6
+bit NPTXFE 5
+bit RXFLVL 4
+bit SOF	 3
+bit OTGINT 2
+bit MMIS 1
+bit CMOD 0
+
+% OTG interrupt mask register
+reg GINTMSK 0x018
+bit MMISM 1
+bit OTGINT 2
+bit SOFM 3
+bit RXFLVLM 4
+bit NPTXFEM 5
+bit GINAKEFFM 6
+bit GONAKEFFM 7
+bit ESUSPM 10
+bit USBSUSPM 11
+bit USBRST 12
+bit ENUMDNEM 13
+bit ISOODRPM	 14
+bit EOPFM 15
+bit EPMISM 17
+bit IEPINT 18
+bit OEPINT 19
+bit IISOIXFRM 20
+bit IISOOXFRM 21
+bit IPXFRM 21
+bit PRTIM 24
+bit HCIM 25
+bit PTXFEM 26
+bit CIDSCHGM 28
+bit DISCINT 29
+bit SRQIM 30
+bit WUIM 31
+
+reg GRXSTSR 0x01C
+
+% OTG Receive Status Pop Register
+reg GRXSTSP 0x020
+bits FRMNUM 4 21
+bits
+ name PKTSTS
+ size 4
+ offset 17
+ value GOUTNAK 1
+ value OUT 2
+ value IN 2
+ value OUT_COMP 3
+ value IN_COMP 3
+ value SETUP_COMP 4
+ value DTERR 5
+ value SETUP 6
+ value CHH 7
+
+bits
+ name DPID
+ size 2
+ offset 15
+ value DATA0 0
+ value DATA1 2
+ value DATA2 1
+ value MDATA 3
+
+bits BCNT 11 4
+bits EPNUM 4 0
+
+reg GRXFSIZ 0x024
+
+reg GNPTXFSIZ 0x028
+bits NPTXFD 16 16
+bits NPTXFSA 16 0
+
+reg DIEP0TXF 0x028
+bits TX0FD 16 16
+bits TX0FSA 16 0
+
+reg GNPTXSTS 0x02C
+reg GGPIO 0x038
+reg GUID 0x03C
+reg GSNPSID 0x040
+reg GHWCFG1 0x044
+bits
+ name EPDIR
+ offset 0
+ size 2
+ variable i (i*2)
+ value BIDIR 0
+ value IN 1
+ value OUT 2
+
+reg GHWCFG2 0x048
+% Number of device endpoints
+bits NUMHSTCHNL 4 14
+bits NUMDEVEPS 4 10
+
+reg GHWCFG3 0x04C
+% DFIFO Depth
+bits DFIFODEPTH 16 16
+% Width of Packet Size Counters (Actual = value + 4)
+bits PKTSIZEWIDTH 3 4
+% Width of Transfer Size Counters (Actual = value + 11)
+bits XFERSIZEWIDTH 4 0
+
+reg GHWCFG4 0x050
+
+% OTG Host periodic transmit FIFO size register
+reg HPTXFSIZ 0x100
+bits PTXFD 16 16
+bits PTXSA 16 0
+
+register
+ name DIEPxTXF
+ offset 0x104
+ bit_name DIEPTXF
+ bits_name DIEPTXF
+ variable x 4*((x)-1)
+
+bits INEPTXFD 16 16
+bits INEPTXSA 16 0
+
+% Host-mode Control and Status Registers
+
+% OTG Host Configuration Register
+reg HCFG 0x400
+bit FSLSS 2
+bits
+ name FSLSPCS
+ size 2
+ offset 0
+ value 48MHz 0x1
+ value 6MHz 0x2
+
+% OTG Host Frame Interval Register
+reg HFIR 0x404
+bits FRIVL 16 0
+
+% OTG Host frame number/frame time remaining register
+reg HFNUM 0x408
+bits FTREM 16 16
+bits FRNUM 16 0
+
+% OTG Host periodic transmit FIFO/queue status
+reg HPTXSTS 0x410
+
+bits
+ name PTXQTOP
+ size 8
+ offset 24
+
+#endif /* defined(__UCD__) */
+
+#define DWC_OTG_HPTXSTS_PTXQTOP_ODDFRM					(1<<31)
+#define DWC_OTG_HPTXSTS_PTXQTOP_EVENFRM					(0<<31)
+#define DWC_OTG_HPTXSTS_PTXQTOP_CHANNEL_NUMBER_MASK		(0xf<<27)
+#define DWC_OTG_HPTXSTS_PTXQTOP_ENDPOINT_NUMBER_MASK	(0xf<<27)
+#define DWC_OTG_HPTXSTS_PTXQTOP_TYPE_INOUT				(0x00<<25)
+#define DWC_OTG_HPTXSTS_PTXQTOP_TYPE_ZEROLENGTH			(0x01<<25)
+#define DWC_OTG_HPTXSTS_PTXQTOP_TYPE_DISABLECMD			(0x11<<25)
+#define DWC_OTG_HPTXSTS_PTXQTOP_TERMINATE				(1<<24)
+
+#if defined(__UCD__)
+
+bits PTXQSAV 8 16
+bits PTXFSAVL 16 0
+
+% OTG Host all channels interrupt register
+reg HAINT 0x414
+
+% OTG Host all channels interrupt mask register
+reg HAINTMSK 0x418
+
+
+% OTG Host port control and status register
+reg HPRT 0x440
+
+bits
+ name PSPD
+ offset 17
+ size 2
+ value HIGH 0x0
+ value FULL 0x1
+ value LOW 0x2
+
+
+bits
+ name PTCTL
+ size 4
+ offset 13
+ value DISABLED 0x0
+ value J 0x1
+ value K 0x2
+ value SE0_NAK 0x3
+ value PACKET 0x4
+ value FORCE_ENABLE 0x4
+
+bit PPWR 12
+bit PLSTS_DM 11
+bit PLSTS_DP 10
+bit PRST 8
+bit PSUSP 7
+bit PRES 6
+bit POCCHNG 5
+bit POCA 4
+bit PENCHNG 3
+bit PENA 2
+bit PCDET 1
+bit PCSTS 0
+
+% OTG Host channel-x characteristics register
+register
+ name HCxCHAR
+ offset 0x500
+ bit_name HCCHAR
+ bits_name HCCHAR
+ variable x 0x20*(x)
+
+bit CHENA 31
+bit CHDIS 30
+bit ODDFRM 29
+bits DAD 7 22
+bits
+ name MCNT
+ size 2
+ offset 20
+ value 1 0x1
+ value 2 0x2
+ value 3 0x3
+
+bits
+ name EPTYP
+ size 2
+ offset 18
+ value CONTROL 0x0
+ value ISOCHRONOUS 0x1
+ value BULK 0x2
+ value INTERRUPT 0x3
+bit LSDEV 17
+bits
+ name EPDIR
+ size 1
+ offset 15
+ value OUT 0
+ value IN 1
+
+bits EPNUM 4 11
+bits MPSIZ 11 0
+
+% OTG host channel-x split control register
+register
+ name HCxSPLT
+ offset 0x504
+ bit_name HCSPLT
+ bits_name HCSPLT
+ variable x 0x20*(x)
+
+bit SPLITEN 31
+bits
+ name XACTPOS
+ size 2
+ offset 14
+ value ALL 0x3
+ value BEGIN 0x2
+ value MID 0x0
+ value END 0x1
+
+bits HUBADDR 7 7
+bits PORTADDR 7 0
+
+% OTG Host channel-x interrupt register
+register
+ name HCxINT
+ offset 0x508
+ bit_name HCINT
+ bits_name HCINT
+ variable x 0x20*(x)
+
+bit DTERR 10
+bit FRMOR 9
+bit BBERR 8
+bit TXERR 7
+% Note: NYET: Only in High Speed
+bit NYET 6
+bit ACK 5
+bit NAK 4
+bit STALL 3
+% Note: AHBERR: Only in High Speed
+bit AHBERR 2
+bit CHH 1
+bit XFRC 0
+
+% OTG Host channel-x interrupt mask register
+register
+ name HCxINTMSK
+ offset 0x50C
+ bit_name HCINTMSK
+ bits_name HCINTMSK
+ variable x 0x20*(x)
+
+bit DTERRM 10
+bit FRMORM 9
+bit BBERRM 8
+bit TXERRM7
+
+% Note: NYET: Only in High Speed
+bit NYET 6
+bit ACKM 5
+bit NAKM 4
+bit STALLM 3
+% Note: AHBERR: Only in High Speed
+bit AHBERR 2
+bit CHHM 1
+bit XFRCM 0
+
+% OTG Host channel-x transfer size register
+register
+ name HCxTSIZ
+ offset 0x510
+ bit_name HCTSIZ
+ bits_name HCTSIZ
+ variable x 0x20*(x)
+
+% Note: DOPING: Only in High Speed
+bit DOPING 31
+
+bits
+ name DPID
+ size 2
+ offset 29
+ value DATA0 0x0
+ value DATA1 0x2
+ value DATA2 0x1
+ value MDATA 0x3
+
+bits PKTCNT 10 19
+bits XFRSIZ 19 0
+
+register
+ name HCxDMA
+ offset 0x514
+ bit_name HCDMA
+ bits_name HCDMA
+ variable x 0x20*(x)
+
+% Device-mode Control and Status Registers
+
+% OTG device configuration register
+reg DCFG 0x800
+
+bits DAD 7 4
+bit NZLSOHSK 3
+bits
+ name DSPD
+ size 2
+ offset 0
+ value HIGH 0
+ value FULL_2_0 1
+ value LOW 2
+ value FULL_1_1 3
+
+% OTG device control register
+reg DCTL 0x804
+bit POPRGDNE 11
+bit CGONAK 10
+bit SGONAK 9
+bit SGINAK 8
+bits TCTL 3 4
+bit GONSTS 3
+bit GINSTS 2
+bit SDIS 1
+bit RWUSIG 0
+
+% Device mode status register
+reg DSTS 0x808
+bits FNSOF 14 8
+bit EERR 3
+bits
+ name ENUMSPD
+ offset 1
+ size 2
+ value HS_PHY_30MHZ_OR_60MHZ
+ value FS_PHY_30MHZ_OR_60MHZ
+ value LS_PHY_6MHZ
+ value FS_PHY_48MHZ
+bit SUSPSTS 0
+
+% OTG Device IN Endpoint Common Interrupt Mask Register
+reg DIEPMSK 0x810
+bit BIM 9
+bit TXFURM 8
+bit INEPNEM 6
+bit INEPNMM 5
+bit ITTXFEM 4
+bit TOM 3
+bit EPDM 1
+bit XFRCM 0
+
+% OTG Device OUT Endpoint Common Interrupt Mask Register
+reg DOEPMSK 0x814
+bit BBLERR 12
+bit BOIM 9
+bit OPEM 8
+bit B2BSTUP 6
+bit OTEPDM 4
+bit STUPM 3
+bit EPDM 1
+bit XFRCM 0
+
+reg DAINT 0x818
+
+bit
+ name OEPINT
+ offset 16
+ variable x (x)
+
+bit
+ name IEPINT
+ offset 0
+ variable x (x)
+
+reg DAINTMSK 0x81C
+
+bit
+ name OEPM
+ offset 16
+ variable x (x)
+
+bit
+ name IEPM
+ offset 0
+ variable x (x)
+
+reg DVBUSDIS 0x828
+reg DVBUSPULSE 0x82C
+
+reg DIEPEMPMSK 0x834
+
+bit
+ name INEPTXFEM
+ offset 0
+ variable x (x)
+
+% OTG device each endpoint interrupt register
+reg DEACHINT 0x838
+bit OEP1INT 17
+bit IEP1INT 1
+
+reg DEACHINTMSK 0x83C
+
+% OTG device each in endpoint-1 interrupt register
+reg DIEPEACHMSK1 0x844
+bit NAKM 13
+bit BIM 9
+bit TXFURM 8
+bit INEPNEM 5
+bit ITTXFEMSK 4
+bit TOM 3
+bit EPDM 1
+bit XFRCM0
+
+% OTG device each OUT endpoint-1 interrupt register
+reg DOEPEACHMSK1 0x884
+bit NYETM 14
+bit NAKM 13
+bit BERRM 12
+bit BIM 9
+bit OPEM 8
+bit AHBERRM 2
+bit EPDM 1
+bit XFRCM 0
+
+% OTG Device Control IN Endpoint x Control Register
+register
+ name DIEPxCTL
+ bit_name DIEPCTL
+ bits_name DIEPCTL
+ offset 0x900
+ variable x 0x20*(x)
+
+bit EPENA 31
+bit EPDIS 30
+bit SD1PID 29
+bit SODDFRM 29
+bit SD0PID 28
+bit SEVNFRM 28
+bit SNAK 27
+bit CNAK 26
+bits TXFNUM 4 22
+bit STALL 21
+bits
+ name EPTYP
+ size 2
+ offset 18
+ value CONTROL 0x0
+ value ISOCHRONOUS 0x1
+ value BULK 0x2
+ value INTERRUPT 0x3
+bit NAKSTS 17
+bit DPID 16
+bit EONUM 16
+bit USBAEP 15
+bits MPSIZ 11 0
+
+% OTG Device IN Endpoint Interrupt Register
+register
+ name DIEPxINT
+ bit_name DIEPINT
+ bits_name DIEPINT
+ offset 0x908
+ variable x 0x20*(x)
+
+bit TXFE 7
+bit INEPNE 6
+bit ITTXFE 4
+bit TOC 3
+bit EPDISD 1
+bit XFRC 0
+
+% OTG Device IN Endpoint x Transfer Size Register
+register
+ name DIEPxTSIZ
+ bit_name DIEPTSIZ
+ bits_name DIEPTSIZ
+ offset 0x910
+ variable x 0x20*(x)
+
+bits
+ name MC
+ size 2
+ offset 29
+ value 1 0x1
+ value 2 0x2
+ value 3 0x3
+
+bits PKTCNT 10 19
+bits XFRSIZ 19 0
+
+register
+ name DIEPxDMA
+ bit_name DIEPDMA
+ bits_name DIEPDMA
+ offset 0x914
+ variable x 0x20*(x)
+
+register
+ name DIEPxTXFSTS
+ bit_name DIEPTXFSTS
+ bits_name DIEPTXFSTS
+ offset 0x918
+ variable x 0x20*(x)
+
+bits INEPTFSAV 16 0
+
+% OTG Device Control OUT Endpoint x Control Register
+register
+ name DOEPxCTL
+ bit_name DOEPCTL
+ bits_name DOEPCTL
+ offset 0xB00
+ variable x 0x20*(x)
+
+bit EPENA 31
+bit EPDIS 30
+bit SD1PID 29
+bit SODDFRM 29
+bit SD0PID 28
+bit SEVNFRM 28
+bit SNAK 27
+bit CNAK 26
+bit STALL 21
+bit SNPM 20
+
+bits
+ name EPTYP
+ size 2
+ offset 18
+ value CONTROL 0x0
+ value ISOCHRONOUS 0x1
+ value BULK 0x2
+ value INTERRUPT 0x3
+
+bit NAKSTS 17
+bit DPID 16
+bit EONUM 16
+bit USBAEP 15
+
+bits MPSIZ 11 0
+
+% OTG Device IN Endpoint Interrupt Register
+register
+ name DOEPxINT
+ bit_name DOEPINT
+ bits_name DOEPINT
+ offset 0xB08
+ variable x 0x20*(x)
+
+bit BBLERR 12
+bit B2BSTUP 6
+bit OTEPDIS 4
+bit STUP 3
+bit EPDISD 1
+bit XFRC 0
+
+% OTG Device OUT Endpoint x Transfer Size Register
+register
+ name DOEPxTSIZ
+ bit_name DOEPTSIZ
+ bits_name DOEPTSIZ
+ offset 0xB10
+ variable x 0x20*(x)
+
+bits
+ name STUPCNT
+ size 2
+ offset 29
+ value 1 0x01
+ value 2 0x02
+ value 3 0x03
+
+bits PKTCNT 10 19
+bits XFRSIZ 19 0
+
+register
+ name DOEPxDMA
+ bit_name DOEPDMA
+ bits_name DOEPDMA
+ offset 0xB14
+ variable x 0x20*(x)
+
+% Endpoint0 (a special endpoint)
+% same as other endpoint but:
+%  - Type can only be Control
+%  - Size can be {8, 16, 32, 64}
+
+% OTG Device Control IN Endpoint 0 Control Register
+reg DIEP0CTL 0x900
+bit EPENA 31
+bit EPDIS 30
+bit SNAK 27
+bit CNAK 26
+bits TXFNUM 4 22
+bit STALL 21
+
+bits
+ name EPTYP
+ size 2
+ offset 18
+ value CONTROL 0x0
+
+bit NAKSTS 17
+bit USBAEP 15
+
+bits
+ name MPSIZ
+ size 2
+ offset 0
+ value 64 0x0
+ value 32 0x1
+ value 16 0x2
+ value 8 0x3
+
+% OTG Device Control IN Endpoint 0 Transfer Size Register
+reg DIEP0TSIZ 0x910
+bits
+ name PKTCNT
+ size 2
+ offset 19
+ value 1 0x1
+
+bits XFRSIZ 7 0
+
+% OTG Device Control OUT Endpoint 0 Control Register
+reg DOEP0CTL 0xB00
+bit EPENA 31
+bit EPDIS 30
+bit SNAK 27
+bit CNAK 26
+bit STALL 21
+bit SNPM 20
+
+bits
+ name EPTYP
+ size 2
+ offset 18
+ value CONTROL 0x0
+
+bit NAKSTS 17
+bit USBAEP 15
+bits
+ name MPSIZ
+ size 2
+ offset 0
+ value 64 0x0
+ value 32 0x1
+ value 16 0x2
+ value 8 0x3
+
+% OTG Device Control OUT Endpoint 0 Transfer Size Register
+reg DOEP0TSIZ 0xB10
+bits
+ name STUPCNT
+ size 2
+ offset 29
+ value 1 0x1
+ value 2 0x2
+ value 3 0x3
+
+bits
+ name PKTCNT
+ size 2
+ offset 19
+ value 1 0x1
+
+bits XFRSIZ 7 0
+
+% Power and clock gating control and status register
+reg PCGCCTL 0xE00
+
+% Data FIFO
+register
+ name FIFO
+ offset 0x1000
+ variable x (x) << 12
+
+#endif /* defined(__UCD__) */
+
+#endif

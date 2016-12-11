@@ -2,7 +2,7 @@
  * This file is part of the unicore-mx project.
  *
  * Copyright (C) 2010 Gareth McMullin <gareth@blacksphere.co.nz>
- * Copyright (C) 2015 Kuldeep Singh Dhaka <kuldeepdhaka9@gmail.com>
+ * Copyright (C) 2015, 2016 Kuldeep Singh Dhaka <kuldeepdhaka9@gmail.com>
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -18,124 +18,146 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "stm32_fsdev_private.h"
+#include "../usbd_private.h"
+
 #include <unicore-mx/cm3/common.h>
 #include <unicore-mx/stm32/rcc.h>
-#include <unicore-mx/stm32/tools.h>
 #include <unicore-mx/stm32/st_usbfs.h>
 #include <unicore-mx/usbd/usbd.h>
-#include "../usbd_private.h"
-#include "stm32_fsdev_private.h"
 
-/* Number of endpoints */
-#define ENDPOINT_COUNTS 8
-
-static void stm32f072_usbd_disconnect(usbd_device *usbd_dev, bool disconnect);
-static usbd_device *stm32f072_usbd_init(void);
+static usbd_device *init(const usbd_backend_config *config);
+static void disconnect(usbd_device *dev, bool disconnect);
 static void copy_from_pm(void *buf, const volatile void *vPM, uint16_t len);
 static void copy_to_pm(volatile void *vPM, const void *buf, uint16_t len);
-
-static struct stm32_fsdev_private_data private_data;
 
 static struct usbd_device _usbd_dev;
 
 const struct usbd_backend usbd_stm32_fsdev_v2 = {
-	.init = stm32f072_usbd_init,
+	.init = init,
 	.set_address = stm32_fsdev_set_address,
-	.ep_setup = stm32_fsdev_ep_setup,
-	.set_ep_type = stm32_fsdev_set_ep_type,
-	.set_ep_size = stm32_fsdev_set_ep_size,
-	.ep_reset = stm32_fsdev_endpoints_reset,
-	.set_ep_stall = stm32_fsdev_set_ep_stall,
-	.get_ep_stall = stm32_fsdev_get_ep_stall,
-	.set_ep_nak = stm32_fsdev_set_ep_nak,
-	.ep_write_packet = stm32_fsdev_ep_write_packet,
-	.ep_read_packet = stm32_fsdev_ep_read_packet,
-	.enable_sof = stm32_fsdev_enable_sof,
-	.poll = stm32_fsdev_poll,
+	.get_address = stm32_fsdev_get_address,
+	.ep_prepare_start = stm32_fsdev_ep_prepare_start,
+	.ep_prepare = stm32_fsdev_ep_prepare,
 	.get_ep_dtog = stm32_fsdev_get_ep_dtog,
 	.set_ep_dtog = stm32_fsdev_set_ep_dtog,
-	.ep_flush = stm32_fsdev_ep_flush,
-	.disconnect = stm32f072_usbd_disconnect,
+	.set_ep_stall = stm32_fsdev_set_ep_stall,
+	.get_ep_stall = stm32_fsdev_get_ep_stall,
+	.poll = stm32_fsdev_poll,
+	.enable_sof = stm32_fsdev_enable_sof,
+	.get_speed = stm32_fsdev_get_speed,
+	.urb_submit = stm32_fsdev_urb_submit,
+	.urb_cancel = stm32_fsdev_urb_cancel,
+	.disconnect = disconnect,
 	.frame_number = stm32_fsdev_frame_number,
+
+	.copy_from_pm = copy_from_pm,
+	.copy_to_pm = copy_to_pm
+};
+
+static const usbd_backend_config _config = {
+	.ep_count = 8,
+	.priv_mem = 1024,
+	.speed = USBD_SPEED_FULL,
+	.feature = USBD_FEATURE_NONE
 };
 
 /** Initialize the USB device controller hardware of the STM32. */
-static usbd_device *stm32f072_usbd_init(void)
+static usbd_device *init(const usbd_backend_config *config)
 {
 	rcc_periph_clock_enable(RCC_USB);
 
-	private_data.ep_count = ENDPOINT_COUNTS;
-	private_data.copy_from_pm = copy_from_pm;
-	private_data.copy_to_pm = copy_to_pm;
-	_usbd_dev.backend_data = &private_data;
+	if (config == NULL) {
+		config = &_config;
+	}
 
+	_usbd_dev.backend = &usbd_stm32_fsdev_v2;
+	_usbd_dev.config = config;
 	stm32_fsdev_init(&_usbd_dev);
 	USB_BCDR = USB_BCDR_DPPU;
 
 	return &_usbd_dev;
 }
 
-/* copy_to_pm() and copy_from_pm() check alignment of memory
- *  and handle unaligned access seperatly because the core used
- *  on the {STM32F0, STM32L0} which do not support unaligned access.
- * STM32F0 - Cortex M0
- * STM32F1 - Cortex M0+
- *
- * TODO: this backend is also used for STM32L1.
- *  but since STM32L1 has a Cortex M3 core, it support unaligned access.
+#if defined(STM32L0) || defined(STM32F0)
+/* Some core dont not supported unaligned memory access.
+ *  STM32L0 has Cortex-M0+
+ *  STM32F0 has Cortex-M0
  */
+# define CORE_DONT_SUPPORT_UNALIGNED_ACCESS
+#endif
 
-void copy_to_pm(volatile void *vPM, const void *buf, uint16_t len)
+static void copy_to_pm(volatile void *vPM, const void *vBuf, uint16_t len)
 {
-	volatile uint16_t *PM = vPM;
+	volatile uint16_t *hPM = vPM;
 
-	if(((uintptr_t) buf) & 0x01) {
-		const uint8_t *lbuf = buf;
-		for (len >>= 1; len; PM++, lbuf += 2, len--) {
-			*PM = ((*(lbuf + 1)) << 8) | (*lbuf);
+#if defined(CORE_DONT_SUPPORT_UNALIGNED_ACCESS)
+	if(((uintptr_t) vBuf) & 0x01) {
+		const uint8_t *uBuf = vBuf;
+		len /= 2;
+
+		while (len--) {
+			*hPM++ = (uBuf[1] << 8) | uBuf[0];
+			uBuf += 2;
 		}
 
-		*(uint8_t *) PM = *(uint8_t *) lbuf;
-	} else {
-		const uint16_t *lbuf = buf;
-		for (len = (len + 1) >> 1; len; PM++, lbuf++, len--) {
-			*PM = *lbuf;
-		}
+		*(uint8_t *) hPM = *uBuf;
+		return;
+	}
+#endif /* defined(CORE_DONT_SUPPORT_UNALIGNED_ACCESS) */
+
+	const uint16_t *hBuf = vBuf;
+	len = DIVIDE_AND_CEIL(len, 2);
+
+	while (len--) {
+		*hPM++ = *hBuf++;
 	}
 }
 
-static void copy_from_pm(void *buf, const volatile void *vPM, uint16_t len)
+static void copy_from_pm(void *vBuf, const volatile void *vPM, uint16_t len)
 {
-	const volatile uint16_t *PM = vPM;
+	const volatile uint16_t *hPM = vPM;
 	uint8_t odd = len & 1;
-	len >>= 1;
+	len /= 2;
 
-	if(((uintptr_t) buf) & 0x01) {
-		for (; len; PM++, len--) {
-			register uint16_t value = *PM;
-			*(uint8_t *) buf++ = value;
-			*(uint8_t *) buf++ = value >> 8;
+#if defined(CORE_DONT_SUPPORT_UNALIGNED_ACCESS)
+	if(((uintptr_t) vBuf) & 0x01) {
+		uint8_t *uBuf = vBuf;
+
+		while (len--) {
+			register uint16_t value = *hPM++;
+			*uBuf++ = value;
+			*uBuf++ = value >> 8;
 		}
-	} else {
-		for (; len; PM++, buf += 2, len--) {
-			*(uint16_t *) buf = *PM;
+
+		if (odd) {
+			*uBuf = *(uint8_t *) hPM;
 		}
+
+		return;
+	}
+#endif /* defined(CORE_DONT_SUPPORT_UNALIGNED_ACCESS) */
+
+	uint16_t *hBuf = vBuf;
+
+	while (len--) {
+		*hBuf++ = *hPM++;
 	}
 
 	if (odd) {
-		*(uint8_t *) buf = *(uint8_t *) PM;
+		*(uint8_t *) hBuf = *(uint8_t *) hPM;
 	}
 }
 
-static void stm32f072_usbd_disconnect(usbd_device *usbd_dev, bool disconnect)
+static void disconnect(usbd_device *dev, bool disconnect)
 {
-	(void) usbd_dev;
+	(void) dev;
 
 	if(disconnect) {
-		USB_CNTR |= USB_CNTR_PWDN;
+		USB_CNTR |= USB_CNTR_PDWN;
 		USB_BCDR &= ~USB_BCDR_DPPU;
 	} else {
-		USB_CNTR &= ~USB_CNTR_PWDN;
+		USB_CNTR &= ~USB_CNTR_PDWN;
 		USB_BCDR |= USB_BCDR_DPPU;
 	}
 }

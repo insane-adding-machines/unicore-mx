@@ -48,10 +48,9 @@ OBJS            += crc_common_all.o dac_common_all.o dma_common_f247.o \
 		   hash_common_f24.o crypto_common_f24.o exti_common_all.o \
 		   rcc_common_all.o rng_common_f247.o
 
-OBJS		+= usbd.o usbd_ep0.o usbd_standard.o
+OBJS		+= usbd.o usbd_ep0.o usbd_transfer.o
 OBJS		+= usbd_dwc_otg.o usbd_stm32_otg_fs.o usbd_stm32_otg_hs.o
 OBJS		+= usbd_msc.o
-OBJS		+= usbd_control.o usbd_string.o
 
 OBJS		+= mac.o phy.o mac_stm32fxx7.o phy_ksz8051mll.o fmc_common_f47.o
 
@@ -63,7 +62,7 @@ OBJS		+= usbh_hid.o
 OBJS		+= usbh_ctrlreq.o
 
 VPATH += ../:../../cm3:../common
-VPATH += ../../usbd:../../usbd/class:../../usbd/backend:../../usbd/misc
+VPATH += ../../usbd:../../usbd/class:../../usbd/backend
 VPATH += ../../ethernet
 VPATH += ../../usbh:../../usbh/backend:../../usbh/helper:../../usbh/class
 

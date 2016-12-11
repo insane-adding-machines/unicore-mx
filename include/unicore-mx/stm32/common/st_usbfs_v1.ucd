@@ -36,25 +36,55 @@
 
 /* --- USB BTABLE Registers ------------------------------------------------ */
 
-#define USB_EP_TX_ADDR(EP) \
-	((uint32_t *)(USB_PMA_BASE + (USB_BTABLE + EP * 8 + 0) * 2))
+#if defined(___UCD__)
 
-#define USB_EP_TX_COUNT(EP) \
-	((uint32_t *)(USB_PMA_BASE + (USB_BTABLE + EP * 8 + 2) * 2))
+family
+ name USB_EP
+ register 16 32
+ instance (USB_PMA_BASE + (USB_BTABLE * 2))
+ internal_only true
 
-#define USB_EP_RX_ADDR(EP) \
-	((uint32_t *)(USB_PMA_BASE + (USB_BTABLE + EP * 8 + 4) * 2))
+register
+ name ADDR_TX
+ name ADDR_TX_0
+ name ADDR_RX_0
+ offset 0
+ variable ep (ep) * 8 * 2
 
-#define USB_EP_RX_COUNT(EP) \
-	((uint32_t *)(USB_PMA_BASE + (USB_BTABLE + EP * 8 + 6) * 2))
+register
+ name COUNT_TX
+ name COUNT_TX_0
+ name COUNT_RX_0
+ offset 4
+ variable ep (ep) * 8 * 2
+
+register
+ name ADDR_RX
+ name ADDR_TX_1
+ name ADDR_RX_1
+ offset 8
+ variable ep (ep) * 8 * 2
+
+register
+ name COUNT_RX
+ name COUNT_TX_1
+ name COUNT_RX_1
+ offset 12
+ variable ep (ep) * 8 * 2
+
+bit BL_SIZE 15
+bits NUM_BLOCK 5 10
+bits COUNT 10 0
+
+#endif
 
 /* --- USB BTABLE manipulators --------------------------------------------- */
 
-#define USB_GET_EP_TX_BUFF(EP) \
-	(USB_PMA_BASE + (uint8_t *)(USB_GET_EP_TX_ADDR(EP) * 2))
+#define USB_EP_TX_PMA_BUF(ep) \
+	((volatile void *)(USB_PMA_BASE + (USB_EP_ADDR_TX(ep) * 2)))
 
-#define USB_GET_EP_RX_BUFF(EP) \
-	(USB_PMA_BASE + (uint8_t *)(USB_GET_EP_RX_ADDR(EP) * 2))
+#define USB_EP_RX_PMA_BUF(ep) \
+	((volatile void *)(USB_PMA_BASE + (USB_EP_ADDR_RX(ep) * 2)))
 
 #endif
 /** @cond */

@@ -1,0 +1,138 @@
+/** @addtogroup usb_defines
+ */
+/*
+ * This library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/* THIS FILE SHOULD NOT BE INCLUDED DIRECTLY !
+ * Use top-level <unicore-mx/stm32/st_usbfs.h>
+ *
+ * Additional definitions for F0 devices :
+ * -F0x0 (RM0360),
+ * -F04x, F0x2, F0x8 (RM0091)
+ */
+
+/** @cond */
+#ifdef UNICOREMX_ST_USBFS_H
+/** @endcond */
+#ifndef UNICOREMX_ST_USBFS_V2_H
+#define UNICOREMX_ST_USBFS_V2_H
+
+#include <unicore-mx/stm32/common/st_usbfs_common.h>
+
+
+#if defined(__UCD__)
+
+family
+ name USB
+ size 16
+ offset 32
+ instance USB_DEV_FS_BASE
+ internal_only true
+
+register
+ name CNTR
+ offset 0x40
+ internal_only true
+
+bit L1REQM 7
+bit L1RESUME 5
+
+register
+ name ISTR
+ offset 0x44
+ internal_only true
+
+bit L1REQ 7
+
+reg LPMCSR 0x54
+
+bits BESL 4 4
+bit REMWAKE 3
+bit LPMACK 1
+bit LPMEN 0
+
+reg BCDR 0x58
+
+bit DPPU 15
+bit PS2DET 7
+bit SDET 6
+bit PDET 5
+bit DCDET 4
+bit SDEN 3
+bit PDEN 2
+bit DCDEN 1
+bit BCDEN 0
+#endif
+
+
+/* --- USB BTABLE registers ------------------------------------------------ */
+
+#if defined(___UCD__)
+
+family
+ name USB_EP
+ register 16 32
+ instance (USB_PMA_BASE + USB_BTABLE)
+ internal_only true
+
+register
+ name ADDR_TX
+ name ADDR_TX_0
+ name ADDR_RX_0
+ offset 0
+ variable ep (ep) * 8
+
+register
+ name COUNT_TX
+ name COUNT_TX_0
+ name COUNT_RX_0
+ offset 2
+ variable ep (ep) * 8
+
+register
+ name ADDR_RX
+ name ADDR_TX_1
+ name ADDR_RX_1
+ offset 4
+ variable ep (ep) * 8
+
+register
+ name COUNT_RX
+ name COUNT_TX_1
+ name COUNT_RX_1
+ offset 6
+ variable ep (ep) * 8
+
+bit BL_SIZE 15
+bits NUM_BLOCK 5 10
+bits COUNT 10 0
+
+#endif
+
+/* --- USB BTABLE manipulators --------------------------------------------- */
+
+#define USB_EP_TX_PMA_BUF(ep) \
+	((volatile void *)(USB_PMA_BASE + (USB_EP_ADDR_TX(ep) * 1)))
+
+#define USB_EP_RX_PMA_BUF(ep) \
+	((volatile void *)(USB_PMA_BASE + (USB_EP_ADDR_RX(ep) * 1)))
+
+#endif
+/** @cond */
+#else
+#error "st_usbfs_v2.h should not be included directly, only via st_usbfs.h"
+#endif
+/** @endcond */
+

@@ -26,6 +26,10 @@
 #include <unicore-mx/stm32/st_usbfs.h>
 #include <unicore-mx/usbd/usbd.h>
 
+inline void ep_set_stat(uint8_t num, bool rx, uint16_t stat);
+inline void ep_clear_ctr(uint8_t num, bool rx);
+inline void ep_set_type(uint8_t num, uint16_t eptype);
+
 /**
  * Set the endpoint @a num status to @a status
  * @param num Endpoint number (not including direction)

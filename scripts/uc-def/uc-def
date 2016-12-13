@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 #
 # This file is part of unicore-mx.
@@ -46,14 +46,11 @@ def verify_access_flags(data):
 		if i not in ('r', 'w', 'c', 's', 'h'):
 			raise Exception("'%c' flag of flags '%s' not valid" % (i, data))
 
-def next_useful_line(input_file, strip_newline=True, strip_comment=True):
-	if not hasattr(input_file, 'line_number'):
-		input_file.last_line_number = input_file.line_number = 1
-
-	while input_file.readable():
-		input_file.last_useful_pos = input_file.tell()
-		input_file.last_line_number = input_file.line_number
-		inp = input_file.readline()
+def next_useful_line(tag, strip_newline=True, strip_comment=True):
+	while True:
+		tag['last_useful_pos'] = tag['input_file'].tell()
+		tag['last_line_number'] = tag['line_number']
+		inp = tag['input_file'].readline()
 
 		if not len(inp):
 			break
@@ -62,35 +59,35 @@ def next_useful_line(input_file, strip_newline=True, strip_comment=True):
 			inp = inp.rstrip()
 
 		if not len(inp):
-			logger.debug("** SKIPPING NEWLINE at %i ***" % input_file.line_number)
-			input_file.line_number += 1
+			logger.debug("** SKIPPING NEWLINE at %i ***" % tag['line_number'])
+			tag['line_number'] += 1
 			continue
 
 		if strip_comment:
 			if inp[0] == "%":
-				input_file.line_number += 1
-				logger.debug("** SKIPPING %i '%s' ***" % (input_file.line_number, inp))
+				tag['line_number'] += 1
+				logger.debug("** SKIPPING %i '%s' ***" % (tag['line_number'], inp))
 				continue
 
-		logger.debug("** LINE %i '%s' ***" % (input_file.line_number, inp))
-		input_file.line_number += 1
+		logger.debug("** LINE %i '%s' ***" % (tag['line_number'], inp))
+		tag['line_number'] += 1
 		return inp
 
 	logger.debug("** END OF FILE ***")
 	return ''
 
-def restore_last_useful_line(input_file):
-	input_file.line_number = input_file.last_line_number
-	input_file.seek(input_file.last_useful_pos)
+def restore_last_useful_line(tag):
+	tag['line_number'] = tag['last_line_number']
+	tag['input_file'].seek(tag['last_useful_pos'])
 
-def get_line_number(input_file):
-	return input_file.line_number
+def get_line_number(tag):
+	return tag['line_number']
 
-def we_have_problem(msg, input_file):
-	raise Exception("%s [line: %i]" % (msg, get_line_number(input_file)))
+def we_have_problem(msg, tag):
+	raise Exception("%s [line: %i]" % (msg, get_line_number(tag)))
 
 # this will return the last readed line. (if it could not parse it)
-def parse_family_member(input_file):
+def parse_family_member(tag):
 	family = {
 		'name': None,
 		'instance': None,
@@ -99,12 +96,12 @@ def parse_family_member(input_file):
 	}
 
 	while True:
-		inp = next_useful_line(input_file)
+		inp = next_useful_line(tag)
 		if inp == '': break
 
 		if not inp[0] == ' ':
 			# revese back and return
-			restore_last_useful_line(input_file)
+			restore_last_useful_line(tag)
 			break
 
 		data = inp.split()
@@ -138,13 +135,13 @@ def parse_family_member(input_file):
 	assert(family['name'] is not None)
 	return family
 
-def parse_family(input_file):
-	inp = next_useful_line(input_file)
+def parse_family(tag):
+	inp = next_useful_line(tag)
 	if inp == '':
 		return None
 
 	if not inp[0] == 'f':
-		restore_last_useful_line(input_file)
+		restore_last_useful_line(tag)
 		return None
 
 	if not inp == "family":
@@ -158,9 +155,9 @@ def parse_family(input_file):
 			'internal_only': False
 		}
 	else:
-		return parse_family_member(input_file)
+		return parse_family_member(tag)
 
-def parse_register_member(input_file):
+def parse_register_member(tag):
 	register = {
 		'name': [],
 		'offset': None,
@@ -173,12 +170,12 @@ def parse_register_member(input_file):
 	}
 
 	while True:
-		inp = next_useful_line(input_file)
+		inp = next_useful_line(tag)
 		if inp == '': break
 
 		if not inp[0] == ' ':
 			# revese back and return
-			restore_last_useful_line(input_file)
+			restore_last_useful_line(tag)
 			break
 
 		data = inp.split()
@@ -235,13 +232,13 @@ def parse_register_member(input_file):
 
 	return register
 
-def parse_register(input_file):
-	inp = next_useful_line(input_file)
+def parse_register(tag):
+	inp = next_useful_line(tag)
 	if inp == '':
 		return None
 
 	if inp[0] is not 'r':
-		restore_last_useful_line(input_file)
+		restore_last_useful_line(tag)
 		return None
 
 	if inp[3] == ' ':
@@ -262,9 +259,9 @@ def parse_register(input_file):
 		}
 	else:
 		assert(inp == "register")
-		return parse_register_member(input_file)
+		return parse_register_member(tag)
 
-def parse_bit_member(input_file):
+def parse_bit_member(tag):
 	bit = {
 		'name': [],
 		'offset': None,
@@ -273,12 +270,12 @@ def parse_bit_member(input_file):
 	}
 
 	while True:
-		inp = next_useful_line(input_file)
+		inp = next_useful_line(tag)
 		if inp == '': break
 
 		if not inp[0] == ' ':
 			# revese back and return
-			restore_last_useful_line(input_file)
+			restore_last_useful_line(tag)
 			break
 
 		data = inp.split()
@@ -299,7 +296,7 @@ def parse_bit_member(input_file):
 				assert(type(bit['offset']) == list)
 				bit['offset'].append({'id': data[1], 'offset': data[2]})
 			else:
-				we_have_problem("unknown design of offset", input_file)
+				we_have_problem("unknown design of offset", tag)
 		elif data[0] == "access":
 			# access <access>
 			verify_access_flags(data[1])
@@ -314,14 +311,14 @@ def parse_bit_member(input_file):
 	assert(len(bit['name']))
 	return bit
 
-def parse_bit(input_file):
-	inp = next_useful_line(input_file)
+def parse_bit(tag):
+	inp = next_useful_line(tag)
 	if inp == '':
 		return None
 
 	data = inp.split()
 	if data[0] != "bit":
-		restore_last_useful_line(input_file)
+		restore_last_useful_line(tag)
 		return None
 
 	if len(data) > 1:
@@ -333,9 +330,9 @@ def parse_bit(input_file):
 			'variable': []
 		}
 	else:
-		return parse_bit_member(input_file)
+		return parse_bit_member(tag)
 
-def parse_bits_member(input_file):
+def parse_bits_member(tag):
 	bits = {
 		'name': [],
 		'offset': None,
@@ -346,12 +343,12 @@ def parse_bits_member(input_file):
 	}
 
 	while True:
-		inp = next_useful_line(input_file)
+		inp = next_useful_line(tag)
 		if inp == '': break
 
 		if not inp[0] == ' ':
 			# revese back and return
-			restore_last_useful_line(input_file)
+			restore_last_useful_line(tag)
 			break
 
 		data = inp.split()
@@ -372,7 +369,7 @@ def parse_bits_member(input_file):
 				assert(type(bits['offset']) == list)
 				bits['offset'].append({'id': data[1], 'offset': data[2]})
 			else:
-				we_have_problem("unknown design of offset", input_file)
+				we_have_problem("unknown design of offset", tag)
 		elif data[0] == "size":
 			# size <size>
 			bits['size'] = data[1]
@@ -398,14 +395,14 @@ def parse_bits_member(input_file):
 	assert(bits['size'] is not None)
 	return bits
 
-def parse_bits(input_file):
-	inp = next_useful_line(input_file)
+def parse_bits(tag):
+	inp = next_useful_line(tag)
 	if inp == '':
 		return None
 
 	data = inp.split()
 	if data[0] != "bits":
-		restore_last_useful_line(input_file)
+		restore_last_useful_line(tag)
 		return None
 
 	if len(data) > 1:
@@ -420,14 +417,21 @@ def parse_bits(input_file):
 			'variable': []
 		}
 	else:
-		return parse_bits_member(input_file)
+		return parse_bits_member(tag)
 
 def parse_input(input_file):
 	data = []
 	inside_block = False
 
-	while input_file.readable():
-		inp = next_useful_line(input_file, strip_newline=inside_block, \
+	tag = {
+		'input_file': input_file,
+		'last_line_number': 1,
+		'line_number': 1,
+		'last_useful_pos': 0
+	}
+
+	while True:
+		inp = next_useful_line(tag, strip_newline=inside_block, \
 										strip_comment=False)
 		if not len(inp):
 			break
@@ -450,28 +454,28 @@ def parse_input(input_file):
 			data.append({'type': 'extra', 'payload': res + "\n\n"})
 			continue
 
-		restore_last_useful_line(input_file)
+		restore_last_useful_line(tag)
 		if inp[0] == "f":
-			family = parse_family(input_file)
+			family = parse_family(tag)
 			if family is None:
 				break
 			data.append({'type': 'family', 'payload': family})
 		elif inp[0] == "r":
-			register = parse_register(input_file)
+			register = parse_register(tag)
 			if register is None:
 				break
 			data.append({'type': 'register', 'payload': register})
 		elif inp[0] == "b":
-			bit = parse_bit(input_file)
+			bit = parse_bit(tag)
 			if bit is not None:
 				data.append({'type': 'bit', 'payload': bit})
 			else:
-				bits = parse_bits(input_file)
+				bits = parse_bits(tag)
 				if bits is None:
 					break
 				data.append({'type': 'bits', 'payload': bits})
 		else:
-			we_have_problem("unknown input: \"%s\"" % inp, input_file)
+			we_have_problem("unknown input: \"%s\"" % inp, tag)
 			break
 	return data
 

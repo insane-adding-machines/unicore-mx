@@ -177,21 +177,21 @@ static int utf8_to_utf16(const uint8_t *utf8, uint16_t *utf16,
 		/* Reference: https://en.wikipedia.org/wiki/UTF-16 */
 
 		/* utf-8? */
-		if (utf32_ch & 0b10000000) {
+		if ((utf32_ch & 0x80) != 0) {
 			/* Decoding header */
 			uint8_t trailing_bytes_utf8;
-			if ((utf32_ch & 0b11100000) == 0b11000000) {
+			if ((utf32_ch & 0xe0) == 0xc0) {
 				/* 110xxxxx 10xxxxxx */
 				trailing_bytes_utf8 = 1;
-				utf32_ch &= 0b00011111;
-			} else if ((utf32_ch & 0b11110000) == 0b11100000) {
+				utf32_ch &= 0x1f;
+			} else if ((utf32_ch & 0xf0) == 0xe0) {
 				/* 1110xxxx 10xxxxxx 10xxxxxx */
 				trailing_bytes_utf8 = 2;
-				utf32_ch &= 0b00001111;
-			} else if ((utf32_ch & 0b11111000) == 0b11110000) {
+				utf32_ch &= 0x0f;
+			} else if ((utf32_ch & 0xf8) == 0xf0) {
 				/* 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx */
 				trailing_bytes_utf8 = 3;
-				utf32_ch &= 0b00000111;
+				utf32_ch &= 0x07;
 			} else {
 				/* 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx */
 				/* 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx */
@@ -208,7 +208,7 @@ static int utf8_to_utf16(const uint8_t *utf8, uint16_t *utf16,
 
 			/* trailing bytes payload */
 			while (trailing_bytes_utf8-- > 0) {
-				utf32_ch = (utf32_ch << 6) | (utf8[i++] & 0b00111111);
+				utf32_ch = (utf32_ch << 6) | (utf8[i++] & 0x3f);
 			}
 
 			/* UTF-8 was restricted by RFC 3629 to end at U+10FFFF, in order
@@ -340,13 +340,13 @@ standard_get_descriptor_string(usbd_device *dev,
 
 	if (!index) {
 		/* Build the list of available langauge strings */
-		used = build_available_lang(dev, sd->wData, max_count);
+		used = build_available_lang(dev, (uint16_t*)sd->wData, max_count);
 	} else {
 		/* Search for the UTF-8 string and convert it to UTF-16 */
 		const uint8_t *utf8_str;
 		utf8_str = search_utf8_string(dev, arg->setup->wIndex, index - 1);
 		used = (utf8_str == NULL) ? -1 :
-			utf8_to_utf16(utf8_str, sd->wData, max_count);
+			utf8_to_utf16(utf8_str, (uint16_t*)sd->wData, max_count);
 	}
 
 	if (used < 0) {
@@ -833,9 +833,7 @@ standard_request(usbd_device *dev, struct usbd_control_arg *arg)
 void usbd_ep0_setup(usbd_device *dev, const struct usb_setup_data *setup_data)
 {
 	/* Only handle Standard request. */
-	if ((setup_data->bmRequestType & USB_REQ_TYPE_TYPE) != USB_REQ_TYPE_STANDARD) {
-		goto stall;
-	}
+	if ((setup_data->bmRequestType & USB_REQ_TYPE_TYPE) == USB_REQ_TYPE_STANDARD) {
 
 	struct usbd_control_arg arg = {
 		.setup = setup_data,
@@ -849,8 +847,9 @@ void usbd_ep0_setup(usbd_device *dev, const struct usb_setup_data *setup_data)
 			arg.complete);
 		return;
 	}
+	}//if ( ...== USB_REQ_TYPE_STANDARD)
 
-	stall:
+	//stall:
 	usbd_ep0_stall(dev);
 }
 

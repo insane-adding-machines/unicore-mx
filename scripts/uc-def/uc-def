@@ -47,10 +47,19 @@ def verify_access_flags(data):
 			raise Exception("'%c' flag of flags '%s' not valid" % (i, data))
 
 def next_useful_line(tag, strip_newline=True, strip_comment=True):
+	if not ('input_lines' in tag):
+		tag['input_lines'] = tag['input_file'].readlines()
+		tag['input_lineno'] = 0;
 	while True:
-		tag['last_useful_pos'] = tag['input_file'].tell()
+		linepos = tag['input_lineno'];
+		tag['last_useful_pos'] = linepos
 		tag['last_line_number'] = tag['line_number']
-		inp = tag['input_file'].readline()
+		lines = tag['input_lines']
+		if (linepos < len(lines)):
+			inp = lines[linepos]
+			tag['input_lineno'] = linepos + 1
+		else:
+			inp = ''
 
 		if not len(inp):
 			break
@@ -78,7 +87,7 @@ def next_useful_line(tag, strip_newline=True, strip_comment=True):
 
 def restore_last_useful_line(tag):
 	tag['line_number'] = tag['last_line_number']
-	tag['input_file'].seek(tag['last_useful_pos'])
+	tag['input_lineno'] = tag['last_useful_pos']
 
 def get_line_number(tag):
 	return tag['line_number']
@@ -597,13 +606,16 @@ def generate_bit(bit, register, family, offset, register_size, output_file):
 		extra_arg = ", ".join(extra_arg)
 		extra_arg = "(%s)" % extra_arg
 
+	mask_long = ''
+	if (int(offset) >= 16) or (len(extra_arg) > 0):
+		mask_long = 'ul'
 	actual_name = None
 	for register_name in register['bit_name']:
 		for bit_name in bit['name']:
 			if register['bit_name'].index(register_name) == bit['name'].index(bit_name) == 0:
 				actual_name = "%s_%s_%s" % (family['name'], register_name, bit_name)
 				output_file.write("#define %s_SHIFT%s (%s%s)\n" % (actual_name, extra_arg, offset, extra_offset))
-				output_file.write("#define %s%s (1 << %s_SHIFT%s)\n" % (actual_name, extra_arg, actual_name, extra_arg))
+				output_file.write("#define %s%s (1%s << %s_SHIFT%s)\n" % (actual_name, extra_arg, mask_long, actual_name, extra_arg))
 			else:
 				alias_name = "%s_%s_%s" % (family['name'], register_name, bit_name)
 				output_file.write("/* Alias of %s */\n" % actual_name)
@@ -644,6 +656,10 @@ def generate_bits(bits, register, family, offset, register_size, output_file):
 		all_arg = "v, %s" % extra_arg
 		bracketed_extra_arg = "(%s)" % extra_arg
 
+	mask_long = ''
+	#import ipdb; ipdb.set_trace()
+	if (int(offset) >= 16) or (len(extra_offset) > 0):
+		mask_long = 'ul'
 	actual_name = None
 	for register_name in register['bits_name']:
 		for bits_name in bits['name']:
@@ -652,8 +668,8 @@ def generate_bits(bits, register, family, offset, register_size, output_file):
 				#print original macro
 				actual_name = "%s_%s_%s" % (family['name'], register_name, bits_name)
 				output_file.write("#define %s_SHIFT%s (%s%s)\n" % (actual_name, bracketed_extra_arg, offset, extra_offset))
-				output_file.write("#define %s_MASK%s (%s << (%s_SHIFT%s))\n" % \
-					(actual_name, bracketed_extra_arg, mask, actual_name, bracketed_extra_arg))
+				output_file.write("#define %s_MASK%s (%s%s << (%s_SHIFT%s))\n" % \
+					(actual_name, bracketed_extra_arg, mask, mask_long, actual_name, bracketed_extra_arg))
 				output_file.write("#define %s(%s) (((v) << (%s_SHIFT%s)) & (%s_MASK%s))\n" % \
 					(actual_name, all_arg, actual_name, bracketed_extra_arg, actual_name, bracketed_extra_arg))
 				output_file.write("#define %s_GET(%s) (((v) & (%s_MASK%s)) >> (%s_SHIFT%s))\n" % \

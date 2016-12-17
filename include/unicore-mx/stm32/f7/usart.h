@@ -313,9 +313,21 @@ LGPL License Terms @ref lgpl_license
 /* EIE: Error interrupt enable */
 #define USART_CR3_EIE			(1 << 0)
 
-/* --- USART_GTPR values --------------------------------------------------- */
+/* --- USART_ICR values --------------------------------------------------- */
+#define USART_ICR_PECF			(1 << 0)
+#define USART_ICR_FFECF			(1 << 1)
+#define USART_ICR_NCF			(1 << 2)
+#define USART_ICR_ORECF			(1 << 3)
+#define USART_ICR_IDLECF		(1 << 4)
+#define USART_ICR_TCCF     		(1 << 6)
+#define USART_ICR_LBDCF			(1 << 8)
+#define USART_ICR_CTSCF			(1 << 9)
+#define USART_ICR_RTOCF			(1 << 11)
+#define USART_ICR_EOBCF			(1 << 12)
+#define USART_ICR_CMCF			(1 << 17)
 
-
+void usart_clear_rx_interrupt(uint32_t usart_base);
+void usart_clear_tx_interrupt(uint32_t usart_base);
 
 #endif
 

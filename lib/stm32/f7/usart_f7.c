@@ -171,4 +171,14 @@ bool usart_get_interrupt_source(uint32_t usart, uint32_t flag)
 	return false;
 }
 
+void usart_clear_tx_interrupt(uint32_t usart_base)
+{
+    USART_ICR(usart_base) |= USART_ICR_TCCF;
+}
+
+void usart_clear_rx_interrupt(uint32_t usart_base)
+{
+    USART_ICR(usart_base) |= USART_ICR_ORECF;
+}
+
 /**@}*/

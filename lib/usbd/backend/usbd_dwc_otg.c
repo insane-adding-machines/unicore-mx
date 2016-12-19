@@ -598,6 +598,10 @@ void dwc_otg_urb_cancel(usbd_device *dev, usbd_urb *urb)
 	(void) urb;
 }
 
+typedef struct {
+	uint32_t	data[1];
+} __attribute__((packed)) uint32_packed_array;
+
 /**
  * Copy @a bytes count from FIFO ( @a fifo) to memory @a mem
  * @param[in] fifo FIFO pointer
@@ -612,15 +616,32 @@ static void fifo_to_memory(volatile uint32_t *fifo, void *mem,
 	LOG_CALL
 
 	uint32_t *mem32 = mem;
+	if (((uintptr_t)mem & 3) == 0) {
+		//aligned memload
 	while (bytes >= 4) {
 		bytes -= 4;
 		*mem32++ = *fifo;
+	}
+	}//if (((uintptr_t)mem & 3) == 0)
+	else {
+		//unaligned memload
+		uint32_packed_array *src = (uint32_packed_array *)mem;
+		while (bytes >= 4) {
+			bytes -= 4;
+			(src++)->data[0] = *fifo;
+		}
+		mem32 = (uint32_t*)src;
 	}
 
 	if (bytes) {
 		/* remaining data (less than 4bytes) */
 		uint32_t extra = *fifo;
-		memcpy(mem32, &extra, bytes);
+		//optimisation on ARM compiler of memcpy call here, breaks 
+		//    the stack frame and crush <extra> contents
+		//memcpy(mem32, (void*)&extra, bytes);
+		uint8_t* memc = (uint8_t*)mem32;
+		for (; bytes > 0; bytes--, extra = extra >> 8)
+			*memc++ = extra&0xff;
 	}
 }
 
@@ -636,10 +657,21 @@ static void memory_to_fifo(const void *mem, volatile uint32_t *fifo,
 {
 	LOG_CALL
 
-	const uint32_t *mem32 = mem;
+	if (((uintptr_t)mem & 3) == 0) {
+		//aligned memload
+	const uint32_t *mem32 = (const uint32_t *)mem;
 	unsigned j;
 	for (j = 0; j < bytes; j += 4) {
 		*fifo = *mem32++;
+	}
+	}//if (((uintptr_t)mem & 3) == 0)
+	else {
+		//unaligned memload
+		const uint32_packed_array *mem32 = (const uint32_packed_array *)mem;
+		unsigned j;
+		for (j = 0; j < bytes; j += 4) {
+			*fifo = (mem32++)->data[0];
+		}
 	}
 }
 

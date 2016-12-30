@@ -219,11 +219,15 @@ struct usbd_backend {
 #define USB_VTRACE 5
 
 #define USB_VCALL  USB_VTRACE
-#define USB_VIO    USB_VTRACE
+#define USB_VIO    USB_VDEBUG
 #define USB_VSETUP USB_VDEBUG
+#define USB_VURB       USB_VDEBUG
+#define USB_VURBQUE    USB_VTRACE
+#define USB_VURBFAIL   USB_VDEBUG
+#define USB_VIO_MSC    USB_VDEBUG
 
 #if !defined(USBD_DEBUG)
-//# define USBD_DEBUG USB_VDEBUG
+# define USBD_DEBUG USB_VDEBUG
 #endif
 
 #define NEW_LINE "\n"
@@ -241,10 +245,10 @@ extern void usbd_log_call(const char *fname);
 
 # define USBD_LOG_LN(level, str) USBD_LOG(level, str); USBD_LOG(level, NEW_LINE );
 //# define USBD_LOGF_LN(level, fmt,...) USBD_LOGF(level, fmt, __VA_ARGS__); USBD_LOG(level, NEW_LINE );
-# define USBD_LOGF_LN(level, fmt,...) USBD_LOGF(level, USBD_STR(fmt)NEW_LINE, __VA_ARGS__);
+# define USBD_LOGF_LN(level, fmt,...) USBD_LOGF(level, USBD_STR(fmt)NEW_LINE, __VA_ARGS__)
 
 # if USBD_DEBUG >= USB_VCALL
-# define USBD_LOG_CALL usbd_log_call(__func__)
+# define USBD_LOG_CALL usbd_log_call(__func__);
 # else
 # define USBD_LOG_CALL
 # endif

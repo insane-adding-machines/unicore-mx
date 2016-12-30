@@ -406,6 +406,7 @@ static void scsi_command(usbd_msc *ms,
 		trans->byte_count = 0;
 	}
 
+	USBD_LOGF_LN(USB_VIO_MSC, "SCSI:cmd %x", trans->cbw.CBWCB[0]);
 	switch (trans->cbw.CBWCB[0]) {
 	case USB_MSC_SCSI_TEST_UNIT_READY:
 	case USB_MSC_SCSI_SEND_DIAGNOSTIC:
@@ -440,6 +441,7 @@ static void scsi_command(usbd_msc *ms,
 		scsi_write_10(ms, trans, event);
 		break;
 	default:
+		USBD_LOGF_LN(USB_VIO_MSC, "SCSI:cmd %x uncknown", trans->cbw.CBWCB[0]);
 		set_sbc_status(ms, SBC_SENSE_KEY_ILLEGAL_REQUEST,
 					SBC_ASC_INVALID_COMMAND_OPERATION_CODE,
 					SBC_ASCQ_NA);
@@ -791,18 +793,22 @@ bool usbd_msc_setup_ep0(usbd_msc *ms,
 	const uint8_t value = USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE;
 
 	if ((setup_data->bmRequestType & mask) == value) {
+		USBD_LOGF(USB_VSETUP, "USB:MSC:Req %x ", (int)setup_data->bRequest);
 		switch (setup_data->bRequest) {
 		case USB_MSC_REQ_BULK_ONLY_RESET:
+			USBD_LOG(USB_VSETUP,"BULK_ONLY_RESET\n");
 			/* Do any special reset code here. */
 			usbd_ep0_transfer(dev, setup_data, NULL, 0, NULL);
 		return true;
 		case USB_MSC_REQ_GET_MAX_LUN: {
+			USBD_LOG(USB_VSETUP,"MAX_LUN 0\n");
 			/* Return the number of LUNs.  We use 0. */
 			static const uint8_t res = 0;
 			usbd_ep0_transfer(dev, setup_data, (void *) &res,
 							sizeof(res), NULL);
 		return true;
-		}}
+		}
+		}//switch (setup_data->bRequest)
  	}
 
 	return false;

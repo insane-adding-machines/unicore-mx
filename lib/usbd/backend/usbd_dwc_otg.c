@@ -727,7 +727,7 @@ static void fifo_to_urb_1pkt(usbd_device *dev, usbd_urb *urb, uint16_t bcnt)
 
 	if (bcnt < transfer->ep_size) {
 		if (transfer->ep_type == USBD_EP_BULK) {
-			LOGF_LN("Short packet received for Bulk endpoint 0x%"PRIx8,
+			USBD_LOGF_LN(USB_VIO, "Short packet received for Bulk endpoint 0x%"PRIx8,
 						transfer->ep_addr);
 
 			if (transfer->flags & USBD_FLAG_SHORT_PACKET) {

@@ -26,6 +26,7 @@
 #include <unicore-mx/usbd/usbd.h>
 #include <unicore-mx/usbd/class/msc.h>
 #include "../usbd_private.h"
+#include <unicore-mx/usb/byteorder.h>
 
 /*
  * TODO:
@@ -275,6 +276,30 @@ static void scsi_read_capacity(usbd_msc *ms,
 	}
 }
 
+
+
+static 
+void scsi_read_format_capacities(usbd_msc *ms,
+ 			       struct usb_msc_trans *trans,
+ 			       enum trans_event event)
+{
+	if (EVENT_CBW_VALID == event) {
+		usb_msc_rfc_capacity_list_header*  h      = (usb_msc_rfc_capacity_list_header*)trans->msd_buf;
+		usb_msc_rfc_capacity_descriptor*   descr  = (usb_msc_rfc_capacity_descriptor*) (trans->msd_buf+sizeof(*h));
+		
+		u24_assign(h->dummy, 0);
+		h->list_len = sizeof(*descr);
+
+		msc_lba_t size = usbd_msc_blocks(ms->backend);
+		descr->blocks_count = HTONL(size);
+		descr->code 		= rfc_dc_Fomatted;
+		u24_assign(descr->block_size, USBD_MSC_SEC_SIZE);
+
+		trans->bytes_to_send = sizeof(*h) + h->list_len;
+		set_sbc_status_good(ms);
+	}
+}
+
 static void fallback_format_unit(usbd_msc *ms, struct usb_msc_trans *trans)
 {
 	uint32_t i;
@@ -441,6 +466,9 @@ static void scsi_command(usbd_msc *ms,
 	case USB_MSC_SCSI_WRITE_10:
 		scsi_write_10(ms, trans, event);
 		break;
+	case USB_MSC_SCSI_READ_FORMAT_CAPACITIES:
+		scsi_read_format_capacities(ms, trans, event);
+	 	break;
 	default:
 		set_sbc_status(ms, SBC_SENSE_KEY_ILLEGAL_REQUEST,
 					SBC_ASC_INVALID_COMMAND_OPERATION_CODE,

@@ -92,6 +92,8 @@ struct sbc_sense_info {
 	uint8_t ascq;
 };
 
+
+#define USBD_MSC_SEC_SIZE	512
 struct usb_msc_trans {
 	struct usb_msc_cbw cbw;
 
@@ -103,7 +105,7 @@ struct usb_msc_trans {
 	uint32_t block_count;
 	uint32_t current_block;
 
-	uint8_t msd_buf[512];
+	uint8_t msd_buf[USBD_MSC_SEC_SIZE];
 
 	struct usb_msc_csw csw;
 };
@@ -257,7 +259,7 @@ static void scsi_read_capacity(usbd_msc *ms,
 					enum trans_event event)
 {
 	if (EVENT_CBW_VALID == event) {
-		uint32_t last_logical_addr = ms->backend->block_count - 1;
+		msc_lba_t last_logical_addr = usbd_msc_blocks(ms->backend)-1;
 		trans->msd_buf[0] = last_logical_addr >> 24;
 		trans->msd_buf[1] = 0xff & (last_logical_addr >> 16);
 		trans->msd_buf[2] = 0xff & (last_logical_addr >> 8);

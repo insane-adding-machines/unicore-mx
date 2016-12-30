@@ -64,15 +64,17 @@ typedef struct usbd_msc_backend usbd_msc_backend;
  * @param lock Lock. Optional - can be NULL
  * @param unlock Unlock. Optional - can be NULL
  */
+typedef uint32_t	msc_lba_t;
+
 struct usbd_msc_backend {
 	const char *vendor_id;
 	const char *product_id;
 	const char *product_rev;
-	uint32_t block_count;
+	msc_lba_t block_count;
 	int (*read_block)(const usbd_msc_backend *backend,
-							uint32_t lba, void *copy_to);
+							msc_lba_t lba, void *copy_to);
 	int (*write_block)(const usbd_msc_backend *backend,
-							uint32_t lba, const void *copy_from);
+							msc_lba_t lba, const void *copy_from);
 	int (*format_unit)(const usbd_msc_backend *backend);
 	int (*lock)(void);
 	int (*unlock)(void);
@@ -90,6 +92,12 @@ void usbd_msc_set_config(usbd_msc *ms,
 				const struct usb_config_descriptor *cfg);
 
 void usbd_msc_start(usbd_msc *ms);
+
+static inline
+msc_lba_t usbd_msc_blocks(const usbd_msc_backend *u)
+{
+	return u->block_count;
+}
 
 #endif
 

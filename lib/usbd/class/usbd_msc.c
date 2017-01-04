@@ -382,40 +382,159 @@ static void scsi_mode_sense_6(usbd_msc *ms,
 	}
 }
 
+
+
+
+int usbd_scsi_inquiry_page(const usbd_msc_backend *self
+                   //, usb_inquiry_cmd* cmd
+                   , int vpd_page         //* < \value -1 request standart iquiry page (EVPD=0)
+                   , unsigned alloc_limit //* < TODO limited by sector size now, due use MCS sector buffer as buf
+                   , void* buf            //* < buffer for inquiry data fill to
+                   );
+
 static void scsi_inquiry(usbd_msc *ms,
 			 struct usb_msc_trans *trans,
 			 enum trans_event event)
 {
+	const usbd_msc_backend* u = ms->backend;
 	if (EVENT_CBW_VALID == event) {
-		uint8_t *buf = trans->cbw.CBWCB;
-		uint8_t evpd = 1 & buf[1];
+		usb_inquiry_cmd* cmd = (usb_inquiry_cmd*)trans->cbw.CBWCB;
+		uint8_t evpd = cmd->evpd & 1;
+		unsigned alloc_len = NTOHS(cmd->alloc_len);
+		if (alloc_len > sizeof(trans->msd_buf))
+			alloc_len = sizeof(trans->msd_buf);
 
+		int page;
 		if (0 == evpd) {
-			size_t len;
-			trans->bytes_to_send = sizeof(_spc3_inquiry_response);
-			memcpy(trans->msd_buf, _spc3_inquiry_response, sizeof(_spc3_inquiry_response));
-
-			len = strlen(ms->backend->vendor_id);
-			len = MIN(len, 8);
-			memcpy(&trans->msd_buf[8], ms->backend->vendor_id, len);
-
-			len = strlen(ms->backend->product_id);
-			len = MIN(len, 16);
-			memcpy(&trans->msd_buf[16], ms->backend->product_id, len);
-
-			len = strlen(ms->backend->product_rev);
-			len = MIN(len, 4);
-			memcpy(&trans->msd_buf[32], ms->backend->product_rev, len);
-
-			trans->csw.dCSWDataResidue = sizeof(_spc3_inquiry_response);
-
-			set_sbc_status_good(ms);
+		  page = -1;
 		} else {
-			/* TODO: Add VPD 0x83 support */
-			/* TODO: Add VPD 0x00 support */
+		  page = cmd->page_code;
+		}
+		int len = usbd_scsi_inquiry_page(u, page, alloc_len, trans->msd_buf);
+		if (len > 0) {
+			trans->bytes_to_send = len;
+			trans->csw.dCSWDataResidue = len;
+			set_sbc_status_good(ms);
+		  USBD_LOGF_LN(USB_VSETUP_MSC, "SCSI:INQUIRY page%3x ok", page);
+		}
+		else{
+			/* Error */
+		  USBD_LOGF_LN(USB_VSETUP_MSC, "SCSI:INQUIRY page%3x fail", page);
+			trans->csw.bCSWStatus = USB_MSC_CSW_STATUS_FAILED;
+			set_sbc_status(ms,
+						SBC_SENSE_KEY_ILLEGAL_REQUEST,
+						SBC_ASC_INVALID_FIELD_IN_CDB,
+						SBC_ASCQ_NA);
 		}
 	}
 }
+
+int usbd_scsi_inquiry_standart_page(const usbd_msc_backend *self, unsigned alloc_limit, void* buf);
+int usbd_scsi_inquiry_evpd_supports(const usbd_msc_backend *self, unsigned alloc_limit, void* buf);
+int usbd_scsi_inquiry_evpd_serial(const usbd_msc_backend *self, unsigned alloc_limit, void* buf);
+
+__attribute__((weak))
+int usbd_scsi_inquiry_page(const usbd_msc_backend *self
+                   //, usb_inquiry_cmd* cmd
+                   , int vpd_page         //* < \value -1 request standart iquiry page (EVPD=0)
+                   , unsigned alloc_limit //* < TODO limited by sector size now, due use MCS sector buffer as buf
+                   , void* buf            //* < buffer for inquiry data fill to
+                   )
+{
+	int res = 0;
+	if (self->inquiry_page != NULL)
+	  res = self->inquiry_page(self, vpd_page, alloc_limit, buf);
+	if (res > 0)
+	  return res;
+
+	if (vpd_page < 0)
+		return usbd_scsi_inquiry_standart_page(self, alloc_limit, buf);
+
+	switch (vpd_page){
+	  case scsi_vpd_Supported :
+	    res = usbd_scsi_inquiry_evpd_supports(self, alloc_limit, buf);
+	    break;
+	  case scsi_vpd_Serial    :
+	    res = usbd_scsi_inquiry_evpd_serial(self, alloc_limit, buf);
+	    break;
+//* TODO page 83 - Demanded by SCSI reference!!!
+//	  case scsi_vpd_DevIdentification :
+//	    res = usbd_scsi_inquiry_evpd83(self, alloc_limit, buf);
+//	    break;
+	  default: return -1;
+	}
+	return res;
+}
+
+__attribute__((weak))
+int usbd_scsi_inquiry_standart_page(const usbd_msc_backend *u, unsigned alloc_limit, void* dst)
+{
+			int res;
+			size_t len;
+			uint8_t*  buf = (uint8_t*)dst;
+			memcpy(buf, _spc3_inquiry_response, sizeof(_spc3_inquiry_response));
+			res = sizeof(_spc3_inquiry_response);
+
+			len = strlen(u->vendor_id);
+			len = MIN(len, 8);
+			memcpy(&buf[8], u->vendor_id, len);
+
+			len = strlen(u->product_id);
+			len = MIN(len, 16);
+			memcpy(&buf[16], u->product_id, len);
+
+			len = strlen(u->product_rev);
+			len = MIN(len, 4);
+			memcpy(&buf[32], u->product_rev, len);
+
+			return res;
+}
+
+__attribute__((weak))
+const uint8_t usbd_scsi_inquiry_evpd_supports_Data[]
+= {
+	0x00,
+	0x00, 
+	0x00, 
+	2,
+	0x00, 
+	0x80 
+//	0x83 
+};
+
+__attribute__((weak))
+int usbd_scsi_inquiry_evpd_supports(const usbd_msc_backend *self, unsigned alloc_limit, void* buf)
+{
+			memcpy(buf, usbd_scsi_inquiry_evpd_supports_Data, sizeof(usbd_scsi_inquiry_evpd_supports_Data));
+			return sizeof(usbd_scsi_inquiry_evpd_supports_Data);
+}
+
+__attribute__((weak))
+const uint8_t usbd_scsi_inquiry_evpd_serial_Data[]
+= {
+	0x00,
+	0x80, 
+	0x00, 
+	16
+	, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '  // dummy product serial
+	, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '  // dummy LUN serial
+};
+
+__attribute__((weak))
+int usbd_scsi_inquiry_evpd_serial(const usbd_msc_backend *self, unsigned alloc_limit, void* buf)
+{
+	const unsigned serial_size = sizeof(usbd_scsi_inquiry_evpd_serial_Data);
+	if ( (alloc_limit == 4) 
+	   ||(alloc_limit >= serial_size) 
+	   )
+	{
+	  memcpy(buf, usbd_scsi_inquiry_evpd_serial_Data, serial_size);
+	  return serial_size;
+	}
+	return -1;
+}
+
+
 
 static void scsi_command(usbd_msc *ms,
 			 struct usb_msc_trans *trans,
@@ -480,6 +599,10 @@ static void scsi_command(usbd_msc *ms,
 		trans->bytes_to_recv = 0;
 		trans->csw.bCSWStatus = USB_MSC_CSW_STATUS_FAILED;
 		break;
+	}
+
+	if (event == EVENT_NEED_STATUS){
+	  USBD_LOGF_LN(USB_VIO_MSC, "SCSI:status %x", trans->csw.bCSWStatus);
 	}
 }
 

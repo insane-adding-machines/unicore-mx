@@ -120,7 +120,7 @@ reserved for this peripheral qualifier */
 } scsi_periferial_qualify;
 
 typedef enum {
-	, scsi_dtDirectBlock = 0	//* < Direct access block device (e.g., magnetic disk)
+	  scsi_dtDirectBlock = 0	//* < Direct access block device (e.g., magnetic disk)
 	, scsi_dtSeqBlock   = 1	//* < Sequential-access device (e.g., magnetic tape)
 	, scsi_dtWriteOnce  = 4	//* < Write-once device (e.g., some optical disks)
 	, scsi_dtCDDVD      = 5	//* < CD/DVD device
@@ -132,10 +132,11 @@ typedef enum {
 #define SCSI_DEVICE_CODE(type, qual) ( (((qual) & 0x7)<<5) | ((type) & 0x1f) )
 
 typedef struct {
-	uint8_t		device_code;   //*  \see SCSI_DEVICE_CODE
-	uint8_t		page_code;	   //* \see scsi_VPD_page
-	uint8_t	    page_len;
-} __attribute__((packed)) usb_inquiry_cmd ;
+	uint8_t   device_code;   //*  \see SCSI_DEVICE_CODE
+	uint8_t   page_code;	   //* \see scsi_VPD_page
+	uint8_t   page_len;
+} __attribute__((packed)) usb_inquiry_ack ;
+
 
 
 //* SCSI - READ FORMAT CAPACITIES structures

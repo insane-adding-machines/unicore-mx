@@ -46,6 +46,10 @@
 #include <unicore-mx/usbd/usbd.h>
 #include <unicore-mx/usb/class/msc.h>
 
+#ifdef __cplusplus
+  extern "C" {
+#endif 
+
 typedef struct usbd_msc usbd_msc;
 typedef struct usbd_msc_backend usbd_msc_backend;
 
@@ -65,6 +69,7 @@ typedef struct usbd_msc_backend usbd_msc_backend;
  * @param unlock Unlock. Optional - can be NULL
  */
 typedef uint32_t	msc_lba_t;
+typedef unsigned  msc_lun_t;
 
 struct usbd_msc_backend {
 	const char *vendor_id;
@@ -78,6 +83,13 @@ struct usbd_msc_backend {
 	int (*format_unit)(const usbd_msc_backend *backend);
 	int (*lock)(void);
 	int (*unlock)(void);
+	msc_lba_t (*unit_blocks_count)(const usbd_msc_backend *self);
+	int (*inquiry_page)(const usbd_msc_backend *self
+	                   //, usb_inquiry_cmd* cmd
+	                   , int vpd_page         //* < \value -1 request standart iquiry page (EVPD=0)
+	                   , unsigned alloc_limit //* < TODO limited by sector size now, due use MCS sector buffer as buf
+	                   , void* buf            //* < buffer for inquiry data fill to
+	                   );
 };
 
 usbd_msc *usbd_msc_init(usbd_device *dev,
@@ -96,8 +108,32 @@ void usbd_msc_start(usbd_msc *ms);
 static inline
 msc_lba_t usbd_msc_blocks(const usbd_msc_backend *u)
 {
+	if (u->unit_blocks_count != NULL)
+		return (u->unit_blocks_count)(u);
 	return u->block_count;
 }
+
+
+
+//* INQUIRY support routines.
+//* this resources linked as weak, and can be ovverriden in user code.
+int usbd_scsi_inquiry_page(const usbd_msc_backend *self
+                   //, usb_inquiry_cmd* cmd
+                   , int vpd_page         //* < \value -1 request standart iquiry page (EVPD=0)
+                   , unsigned alloc_limit //* < TODO limited by sector size now, due use MCS sector buffer as buf
+                   , void* buf            //* < buffer for inquiry data fill to
+                   );
+int usbd_scsi_inquiry_standart_page(const usbd_msc_backend *self, unsigned alloc_limit, void* buf);
+int usbd_scsi_inquiry_evpd_supports(const usbd_msc_backend *self, unsigned alloc_limit, void* buf);
+int usbd_scsi_inquiry_evpd_serial(const usbd_msc_backend *self, unsigned alloc_limit, void* buf);
+
+extern const uint8_t usbd_scsi_inquiry_evpd_supports_Data[];
+extern const uint8_t usbd_scsi_inquiry_evpd_serial_Data[];
+
+
+#ifdef __cplusplus
+  }
+#endif 
 
 #endif
 

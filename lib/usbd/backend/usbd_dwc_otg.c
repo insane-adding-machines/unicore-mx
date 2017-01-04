@@ -332,7 +332,7 @@ void dwc_otg_set_ep_stall(usbd_device *dev, uint8_t addr, bool stall)
 {
 	uint8_t num = ENDPOINT_NUMBER(addr);
 
-	LOGF_LN("STALL endpoint 0x%"PRIx8" = %s", addr, stall ? "Yes" : "No");
+	USBD_LOGF_LN(USB_VIO, "STALL ep0x%"PRIx8" = %s", addr, stall ? "Yes" : "No");
 
 	/* DIEP0CTL, DIEPxCTL, DOEP0CTL, DOEPxCTL have same STALL layout */
 	volatile uint32_t *reg_ptr = IS_IN_ENDPOINT(addr) ?
@@ -389,7 +389,7 @@ static void urb_to_fifo_1pkt(usbd_device *dev, usbd_urb *urb)
 	size_t rem_len = transfer->length - transfer->transferred;
 
 	if (!rem_len) {
-		LOGF_LN("No more data to send URB %"PRIu64" (endpoint 0x%"PRIx8") "
+		USBD_LOGF_LN(USB_VURB, "No more data to send URB %"PRIu64" (ep0x%"PRIx8") "
 			"(intending ZLP?)", urb->id, transfer->ep_addr);
 		return;
 	}
@@ -775,7 +775,7 @@ static void handle_rxflvl_interrupt(usbd_device *dev)
 		[15] = "RESERVED_15"
 	};
 
-	USBD_LOGF_LN(USB_VIO, "GRXSTSP: rxstsp = %s, ep_num = %"PRIu8", bcnt = %"PRIu16,
+	USBD_LOGF_LN(USB_VIO, "GRXSTSP: %s, ep%"PRIu8", bcnt = %"PRIu16,
 		map_pktsts[DWC_OTG_GRXSTSP_PKTSTS_GET(rxstsp)], ep_num, bcnt);
 #endif
 
@@ -873,7 +873,7 @@ static void process_in_endpoint_interrupt(usbd_device *dev, uint8_t ep_num)
 
 	if (REBASE(DWC_OTG_DIEPxINT, ep_num) & DWC_OTG_DIEPINT_TXFE) {
 		/* Send more data */
-		USBD_LOGF_LN(USB_VIO, "Sending more data for endpoint 0x%"PRIx8, ep_addr);
+		USBD_LOGF_LN(USB_VIO2, "Sending more data for endpoint 0x%"PRIx8, ep_addr);
 
 		if (urb != NULL) {
 			/* As per doc, before writing to FIFO, we need to write to CTL register.
@@ -885,7 +885,7 @@ static void process_in_endpoint_interrupt(usbd_device *dev, uint8_t ep_num)
 	}
 
 	if (REBASE(DWC_OTG_DIEPxINT, ep_num) & DWC_OTG_DIEPINT_ITTXFE) {
-		USBD_LOGF_LN(USB_VIO, "Data IN Token received when ep0x%"PRIx8" FIFO was empty",
+		USBD_LOGF_LN(USB_VIO2, "Data IN Token received when ep0x%"PRIx8" FIFO was empty",
 			ep_addr);
 		REBASE(DWC_OTG_DIEPxINT, ep_num) = DWC_OTG_DIEPINT_ITTXFE;
 	}

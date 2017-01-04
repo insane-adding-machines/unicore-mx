@@ -220,6 +220,7 @@ struct usbd_backend {
 
 #define USB_VCALL  USB_VTRACE
 #define USB_VIO    USB_VDEBUG
+#define USB_VIO2   USB_VTRACE
 #define USB_VSETUP USB_VDEBUG
 #define USB_VURB       USB_VDEBUG
 #define USB_VURBQUE    USB_VTRACE

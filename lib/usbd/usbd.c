@@ -210,3 +210,10 @@ usbd_speed usbd_get_speed(usbd_device *dev)
 
 /**@}*/
 
+#if defined(USBD_DEBUG)
+void usbd_log_call(const char *fname){
+	USBD_LOG(USB_VALL, "inside ");
+	USBD_LOG_LN(USB_VALL, fname);
+}
+#endif
+

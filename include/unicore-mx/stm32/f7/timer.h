@@ -1,8 +1,8 @@
 /** @defgroup timer_defines Timer Defines
 
-@brief <b>unicore-mx Defined Constants and Types for the STM32F4xx Timers</b>
+@brief <b>unicore-mx Defined Constants and Types for the STM3274xx Timers</b>
 
-@ingroup STM32F4xx_defines
+@ingroup STM32F7xx_defines
 
 @version 1.0.0
 

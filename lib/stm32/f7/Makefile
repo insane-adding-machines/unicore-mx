@@ -43,6 +43,8 @@ OBJS		= rcc.o gpio.o gpio_common_all.o gpio_common_f0234.o
 OBJS		+= rcc_common_all.o flash_common_f234.o flash_common_f24.o usart_f7.o \
 		    i2c_common_all.o dma_common_f247.o usart_common_all.o exti_common_all.o rng_common_f247.o
 
+OBJS		+= timer_common_all.o timer_common_f2347.o timer_common_f247.o
+
 OBJS		+= usbd.o usbd_ep0.o usbd_transfer.o
 OBJS		+= usbd_dwc_otg.o usbd_stm32_otg_fs.o usbd_stm32_otg_hs.o
 OBJS		+= usbd_msc.o

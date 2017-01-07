@@ -30,6 +30,8 @@
 #       include <unicore-mx/stm32/f3/timer.h>
 #elif defined(STM32F4)
 #       include <unicore-mx/stm32/f4/timer.h>
+#elif defined(STM32F7)
+#       include <unicore-mx/stm32/f7/timer.h>
 #elif defined(STM32L0)
 #       include <unicore-mx/stm32/l0/timer.h>
 #elif defined(STM32L1)

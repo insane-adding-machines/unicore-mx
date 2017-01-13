@@ -10,6 +10,7 @@ Piotr Esden-Tempski <piotr@esden.net>
 /*
  * Copyright (C) 2010 Thomas Otto <tommi@viadmin.org>
  * Copyright (C) 2012 Piotr Esden-Tempski <piotr@esden.net>
+ * Copyright (C) 2016 Daniel Gröber <dxld@darkboxed.org>
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -408,6 +409,7 @@ void dma_disable_channel(uint32_t dma, uint8_t channel);
 void dma_set_peripheral_address(uint32_t dma, uint8_t channel,
 				uint32_t address);
 void dma_set_memory_address(uint32_t dma, uint8_t channel, uint32_t address);
+uint16_t dma_get_number_of_data(uint32_t dma, uint8_t channel);
 void dma_set_number_of_data(uint32_t dma, uint8_t channel, uint16_t number);
 
 END_DECLS
@@ -420,4 +422,3 @@ END_DECLS
 /** @endcond */
 
 /**@}*/
-

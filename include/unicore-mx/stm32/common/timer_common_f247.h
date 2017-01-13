@@ -28,8 +28,8 @@ specific memorymap.h header before including this header file.*/
 /** @cond */
 #ifdef UNICOREMX_TIMER_H
 /** @endcond */
-#ifndef UNICOREMX_TIMER_COMMON_F24_H
-#define UNICOREMX_TIMER_COMMON_F24_H
+#ifndef UNICOREMX_TIMER_COMMON_F247_H
+#define UNICOREMX_TIMER_COMMON_F247_H
 
 #include <unicore-mx/stm32/common/timer_common_all.h>
 
@@ -106,7 +106,7 @@ END_DECLS
 #endif
 /** @cond */
 #else
-#warning "timer_common_f24.h should not be included directly, only via timer.h"
+#warning "timer_common_f247.h should not be included directly, only via timer.h"
 #endif
 /** @endcond */
 

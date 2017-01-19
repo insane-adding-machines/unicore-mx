@@ -309,7 +309,8 @@ inline void mark_ep_as_free(usbd_device *dev, uint8_t ep_addr, bool yes);
  * @param[in] ep_addr Endpoint address (including direction)
  * @return mask
  */
-inline uint32_t ep_free_mask(uint8_t ep_addr)
+static inline 
+uint32_t ep_free_mask(uint8_t ep_addr)
 {
 	uint32_t num = ENDPOINT_NUMBER(ep_addr);
 
@@ -408,7 +409,8 @@ inline void usbd_handle_reset(usbd_device *dev)
  * @param[in] dev USB Device
  * @param[in] ep_addr Endpoint (including direction)
  */
-inline bool is_ep_free(usbd_device *dev, uint8_t ep_addr)
+static inline 
+bool is_ep_free(usbd_device *dev, uint8_t ep_addr)
 {
 	return !!(dev->urbs.ep_free & ep_free_mask(ep_addr));
 }
@@ -419,7 +421,8 @@ inline bool is_ep_free(usbd_device *dev, uint8_t ep_addr)
  * @param[in] ep_addr Endpoint address (including direction)
  * @param[in] yes Yes (if true, mark it as unused)
  */
-inline void mark_ep_as_free(usbd_device *dev, uint8_t ep_addr, bool yes)
+static inline 
+void mark_ep_as_free(usbd_device *dev, uint8_t ep_addr, bool yes)
 {
 	uint32_t mask = ep_free_mask(ep_addr);
 	if (yes) {

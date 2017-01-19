@@ -670,7 +670,7 @@ static void _control_status_callback(usbd_device *dev,
 		return;
 	}
 
-	usbd_control_transfer_callback callback = transfer->user_data;
+	usbd_control_transfer_callback callback = (usbd_control_transfer_callback)transfer->user_data;
 	if (callback != NULL) {
 		callback(dev, NULL);
 	}
@@ -720,7 +720,7 @@ static void _control_data_callback(usbd_device *dev,
 		return;
 	}
 
-	usbd_control_transfer_callback callback = transfer->user_data;
+	usbd_control_transfer_callback callback = (usbd_control_transfer_callback)transfer->user_data;
 	usbd_control_transfer_feedback feedback = USBD_CONTROL_TRANSFER_OK;
 
 	if (callback != NULL) {
@@ -897,7 +897,7 @@ void *usbd_urb_get_buffer_pointer(usbd_device *dev, usbd_urb *urb, size_t len)
 		return transfer->buffer;
 	}
 
-	return transfer->buffer + transfer->transferred;
+	return (void*)((uintptr_t)transfer->buffer + transfer->transferred);
 }
 
 /**

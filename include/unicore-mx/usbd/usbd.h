@@ -431,6 +431,8 @@ typedef void (*usbd_set_interface_callback)(usbd_device *dev,
 typedef void (*usbd_setup_callback)(usbd_device *dev, uint8_t addr,
 					const struct usb_setup_data *setup_data);
 
+typedef void (* usbd_session_callback)(usbd_device *dev, bool online);
+
 typedef void (* usbd_generic_callback)(usbd_device *dev);
 
 /**
@@ -514,6 +516,16 @@ void usbd_register_resume_callback(usbd_device *dev,
  */
 void usbd_register_sof_callback(usbd_device *dev,
 					usbd_generic_callback callback);
+
+/**
+ * Register session connect/disconnect callback
+ *   with USBD_VBUS_SENSE feature primary need for cable 
+ *   plug detection
+ * @param[in] dev USB Device
+ * @param[in] callback callback to be invoked
+ */
+void usbd_register_session_callback(usbd_device *dev,
+					usbd_session_callback callback);
 
 /**
  * Register SET_CONFIGURATION callback \n
@@ -642,6 +654,22 @@ uint8_t usbd_get_address(usbd_device *dev);
  * @return Current enumeration speed
  */
 usbd_speed usbd_get_speed(usbd_device *dev);
+
+
+/**
+ * Get status of connected cable.
+ * @param[in] dev USB Device
+ * @return true - cable connected, and Vbus active
+ */
+bool usbd_is_vbus(usbd_device *dev);
+
+/**
+ * Controls power state of usb-core and PHY
+ * @param[in] dev USB Device
+ * @param[in] onoff  - true turn on device in action, and power PHY
+ *                     false disable PHY and stops usb-core
+ */
+void usbd_enable(usbd_device *dev, bool onoff);
 
 /**
  * Perform a transfer

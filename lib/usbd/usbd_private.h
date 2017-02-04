@@ -41,6 +41,7 @@
 #ifndef UNICOREMX_USBD_PRIVATE_H
 #define UNICOREMX_USBD_PRIVATE_H
 
+#include <stdbool.h>
 #include <unicore-mx/usbd/usbd.h>
 
 /**
@@ -109,6 +110,10 @@ struct usbd_device {
 
 		/** invoked when sof received */
 		usbd_generic_callback sof;
+		
+		//* invoked on Session New / End
+		//*    with USBD_VBUS_SENSE feature detects cable plug
+		usbd_session_callback session;
 
 		/** invoked on SETUP packet */
 		usbd_setup_callback setup;
@@ -174,6 +179,11 @@ struct usbd_device {
 #endif
 };
 
+typedef enum {
+	  usbd_paShutdown
+	, usbd_paActivate
+} usbd_power_action;
+
 /* Functions provided by the hardware abstraction. */
 struct usbd_backend {
 	usbd_device * (*init)(const usbd_backend_config *config);
@@ -196,6 +206,10 @@ struct usbd_backend {
 
 	/* Frame number */
 	uint16_t (*frame_number)(usbd_device *dev);
+
+	//* power control
+	bool (*is_vbus)(usbd_device *dev);
+	void (*power_control)(usbd_device *dev, usbd_power_action action);
 
 	/*
 	 * this is to tell usb generic code
@@ -356,6 +370,14 @@ static inline void usbd_handle_sof(usbd_device *dev)
 
 	if (dev->callback.sof != NULL) {
 		dev->callback.sof(dev);
+	}
+}
+
+static inline
+void usbd_handle_session(usbd_device *dev, bool onoff)
+{
+	if (dev->callback.session != NULL) {
+		dev->callback.session(dev, onoff);
 	}
 }
 

@@ -28,6 +28,8 @@
 #include <unicore-mx/usbd/usbd.h>
 
 static usbd_device *init(const usbd_backend_config *config);
+static bool otgfs_is_powered(usbd_device *dev);
+static void otgfs_power_control(usbd_device *dev, usbd_power_action action);
 
 static struct usbd_device _usbd_dev;
 
@@ -51,6 +53,8 @@ const struct usbd_backend usbd_stm32_otg_fs = {
 	.get_speed = dwc_otg_get_speed,
 	.set_address_before_status = true,
 	.base_address = USB_OTG_FS_BASE,
+	  .is_vbus        = otgfs_is_powered
+	, .power_control  = otgfs_power_control
 };
 
 #define REBASE(REG, ...)	REG(usbd_stm32_otg_fs.base_address, ##__VA_ARGS__)
@@ -75,10 +79,10 @@ static usbd_device *init(const usbd_backend_config *config)
 	_usbd_dev.config = config;
 
 	if (config->feature & USBD_VBUS_SENSE) {
-		if (OTG_FS_CID >= 0x00002000) { /* 2.0 */
+		if (OTG_FS_CID >= 0x00002000) { /* 2.0 HS core*/
 			/* Enable VBUS detection */
 			OTG_FS_GCCFG |= OTG_GCCFG_VBDEN;
-		} else { /* 1.x */
+		} else { /* 1.x  FS core*/
 			/* Enable VBUS sensing in device mode */
 			OTG_FS_GCCFG |= OTG_GCCFG_VBUSBSEN;
 		}
@@ -107,4 +111,30 @@ static usbd_device *init(const usbd_backend_config *config)
 	dwc_otg_init(&_usbd_dev);
 
 	return &_usbd_dev;
+}
+
+static
+bool otgfs_is_powered(usbd_device *dev){
+	uint32_t base = dev->backend->base_address;
+	return (DWC_OTG_GOTGCTL(base) & DWC_OTG_GOTGCTL_BSVLD) != 0;
+}
+
+static
+void otgfs_power_control(usbd_device *dev, usbd_power_action action){
+	uint32_t base = dev->backend->base_address;
+	switch (action){
+		case usbd_paActivate:{
+			DWC_OTG_PCGCCTL(base) = 0;
+			OTG_FS_GCCFG |= OTG_GCCFG_PWRDWN;
+			break;
+		}
+		case usbd_paShutdown: {
+		/* Wait for AHB idle. */
+			while (( (DWC_OTG_GRSTCTL(base) & DWC_OTG_GRSTCTL_AHBIDL) == 0) );
+			//poser down PHY
+			OTG_FS_GCCFG &= ~OTG_GCCFG_PWRDWN;
+			DWC_OTG_PCGCCTL(base) = DWC_OTG_PCGCCTL_STPPCLK; //| DWC_OTG_PCGCCTL_GATEHCLK ;
+			break;
+		}
+	}
 }

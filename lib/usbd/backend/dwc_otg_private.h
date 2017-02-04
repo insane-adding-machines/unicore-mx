@@ -88,6 +88,7 @@ struct dwc_otg_private_data {
 #define USBD_DEVICE_EXTRA												\
 	struct dwc_otg_private_data private_data;
 
+//#include "../usbd_private.h"
 void dwc_otg_init(usbd_device *dev);
 
 void dwc_otg_set_address(usbd_device *dev, uint8_t addr);

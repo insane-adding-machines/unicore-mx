@@ -128,6 +128,14 @@ void usbd_register_sof_callback(usbd_device *dev,
 	}
 }
 
+void usbd_register_session_callback(usbd_device *dev,
+					usbd_session_callback callback)
+{
+	dev->callback.session = callback;
+}
+
+
+
 /* Functions to be provided by the hardware abstraction layer */
 void usbd_poll(usbd_device *dev, uint32_t us)
 {
@@ -207,6 +215,19 @@ usbd_speed usbd_get_speed(usbd_device *dev)
 {
 	return dev->backend->get_speed(dev);
 }
+
+bool usbd_is_vbus(usbd_device *dev){
+	if (dev->backend->is_vbus)
+		return dev->backend->is_vbus(dev);
+	else
+		return true;
+}
+
+void usbd_enable(usbd_device *dev, bool onoff){
+	if (dev->backend->power_control)
+		dev->backend->power_control(dev, (onoff)? usbd_paActivate : usbd_paShutdown );
+}
+
 
 /**@}*/
 

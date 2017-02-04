@@ -1042,6 +1042,15 @@ void dwc_otg_poll(usbd_device *dev)
 		REBASE(DWC_OTG_GINTSTS) = DWC_OTG_GINTSTS_SOF;
 		usbd_handle_sof(dev);
 	}
+
+	if ( (REBASE(DWC_OTG_GINTSTS) & (DWC_OTG_GINTSTS_SRQINT)) != 0) {
+		REBASE(DWC_OTG_GINTSTS) = (DWC_OTG_GINTSTS_SRQINT);
+		usbd_handle_session(dev, true);
+	}
+	if ( (REBASE(DWC_OTG_GOTGINT) & (DWC_OTG_GOTGINT_SEDET)) != 0) {
+		REBASE(DWC_OTG_GOTGINT) = DWC_OTG_GOTGINT_SEDET;
+		usbd_handle_session(dev, false);
+	}
 }
 
 void dwc_otg_disconnect(usbd_device *dev, bool disconnected)

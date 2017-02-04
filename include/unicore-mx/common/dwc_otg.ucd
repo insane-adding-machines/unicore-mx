@@ -56,6 +56,9 @@ bit SRQ 1
 bit SRQSCS 0
 
 reg GOTGINT 0x004
+% Session end detected. The core sets this bit to indicate that the level of the voltage 
+%   on VBUS is no longer valid for a B-Peripheral session when VBUS < 0.8 V //STM32F4
+bit SEDET  2
 
 % OTG AHB configuration register
 reg GAHBCFG 0x008
@@ -847,6 +850,16 @@ bits XFRSIZ 7 0
 
 % Power and clock gating control and status register
 reg PCGCCTL 0xE00
+% Stop PHY clock. The application sets this bit to stop the PHY clock when the USB is suspended, the session 
+%   is not valid, or the device is disconnected. 
+%    The application clears this bit when the USB is resumed or a new session starts //STM32F4
+bit STPPCLK  0
+% Gate HCLK. The application sets this bit to gate HCLK to modules other than the AHB Slave and Master 
+%   and wakeup logic when the USB is suspended or the session is not valid.
+%   The application clears this bit when the USB is resumed or a new session starts. //STM32F4
+bit GATEHCLK 1
+% Indicates that the PHY has been suspended.
+bit PHYSUSP  4
 
 % Data FIFO
 register

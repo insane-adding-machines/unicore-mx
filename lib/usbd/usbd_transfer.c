@@ -527,6 +527,8 @@ static void detach_from_active(usbd_device *dev, usbd_urb *item)
 void usbd_urb_complete(usbd_device *dev, usbd_urb *urb,
 			usbd_transfer_status status)
 {
+	USBD_LOGF_LN(USB_VURB, "URB %"PRIu64" on ep0x%"PRIx8" complete\n"
+											, urb->id, urb->transfer.ep_addr);
 	detach_from_active(dev, urb);
 	urb_callback(dev, urb, status);
 	unused_push(dev, urb);

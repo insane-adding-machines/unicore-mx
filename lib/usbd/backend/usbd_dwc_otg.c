@@ -834,14 +834,13 @@ static void process_in_endpoint_interrupt(usbd_device *dev, uint8_t ep_num)
 	if (REBASE(DWC_OTG_DIEPxINT, ep_num) & DWC_OTG_DIEPINT_XFRC) {
 		REBASE(DWC_OTG_DIEPxINT, ep_num) = DWC_OTG_DIEPINT_XFRC;
 
-		USBD_LOGF_LN(USB_VIO, "Transfer Complete: ep0x%"PRIx8, ep_addr);
-
 		if (!ep_num && urb != NULL && dev->private_data.ep0tsiz_pktcnt) {
 			/* We are still sending data! */
 
 			size_t rem = urb->transfer.length - urb->transfer.transferred;
 			uint32_t xfrsiz = MIN(urb->transfer.ep_size, rem);
 			dev->private_data.ep0tsiz_pktcnt--;
+   		USBD_LOGF_LN(USB_VIO, "USBD: new frame: ep0x%"PRIx8" len %d\n", ep_addr, xfrsiz);
 
 			REBASE(DWC_OTG_DIEP0TSIZ) = DWC_OTG_DIEP0TSIZ_PKTCNT_1 |
 				DWC_OTG_DIEP0TSIZ_XFRSIZ(xfrsiz);
@@ -862,6 +861,7 @@ static void process_in_endpoint_interrupt(usbd_device *dev, uint8_t ep_num)
 			/* Disable Interrupt */
 			REBASE(DWC_OTG_DAINTMSK) &= ~DWC_OTG_DAINTMSK_IEPM(ep_num);
 
+   		USBD_LOGF_LN(USB_VIO, "USBD: last frame: ep0x%"PRIx8"\n", ep_addr);
 			/* The URB has been processed, do the callback */
 			if (urb != NULL) {
 				usbd_urb_complete(dev, urb, USBD_SUCCESS);

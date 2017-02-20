@@ -228,7 +228,7 @@ struct usbd_backend {
 #define USB_VIO_MSC    USB_VDEBUG
 
 #if !defined(USBD_DEBUG)
-# define USBD_DEBUG USB_VDEBUG
+//# define USBD_DEBUG USB_VDEBUG
 #endif
 
 #define NEW_LINE "\n"

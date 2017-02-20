@@ -179,10 +179,11 @@ struct usbd_device {
 #endif
 };
 
-typedef enum {
+enum _usbd_power_action{
 	  usbd_paShutdown
 	, usbd_paActivate
-} usbd_power_action;
+};
+typedef enum _usbd_power_action usbd_power_action;
 
 /* Functions provided by the hardware abstraction. */
 struct usbd_backend {

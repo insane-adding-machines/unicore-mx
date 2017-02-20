@@ -135,6 +135,16 @@ enum usbd_speed {
 
 typedef enum usbd_speed usbd_speed;
 
+	/** Optional features */
+enum usbd_backend_features{
+		USBD_FEATURE_NONE = 0,
+		USBD_PHY_EXT = (1 << 0),
+		USBD_VBUS_SENSE = (1 << 1),
+		USBD_VBUS_EXT = (1 << 2)
+		//* provide usb-core auto power-up/down on connect/disconnect
+		, USBD_USE_POWERDOWN		= (1<<3)
+};
+
 struct usbd_backend_config {
 	/** Number of endpoints. (Including control endpoint) */
 	uint8_t ep_count;
@@ -145,13 +155,8 @@ struct usbd_backend_config {
 	/** Device speed */
 	usbd_speed speed;
 
-	/** Optional features */
-	enum {
-		USBD_FEATURE_NONE = 0,
-		USBD_PHY_EXT = (1 << 0),
-		USBD_VBUS_SENSE = (1 << 1),
-		USBD_VBUS_EXT = (1 << 2)
-	} feature;
+	/** Optional features see usbd_backend_features*/
+	unsigned int feature;
 };
 
 typedef struct usbd_backend_config usbd_backend_config;
@@ -279,7 +284,7 @@ enum usbd_transfer_flags {
 	USBD_FLAG_PACKET_PER_FRAME_MASK = (0x3 << 5)
 };
 
-typedef enum usbd_transfer_flags usbd_transfer_flags;
+typedef unsigned char usbd_transfer_flags;
 
 /**
  * USB Transfer status

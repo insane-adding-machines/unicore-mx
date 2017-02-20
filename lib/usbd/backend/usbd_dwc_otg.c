@@ -536,6 +536,10 @@ static void urb_submit_non_ep0(usbd_device *dev, usbd_urb *urb)
 				}
 			}
 		}
+		else if (transfer->length == 0){
+				// force transmit empty packet
+				pktcnt = 1;
+		}
 
 		REBASE(DWC_OTG_DIEPxTSIZ, ep_num) =
 					mc_from_flags(transfer->flags) |

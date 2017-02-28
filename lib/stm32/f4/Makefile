@@ -61,9 +61,12 @@ OBJS		+= usbh_dwc_otg.o usbh_stm32_otg_fs.o
 OBJS		+= usbh_hid.o
 OBJS		+= usbh_ctrlreq.o
 
+OBJS		+= lcd_tft.o lcd_tft_stm32_ltdc.o
+
 VPATH += ../:../../cm3:../common
 VPATH += ../../usbd:../../usbd/class:../../usbd/backend
 VPATH += ../../ethernet
 VPATH += ../../usbh:../../usbh/backend:../../usbh/helper:../../usbh/class
+VPATH += ../../lcd_tft:../../lcd_tft/backend
 
 include ../../Makefile.include

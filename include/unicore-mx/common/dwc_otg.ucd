@@ -99,7 +99,7 @@ bit AHBIDL 31
 bits
  name TXFNUM
  size 5
- offset 16
+ offset 6
  value ALL 0x10
 
 bit TXFFLSH 5
@@ -495,7 +495,8 @@ reg DCTL 0x804
 bit POPRGDNE 11
 bit CGONAK 10
 bit SGONAK 9
-bit SGINAK 8
+bit CGINAK 8
+bit SGINAK 7
 bits TCTL 3 4
 bit GONSTS 3
 bit GINSTS 2

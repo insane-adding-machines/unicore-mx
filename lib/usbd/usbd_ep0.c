@@ -790,6 +790,7 @@ standard_request_endpoint(usbd_device *dev, struct usbd_control_arg *arg)
 	case USB_REQ_CLEAR_FEATURE:
 		if (arg->setup->wValue == USB_FEAT_ENDPOINT_HALT) {
 			uint8_t ep_addr = arg->setup->wIndex;
+			USBD_LOGF_LN(USB_VSETUP,"USBD:CLEAR_FEATURE - halt EP%d", ep_addr);
 			usbd_set_ep_dtog(dev, ep_addr, false);
 			usbd_set_ep_stall(dev, ep_addr, false);
 			return USBD_REQ_HANDLED;
@@ -797,7 +798,9 @@ standard_request_endpoint(usbd_device *dev, struct usbd_control_arg *arg)
 	break;
 	case USB_REQ_SET_FEATURE:
 		if (arg->setup->wValue == USB_FEAT_ENDPOINT_HALT) {
-			usbd_set_ep_stall(dev, arg->setup->wIndex, true);
+			uint8_t ep_addr = arg->setup->wIndex;
+			USBD_LOGF_LN(USB_VSETUP,"USBD:SET_FEATURE - halt EP%d", ep_addr);
+			usbd_set_ep_stall(dev, ep_addr, true);
 			return USBD_REQ_HANDLED;
 		}
 	break;

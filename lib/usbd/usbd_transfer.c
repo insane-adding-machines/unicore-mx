@@ -331,8 +331,8 @@ usbd_urb_id usbd_transfer_submit(usbd_device *dev,
 		[USBD_EP_BULK] = "Bulk",
 	};
 
-	USBD_LOGF_LN(USB_VURB, "Created URB %"PRIu64": %s %s %"PRIu8": data=%p, length=%u is %s",
-				urb->id, ep_type_map_str[urb->transfer.ep_type],
+	USBD_LOGF_LN(USB_VURB, "Created URB %"PRIurb": %s %s %"PRIu8": data=%p, length=%u is %s",
+				view_urbid(urb->id), ep_type_map_str[urb->transfer.ep_type],
 				IS_IN_ENDPOINT(urb->transfer.ep_addr) ? "IN" : "OUT",
 				ENDPOINT_NUMBER(urb->transfer.ep_addr),
 				urb->transfer.buffer, urb->transfer.length
@@ -362,7 +362,7 @@ static void urb_callback(usbd_device *dev, usbd_urb *urb,
 {
 	LOG_CALL
 
-	USBD_LOGF_LN(USB_VURB, "URB %"PRIu64" transfer status = %s", urb->id,
+	USBD_LOGF_LN(USB_VURB, "URB %"PRIurb" transfer status = %s", view_urbid(urb->id),
 		stringify_transfer_status(status));
 
 	/* callback provided */
@@ -486,7 +486,7 @@ void usbd_urb_schedule(usbd_device *dev)
 		urb = queue_item_detach(&dev->urbs.waiting, prev, tmp);
 		queue_item_append(&dev->urbs.active, tmp);
 
-		USBD_LOGF_LN(USB_VURB, "[waiting] URB id=%"PRIu64" is now active", tmp->id);
+		USBD_LOGF_LN(USB_VURB, "[waiting] URB id=%"PRIurb" is now active", view_urbid(tmp->id) );
 		dev->backend->urb_submit(dev, tmp);
 	}
 }
@@ -513,8 +513,8 @@ static void detach_from_active(usbd_device *dev, usbd_urb *item)
 		return;
 	}
 
-	USBD_LOGF_LN(USB_VURBFAIL, "WARNING: Found not find URB %"PRIu64" in active list to detach it",
-		urb->id);
+	USBD_LOGF_LN(USB_VURBFAIL, "WARNING: Found not find URB %"PRIurb" in active list to detach it"
+	                         ,  view_urbid(urb->id) );
 }
 
 /**
@@ -527,8 +527,8 @@ static void detach_from_active(usbd_device *dev, usbd_urb *item)
 void usbd_urb_complete(usbd_device *dev, usbd_urb *urb,
 			usbd_transfer_status status)
 {
-	USBD_LOGF_LN(USB_VURB, "URB %"PRIu64" on ep0x%"PRIx8" complete\n"
-											, urb->id, urb->transfer.ep_addr);
+	USBD_LOGF_LN(USB_VURB, "URB %"PRIurb" on ep0x%"PRIx8" complete\n"
+	                     , view_urbid(urb->id), urb->transfer.ep_addr);
 	detach_from_active(dev, urb);
 	urb_callback(dev, urb, status);
 	unused_push(dev, urb);
@@ -662,8 +662,8 @@ static void _control_status_callback(usbd_device *dev,
 	(void) urb_id;
 
 	if (status != USBD_SUCCESS) {
-		LOGF_LN("[Control status stage] Transfer %"PRIu64" failed with "
-			"status=%s", urb_id, stringify_transfer_status(status));
+		USBD_LOGF_LN(USB_VURB, "[Control status stage] Transfer %"PRIurb" failed with status=%s"
+		                     , view_urbid(urb_id), stringify_transfer_status(status));
 		return;
 	}
 
@@ -711,9 +711,9 @@ static void _control_data_callback(usbd_device *dev,
 	(void) urb_id;
 
 	if (status != USBD_SUCCESS) {
-		LOGF_LN("[Control data stage] Transfer %"PRIu64" failed with "
-			"status=%s, not going into status stage", urb_id,
-			stringify_transfer_status(status));
+		USBD_LOGF_LN(USB_VURB, "[Control data stage] Transfer %"PRIurb" failed with "
+		                       "status=%s, not going into status stage"
+		                     , view_urbid(urb_id), stringify_transfer_status(status));
 		return;
 	}
 
@@ -825,8 +825,7 @@ void usbd_control_transfer(usbd_device *dev, uint8_t ep_addr,
 			 *  going to send for data stage.
 			 * If our safest bet is to STALL the transaction.
 			 */
-			LOGF_LN("STALL: User provide less buffer than "
-						"the host is going to send");
+			LOG_LN("STALL: User provide less buffer than the host is going to send");
 			usbd_set_ep_stall(dev, ep_addr | 0x80, true);
 			usbd_set_ep_stall(dev, ep_addr & 0x7F, true);
 			return;
@@ -872,8 +871,9 @@ void *usbd_urb_get_buffer_pointer(usbd_device *dev, usbd_urb *urb, size_t len)
 
 #if defined(USBD_DEBUG)
 	if ((transfer->transferred + len) > transfer->length) {
-		LOGF_LN("URB %"PRIu64" buffer overflow detected! "
-			"(backend want to %s %"PRIu16" bytes to buffer)", urb->id,
+		LOGF_LN("URB %"PRIurb" buffer overflow detected! "
+		  "(backend want to %s %"PRIu16" bytes to buffer)"
+		  , view_urbid(urb->id),
 			out ? "write" : "read", len);
 		LOGF_LN("transfer->length: %"PRIu16, transfer->length);
 		LOGF_LN("transfer->transferred: %"PRIu16, transfer->transferred);

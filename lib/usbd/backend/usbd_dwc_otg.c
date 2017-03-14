@@ -207,6 +207,7 @@ void dwc_otg_ep_prepare_start(usbd_device *dev)
 
 	dev->private_data.fifo_rx_usage_overall = 16; /* by EP0 and constant */
 	dev->private_data.fifo_rx_usage_packet = fifo_word + 1; /* EP0 */
+	dev->private_data.ep_prematured = 0;
 
 	disable_all_non_ep0(dev);
 
@@ -684,6 +685,7 @@ static void premature_urb_complete(usbd_device *dev, usbd_urb *urb,
 		REBASE(DWC_OTG_DOEPxINT, ep_num) = 0xFFFF ^ DWC_OTG_DOEPINT_STUP;
 		REBASE(DWC_OTG_DAINTMSK) &= ~DWC_OTG_DAINTMSK_OEPM(ep_num);
 	}
+	mark_ep_as_prematured(dev, transfer->ep_addr, true);
 
 	usbd_urb_complete(dev, urb, status);
 }
@@ -919,6 +921,18 @@ static void process_out_endpoint_interrupt(usbd_device *dev, uint8_t ep_num)
 		LOGF_LN("Transfer Complete: endpoint 0x%"PRIx8, ep_addr);
 		usbd_urb *urb = usbd_find_active_urb(dev, ep_addr);
 
+		if (is_ep_prematured(dev, ep_addr)) {
+			if (urb != NULL){
+				//* ommit this RXC and restart current URB
+				REBASE(DWC_OTG_DOEP0TSIZ) = DWC_OTG_DOEP0TSIZ_STUPCNT_3 |
+						DWC_OTG_DOEP0TSIZ_PKTCNT_1 |
+						DWC_OTG_DOEP0TSIZ_XFRSIZ(urb->transfer.ep_size);
+
+				REBASE(DWC_OTG_DOEP0CTL) |= DWC_OTG_DOEP0CTL_EPENA;
+			}
+			mark_ep_as_prematured(dev, ep_addr, false);
+		}
+		else
 		if (!ep_num && urb != NULL && dev->private_data.ep0tsiz_pktcnt) {
 			/* We are still expecting data! */
 

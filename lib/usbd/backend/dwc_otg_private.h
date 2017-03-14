@@ -83,11 +83,19 @@ struct dwc_otg_private_data {
 
 	/* FIXME: used for all endpoint setup_data. */
 	struct usb_setup_data setup_data;
+
+	/* Premature terminated OUT URBs are probably have followed by 
+	 * COMP_OUT cause IRQ RXC - that should be ommited, 
+	 * else  next URB will terminate by this loosed RXC */
+	uint32_t ep_prematured;
 };
 
 #define USBD_DEVICE_EXTRA												\
 	struct dwc_otg_private_data private_data;
 
+
+
+#include "../usbd_private.h"
 void dwc_otg_init(usbd_device *dev);
 
 void dwc_otg_set_address(usbd_device *dev, uint8_t addr);
@@ -111,6 +119,23 @@ uint16_t dwc_otg_frame_number(usbd_device *dev);
 typedef struct usbd_urb usbd_urb;
 void dwc_otg_urb_submit(usbd_device *dev, usbd_urb *urb);
 void dwc_otg_urb_cancel(usbd_device *dev, usbd_urb *urb);
+
+static inline
+bool is_ep_prematured(usbd_device *dev, uint8_t ep_addr)
+{
+	return (dev->private_data.ep_prematured & ep_free_mask(ep_addr));
+}
+
+static inline 
+void mark_ep_as_prematured(usbd_device *dev, uint8_t ep_addr, bool yes)
+{
+	uint32_t mask = ep_free_mask(ep_addr);
+	if (yes) {
+		dev->private_data.ep_prematured |= mask;
+	} else {
+		dev->private_data.ep_prematured &= ~mask;
+	}
+}
 
 END_DECLS
 

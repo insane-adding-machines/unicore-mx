@@ -26,9 +26,9 @@
 #include <unicore-mx/stm32/st_usbfs.h>
 #include <unicore-mx/usbd/usbd.h>
 
-inline void ep_set_stat(uint8_t num, bool rx, uint16_t stat);
-inline void ep_clear_ctr(uint8_t num, bool rx);
-inline void ep_set_type(uint8_t num, uint16_t eptype);
+static inline void ep_set_stat(uint8_t num, bool rx, uint16_t stat);
+static inline void ep_clear_ctr(uint8_t num, bool rx);
+static inline void ep_set_type(uint8_t num, uint16_t eptype);
 
 /**
  * Set the endpoint @a num status to @a status
@@ -36,7 +36,7 @@ inline void ep_set_type(uint8_t num, uint16_t eptype);
  * @param rx true for RX, false for TX
  * @param stat Status
  */
-inline void ep_set_stat(uint8_t num, bool rx, uint16_t stat)
+static inline void ep_set_stat(uint8_t num, bool rx, uint16_t stat)
 {
 	uint16_t ep = USB_EP(num);
 	ep &= USB_EP_TYPE_MASK | USB_EP_KIND | USB_EP_EA_MASK |
@@ -51,7 +51,7 @@ inline void ep_set_stat(uint8_t num, bool rx, uint16_t stat)
  * @param num Endpoint number (not including direction)
  * @param rx true for CTR_RX, false for CTR_TX
  */
-inline void ep_clear_ctr(uint8_t num, bool rx)
+static inline void ep_clear_ctr(uint8_t num, bool rx)
 {
 	uint16_t ep = USB_EP(num);
 	ep &= USB_EP_TYPE_MASK | USB_EP_KIND | USB_EP_EA_MASK;
@@ -64,7 +64,7 @@ inline void ep_clear_ctr(uint8_t num, bool rx)
  * @param num Endpoint number (not including direction)
  * @param eptype New endpoint type
  */
-inline void ep_set_type(uint8_t num, uint16_t eptype)
+static inline void ep_set_type(uint8_t num, uint16_t eptype)
 {
 	uint16_t ep = USB_EP(num);
 	ep &= USB_EP_KIND | USB_EP_EA_MASK;

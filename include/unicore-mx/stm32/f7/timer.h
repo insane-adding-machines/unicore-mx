@@ -1,16 +1,16 @@
 /** @defgroup timer_defines Timer Defines
- *
- * @brief <b>Defined Constants and Types for the STM32F3xx Timers</b>
- *
- * @ingroup STM32F3xx_defines
- *
- * @version 1.0.0
- *
- * @date 8 March 2013
- *
- * @author @htmlonly &copy; @endhtmlonly 2011 Fergus Noble <fergusnoble@gmail.com>
- *
- * LGPL License Terms @ref lgpl_license
+
+@brief <b>unicore-mx Defined Constants and Types for the STM3274xx Timers</b>
+
+@ingroup STM32F7xx_defines
+
+@version 1.0.0
+
+@date 8 March 2013
+
+@author @htmlonly &copy; @endhtmlonly 2011 Fergus Noble <fergusnoble@gmail.com>
+
+LGPL License Terms @ref lgpl_license
  */
 /*
  * Copyright (C) 2011 Fergus Noble <fergusnoble@gmail.com>

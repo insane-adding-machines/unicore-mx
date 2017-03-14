@@ -27,6 +27,7 @@ LGPL License Terms @ref lgpl_license
  */
 /*
  * Copyright (C) 2012 Ken Sarkies <ksarkies@internode.on.net>
+ * Copyright (C) 2016 Daniel Gröber <dxld@darkboxed.org>
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -773,6 +774,20 @@ void dma_set_memory_address_1(uint32_t dma, uint8_t stream, uint32_t address)
 }
 
 /*---------------------------------------------------------------------------*/
+/** @brief DMA Stream Get the Transfer Block Size
+
+@param[in] dma unsigned int32. DMA controller base address: DMA1 or DMA2
+@param[in] stream unsigned int8. Stream number: @ref dma_st_number
+@returns unsigned int16. Number of remaining data words to transfer (65535
+maximum).
+*/
+
+uint16_t dma_get_number_of_data(uint32_t dma, uint8_t stream)
+{
+	return DMA_SNDTR(dma, stream);
+}
+
+/*---------------------------------------------------------------------------*/
 /** @brief DMA Stream Set the Transfer Block Size
 
 @note The DMA stream must be disabled before setting this count value. The count
@@ -789,4 +804,3 @@ void dma_set_number_of_data(uint32_t dma, uint8_t stream, uint16_t number)
 	DMA_SNDTR(dma, stream) = number;
 }
 /**@}*/
-

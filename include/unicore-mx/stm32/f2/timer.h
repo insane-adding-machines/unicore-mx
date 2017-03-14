@@ -32,6 +32,6 @@ LGPL License Terms @ref lgpl_license
 #ifndef UNICOREMX_TIMER_H
 #define UNICOREMX_TIMER_H
 
-#include <unicore-mx/stm32/common/timer_common_f24.h>
+#include <unicore-mx/stm32/common/timer_common_f247.h>
 
 #endif

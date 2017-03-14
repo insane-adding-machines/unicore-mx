@@ -19,6 +19,7 @@ LGPL License Terms @ref lgpl_license
  */
 /*
  * Copyright (C) 2010 Thomas Otto <tommi@viadmin.org>
+ * Copyright (C) 2016 Daniel Gröber <dxld@darkboxed.org>
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -414,6 +415,20 @@ void dma_set_memory_address(uint32_t dma, uint8_t channel, uint32_t address)
 }
 
 /*---------------------------------------------------------------------------*/
+/** @brief DMA Channel Get the Transfer Block Size
+
+@param[in] dma unsigned int32. DMA controller base address: DMA1 or DMA2
+@param[in] channel unsigned int8. Channel number: 1-7 for DMA1 or 1-5 for DMA2
+@returns unsigned int16. Number of remaining data words to transfer (65535
+maximum).
+*/
+
+uint16_t dma_get_number_of_data(uint32_t dma, uint8_t channel)
+{
+	return DMA_CNDTR(dma, channel);
+}
+
+/*---------------------------------------------------------------------------*/
 /** @brief DMA Channel Set the Transfer Block Size
 
 @note The DMA channel must be disabled before setting this count value. The
@@ -430,4 +445,3 @@ void dma_set_number_of_data(uint32_t dma, uint8_t channel, uint16_t number)
 	DMA_CNDTR(dma, channel) = number;
 }
 /**@}*/
-

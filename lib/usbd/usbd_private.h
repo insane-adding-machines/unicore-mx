@@ -343,22 +343,22 @@ void usbd_put_all_urb_into_unused(usbd_device *dev);
 void usbd_purge_all_non_ep0_transfer(usbd_device *dev,
 			usbd_transfer_status status);
 
-inline uint32_t ep_free_mask(uint8_t ep_addr);
-inline void usbd_handle_suspend(usbd_device *dev);
-inline void usbd_handle_resume(usbd_device *dev);
-inline void usbd_handle_sof(usbd_device *dev);
-inline void usbd_handle_setup(usbd_device *dev, uint8_t ep,
+static inline uint32_t ep_free_mask(uint8_t ep_addr);
+static inline void usbd_handle_suspend(usbd_device *dev);
+static inline void usbd_handle_resume(usbd_device *dev);
+static inline void usbd_handle_sof(usbd_device *dev);
+static inline void usbd_handle_setup(usbd_device *dev, uint8_t ep,
 					const struct usb_setup_data *setup_data);
-inline void usbd_handle_reset(usbd_device *dev);
-inline bool is_ep_free(usbd_device *dev, uint8_t ep_addr);
-inline void mark_ep_as_free(usbd_device *dev, uint8_t ep_addr, bool yes);
+static inline void usbd_handle_reset(usbd_device *dev);
+static inline bool is_ep_free(usbd_device *dev, uint8_t ep_addr);
+static inline void mark_ep_as_free(usbd_device *dev, uint8_t ep_addr, bool yes);
 
 /**
  * Get the DTOG bit mask for @a ep_addr
  * @param[in] ep_addr Endpoint address (including direction)
  * @return mask
  */
-inline uint32_t ep_free_mask(uint8_t ep_addr)
+static inline uint32_t ep_free_mask(uint8_t ep_addr)
 {
 	uint32_t num = ENDPOINT_NUMBER(ep_addr);
 
@@ -373,7 +373,7 @@ inline uint32_t ep_free_mask(uint8_t ep_addr)
  * SUSPEND detected on bus
  * @param[in] dev USB Device
  */
-inline void usbd_handle_suspend(usbd_device *dev)
+static inline void usbd_handle_suspend(usbd_device *dev)
 {
 	LOG_LN("SUSPEND detected!");
 
@@ -386,7 +386,7 @@ inline void usbd_handle_suspend(usbd_device *dev)
  * RESUME detected on bus
  * @param[in] dev USB Device
  */
-inline void usbd_handle_resume(usbd_device *dev)
+static inline void usbd_handle_resume(usbd_device *dev)
 {
 	LOG_LN("RESUME detected!");
 
@@ -399,7 +399,7 @@ inline void usbd_handle_resume(usbd_device *dev)
  * SOF detected on bus
  * @param[in] dev USB Device
  */
-inline void usbd_handle_sof(usbd_device *dev)
+static inline void usbd_handle_sof(usbd_device *dev)
 {
 	/* Oh no! dont print anything here... or else... */
 
@@ -416,7 +416,7 @@ inline void usbd_handle_sof(usbd_device *dev)
  * @param[in] setup_data Setup Data
  * @note setup_data is only expected to be valid till this function do not return.
  */
-inline void usbd_handle_setup(usbd_device *dev, uint8_t ep,
+static inline void usbd_handle_setup(usbd_device *dev, uint8_t ep,
 					const struct usb_setup_data *setup_data)
 {
 	if (dev->callback.setup != NULL) {
@@ -437,7 +437,7 @@ inline void usbd_handle_setup(usbd_device *dev, uint8_t ep,
  * RESET detected on bus
  * @param[in] dev USB Device
  */
-inline void usbd_handle_reset(usbd_device *dev)
+static inline void usbd_handle_reset(usbd_device *dev)
 {
 	LOG_LN("RESET detected");
 
@@ -457,7 +457,7 @@ inline void usbd_handle_reset(usbd_device *dev)
  * @param[in] dev USB Device
  * @param[in] ep_addr Endpoint (including direction)
  */
-inline bool is_ep_free(usbd_device *dev, uint8_t ep_addr)
+static inline bool is_ep_free(usbd_device *dev, uint8_t ep_addr)
 {
 	return !!(dev->urbs.ep_free & ep_free_mask(ep_addr));
 }
@@ -468,7 +468,7 @@ inline bool is_ep_free(usbd_device *dev, uint8_t ep_addr)
  * @param[in] ep_addr Endpoint address (including direction)
  * @param[in] yes Yes (if true, mark it as unused)
  */
-inline void mark_ep_as_free(usbd_device *dev, uint8_t ep_addr, bool yes)
+static inline void mark_ep_as_free(usbd_device *dev, uint8_t ep_addr, bool yes)
 {
 	uint32_t mask = ep_free_mask(ep_addr);
 	if (yes) {

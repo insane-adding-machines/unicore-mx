@@ -1,7 +1,7 @@
 /*
  * This file is part of the unicore-mx project.
  *
- * Copyright (C) 2016 Kuldeep Singh Dhaka <kuldeepdhaka9@gmail.com>
+ * Copyright (C) 2016, 2017 Kuldeep Singh Dhaka <kuldeepdhaka9@gmail.com>
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -23,13 +23,12 @@
 #include <unicore-mx/cm3/common.h>
 #include <string.h>
 
-#define BACKEND_DATA     ((usbh_dwc_otg_priv *)(host->backend_data))
-#define BASE_ADDRESS     (BACKEND_DATA->base_address)
-#define RX_FIFO_SIZE     (BACKEND_DATA->fifo_size.rx)
-#define TX_NP_FIFO_SIZE  (BACKEND_DATA->fifo_size.tx_np)
-#define TX_P_FIFO_SIZE   (BACKEND_DATA->fifo_size.tx_p)
-#define CHANNELS_COUNT   (BACKEND_DATA->channels_count)
-#define CHANNELS_ITEM(i) (&BACKEND_DATA->channels[i])
+#define BASE_ADDRESS     (host->backend->base_address)
+#define RX_FIFO_SIZE     (host->backend->fifo_size.rx)
+#define TX_NP_FIFO_SIZE  (host->backend->fifo_size.tx_np)
+#define TX_P_FIFO_SIZE   (host->backend->fifo_size.tx_p)
+#define CHANNELS_COUNT   (host->backend->channels_count)
+#define CHANNELS_ITEM(i) (&host->backend->channels[i])
 
 
 #define REBASE(REG, ...)		REG(BASE_ADDRESS, ##__VA_ARGS__)
@@ -277,7 +276,7 @@ void usbh_dwc_otg_poll(usbh_host *host, uint64_t now)
 	 * If yes, then enable reset sequence for duration between 10ms to 20ms */
 	if (REBASE(DWC_OTG_HPRT) & DWC_OTG_HPRT_PCDET) {
 		/* Clear PCDET bit and turn reset on */
-		BACKEND_DATA->wait_till = now + RESET_HOLD_DURATION;
+		host->wait_till = now + RESET_HOLD_DURATION;
 		REBASE(DWC_OTG_HPRT) |= DWC_OTG_HPRT_PCDET | DWC_OTG_HPRT_PRST;
 		LOG_LN("reset sequence enabled");
 	}
@@ -285,7 +284,7 @@ void usbh_dwc_otg_poll(usbh_host *host, uint64_t now)
 	/* Check if reset in progress
 	 * If yes, after the duration is over, disable the reset */
 	if (REBASE(DWC_OTG_HPRT) & DWC_OTG_HPRT_PRST) {
-		if (now >= BACKEND_DATA->wait_till) {
+		if (now >= host->wait_till) {
 			/* Disable reset sequence */
 			REBASE(DWC_OTG_HPRT) &= ~DWC_OTG_HPRT_PRST;
 			LOG_LN("reset sequence disabled");
@@ -354,7 +353,7 @@ void usbh_dwc_otg_poll(usbh_host *host, uint64_t now)
 				REBASE(DWC_OTG_HPRT) = (REBASE(DWC_OTG_HPRT) &
 					~(DWC_OTG_HPRT_PENA | DWC_OTG_HPRT_PENCHNG)) |
 						DWC_OTG_HPRT_PRST;
-				BACKEND_DATA->wait_till = now + RESET_HOLD_DURATION;
+				host->wait_till = now + RESET_HOLD_DURATION;
 			break;
 			}
 		} else {
@@ -420,7 +419,7 @@ void usbh_dwc_otg_reset(usbh_host *host)
 	LOG_CALL
 
 	REBASE(DWC_OTG_HPRT) |= DWC_OTG_HPRT_PRST;
-	BACKEND_DATA->wait_till = host->last_poll + RESET_HOLD_DURATION;
+	host->wait_till = host->last_poll + RESET_HOLD_DURATION;
 }
 
 /**

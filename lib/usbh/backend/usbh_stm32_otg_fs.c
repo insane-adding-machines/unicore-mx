@@ -1,7 +1,7 @@
 /*
  * This file is part of the unicore-mx project.
  *
- * Copyright (C) 2016 Kuldeep Singh Dhaka <kuldeepdhaka9@gmail.com>
+ * Copyright (C) 2016, 2017 Kuldeep Singh Dhaka <kuldeepdhaka9@gmail.com>
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -18,8 +18,10 @@
  */
 
 #include "dwc_otg-private.h"
+#include "../usbh-private.h"
 #include <unicore-mx/stm32/otg_fs.h>
 #include <unicore-mx/stm32/memorymap.h>
+#include <unicore-mx/stm32/rcc.h>
 
 static usbh_host host;
 
@@ -27,24 +29,11 @@ static usbh_host host;
 
 static usbh_dwc_otg_chan channels[NUM_OF_CHANNELS];
 
-/* `host.backend_data` is usually used for information that is in RAM.
- *  but since all below data is constant, making it "const". */
-static usbh_dwc_otg_priv private_data = {
-	.base_address = USB_OTG_FS_BASE,
-
-	.fifo_size = {
-		.rx = 160,
-		.tx_np = 76,
-		.tx_p = 76
-	},
-
-	.channels_count = NUM_OF_CHANNELS,
-	.channels = channels
-};
-
 static usbh_host *init(void)
 {
-	host.backend_data = &private_data;
+	rcc_periph_clock_enable(RCC_OTGFS);
+
+	host.backend = &usbh_stm32_otg_fs;
 
 	if (OTG_FS_CID >= 0x00002000) { /* 2.0 */
 		OTG_FS_GCCFG = OTG_GCCFG_VBDEN | OTG_GCCFG_PWRDWN;
@@ -66,4 +55,15 @@ usbh_backend usbh_stm32_otg_fs = {
 	.reset = usbh_dwc_otg_reset,
 	.transfer_submit = usbh_dwc_otg_transfer_submit,
 	.transfer_cancel = usbh_dwc_otg_transfer_cancel,
+
+	.base_address = USB_OTG_FS_BASE,
+
+	.fifo_size = {
+		.rx = 160,
+		.tx_np = 76,
+		.tx_p = 76
+	},
+
+	.channels_count = NUM_OF_CHANNELS,
+	.channels = channels
 };

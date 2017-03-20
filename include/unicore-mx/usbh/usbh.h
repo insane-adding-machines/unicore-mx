@@ -251,8 +251,10 @@ struct usbh_transfer {
 #define USBH_INVALID_URB_ID 0
 
 extern usbh_backend usbh_stm32_otg_fs;
+extern usbh_backend usbh_stm32_otg_hs;
 
 #define USBH_STM32_OTG_FS (&usbh_stm32_otg_fs)
+#define USBH_STM32_OTG_HS (&usbh_stm32_otg_hs)
 
 /**
  * Init the host.

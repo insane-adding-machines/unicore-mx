@@ -56,11 +56,9 @@ OBJS		+= mac.o phy.o mac_stm32fxx7.o phy_ksz8051mll.o fmc_common_f47.o
 
 OBJS		+= pwr.o pwr_common_all.o
 
-# FIXME: USB device stack not being compiled
-
 OBJS		+= usbh_dev_enum.o usbh_device.o usbh_host.o
 OBJS		+= usbh_hub.o usbh_transfer.o usbh_urb.o
-OBJS		+= usbh_dwc_otg.o usbh_stm32_otg_fs.o
+OBJS		+= usbh_dwc_otg.o usbh_stm32_otg_fs.o usbh_stm32_otg_hs.o
 OBJS		+= usbh_hid.o
 OBJS		+= usbh_ctrlreq.o
 

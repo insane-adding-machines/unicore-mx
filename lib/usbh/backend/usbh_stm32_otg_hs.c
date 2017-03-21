@@ -25,26 +25,76 @@
 
 static usbh_host host;
 
-#define NUM_OF_CHANNELS 12
+#if !defined(USBH_STM32_OTG_HS_CHANNEL_COUNT)
+# define USBH_STM32_OTG_HS_CHANNEL_COUNT 12
+#elif !(USBH_STM32_OTG_HS_CHANNEL_COUNT > 0)
+# error "Got get some sleep, channel count need to be a greater than 0"
+#endif
 
-static usbh_dwc_otg_chan channels[NUM_OF_CHANNELS];
+#define REBASE(REG, ...)	REG(usbh_stm32_otg_hs.base_address, ##__VA_ARGS__)
 
-static usbh_host *init(void)
+static usbh_dwc_otg_chan channels[USBH_STM32_OTG_HS_CHANNEL_COUNT];
+
+static const usbh_backend_config _config = {
+	.chan_count = USBH_STM32_OTG_HS_CHANNEL_COUNT,
+	.priv_mem = 4096, /* 4KB * 1024 */
+	.speed = USBH_SPEED_FULL,
+	.feature = USBH_FEATURE_NONE
+};
+
+static usbh_host *init(const usbh_backend_config *config)
 {
 	rcc_periph_clock_enable(RCC_OTGHS);
 
-	host.backend = &usbh_stm32_otg_hs;
-
-	if (OTG_HS_CID >= 0x00002000) { /* 2.0 */
-		OTG_HS_GCCFG = OTG_GCCFG_VBDEN | OTG_GCCFG_PWRDWN;
-		DWC_OTG_GOTGCTL(USB_OTG_HS_BASE) |= DWC_OTG_GOTGCTL_AVALOEN |
-										DWC_OTG_GOTGCTL_AVALOVAL;
-	} else { /* 1.x */
-		OTG_HS_GCCFG = OTG_GCCFG_VBUSASEN | OTG_GCCFG_PWRDWN;
+	if (config == NULL) {
+		config = &_config;
 	}
 
-	/* Select internal PHY */
-	DWC_OTG_GUSBCFG(USB_OTG_HS_BASE) |=DWC_OTG_GUSBCFG_PHYSEL;
+	host.backend = &usbh_stm32_otg_hs;
+	host.config = config;
+
+	if (config->feature & USBH_PHY_EXT) {
+		/* Deactivate internal PHY */
+		OTG_HS_GCCFG &= ~OTG_GCCFG_PWRDWN;
+
+		rcc_periph_clock_enable(RCC_OTGHSULPI);
+
+		/* Select External PHY */
+		REBASE(DWC_OTG_GUSBCFG) &= ~DWC_OTG_GUSBCFG_PHYSEL;
+
+		/* Select VBUS source */
+		if (config->feature & USBH_VBUS_EXT) {
+			REBASE(DWC_OTG_GUSBCFG) |= DWC_OTG_GUSBCFG_ULPIEVBUSD;
+		} else {
+			REBASE(DWC_OTG_GUSBCFG) &= ~DWC_OTG_GUSBCFG_ULPIEVBUSD;
+		}
+	} else {
+		/* Activate internal PHY */
+		OTG_HS_GCCFG |= OTG_GCCFG_PWRDWN;
+
+		/* Select internal PHY */
+		REBASE(DWC_OTG_GUSBCFG) |= DWC_OTG_GUSBCFG_PHYSEL;
+	}
+
+	if (config->feature & USBH_VBUS_SENSE) {
+		if (OTG_HS_CID >= 0x00002000) { /* 2.0 */
+			/* Enable VBUS detection */
+			OTG_HS_GCCFG |= OTG_GCCFG_VBDEN;
+		} else { /* 1.x */
+			/* Enable VBUS sensing in host mode */
+			OTG_HS_GCCFG |= OTG_GCCFG_VBUSASEN;
+		}
+	} else {
+		if (OTG_HS_CID >= 0x00002000) { /* 2.0 */
+			/* Disable VBUS detection. */
+			OTG_HS_GCCFG &= ~OTG_GCCFG_VBDEN;
+			REBASE(DWC_OTG_GOTGCTL) |= DWC_OTG_GOTGCTL_AVALOEN |
+											DWC_OTG_GOTGCTL_AVALOVAL;
+		} else { /* 1.x */
+			/* Disable VBUS sensing in host mode. */
+			OTG_HS_GCCFG |= OTG_GCCFG_NOVBUSSENS | OTG_GCCFG_VBUSASEN;
+		}
+	}
 
 	usbh_dwc_otg_init(&host);
 
@@ -60,13 +110,6 @@ usbh_backend usbh_stm32_otg_hs = {
 	.transfer_cancel = usbh_dwc_otg_transfer_cancel,
 
 	.base_address = USB_OTG_HS_BASE,
-
-	.fifo_size = {
-		.rx = 524,
-		.tx_np = 250,
-		.tx_p = 250
-	},
-
-	.channels_count = NUM_OF_CHANNELS,
+	.channels_count = USBH_STM32_OTG_HS_CHANNEL_COUNT,
 	.channels = channels
 };

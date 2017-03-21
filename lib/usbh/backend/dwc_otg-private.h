@@ -83,15 +83,7 @@ typedef struct usbh_dwc_otg_chan usbh_dwc_otg_chan;
 
 #define USBH_BACKEND_EXTRA								\
 	uint32_t base_address;								\
-														\
-	/* Note: All sizes are in 32-bit words */			\
-	struct {											\
-		uint16_t rx; /* Receive size */				\
-		uint16_t tx_np; /* Transmit non-periodic */	\
-		uint16_t tx_p; /* Transmit periodic */			\
-	} fifo_size;										\
-														\
-	uint8_t channels_count;								\
+	uint8_t channels_count;									\
 	usbh_dwc_otg_chan *channels;
 
 void usbh_dwc_otg_init(usbh_host *host);

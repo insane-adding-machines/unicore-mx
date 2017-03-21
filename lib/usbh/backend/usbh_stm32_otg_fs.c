@@ -25,23 +25,59 @@
 
 static usbh_host host;
 
-#define NUM_OF_CHANNELS 8
+#if !defined(USBH_STM32_OTG_FS_CHANNEL_COUNT)
+# define USBH_STM32_OTG_FS_CHANNEL_COUNT 8
+#elif !(USBH_STM32_OTG_FS_CHANNEL_COUNT > 0)
+# error "Got get some sleep, channel count need to be a greater than 0"
+#endif
 
-static usbh_dwc_otg_chan channels[NUM_OF_CHANNELS];
+#define REBASE(REG, ...)	REG(usbh_stm32_otg_fs.base_address, ##__VA_ARGS__)
 
-static usbh_host *init(void)
+static usbh_dwc_otg_chan channels[USBH_STM32_OTG_FS_CHANNEL_COUNT];
+
+static const usbh_backend_config _config = {
+	.chan_count = USBH_STM32_OTG_FS_CHANNEL_COUNT,
+	.priv_mem = 1280, /* 1.25KB * 1024 */
+	.speed = USBH_SPEED_FULL,
+	.feature = USBH_FEATURE_NONE
+};
+
+static usbh_host *init(const usbh_backend_config *config)
 {
 	rcc_periph_clock_enable(RCC_OTGFS);
 
-	host.backend = &usbh_stm32_otg_fs;
-
-	if (OTG_FS_CID >= 0x00002000) { /* 2.0 */
-		OTG_FS_GCCFG = OTG_GCCFG_VBDEN | OTG_GCCFG_PWRDWN;
-		DWC_OTG_GOTGCTL(USB_OTG_FS_BASE) |= DWC_OTG_GOTGCTL_AVALOEN |
-										DWC_OTG_GOTGCTL_AVALOVAL;
-	} else { /* 1.x */
-		OTG_FS_GCCFG = OTG_GCCFG_VBUSASEN | OTG_GCCFG_PWRDWN;
+	if (config == NULL) {
+		config = &_config;
 	}
+
+	host.backend = &usbh_stm32_otg_fs;
+	host.config = config;
+
+	if (config->feature & USBH_VBUS_SENSE) {
+		if (OTG_FS_CID >= 0x00002000) { /* 2.0 */
+			/* Enable VBUS detection */
+			OTG_FS_GCCFG |= OTG_GCCFG_VBDEN;
+		} else { /* 1.x */
+			/* Enable VBUS sensing in host mode */
+			OTG_FS_GCCFG |= OTG_GCCFG_VBUSASEN;
+		}
+	} else {
+		if (OTG_FS_CID >= 0x00002000) { /* 2.0 */
+			/* Disable VBUS detection. */
+			OTG_FS_GCCFG &= ~OTG_GCCFG_VBDEN;
+			REBASE(DWC_OTG_GOTGCTL) |= DWC_OTG_GOTGCTL_AVALOEN |
+											DWC_OTG_GOTGCTL_AVALOVAL;
+		} else { /* 1.x */
+			/* Disable VBUS sensing in host mode. */
+			OTG_FS_GCCFG |= OTG_GCCFG_NOVBUSSENS | OTG_GCCFG_VBUSASEN;
+		}
+	}
+
+	/* Power up the PHY */
+	OTG_FS_GCCFG |= OTG_GCCFG_PWRDWN;
+
+	/* Internal PHY */
+	REBASE(DWC_OTG_GUSBCFG) |= DWC_OTG_GUSBCFG_PHYSEL;
 
 	usbh_dwc_otg_init(&host);
 
@@ -57,13 +93,6 @@ usbh_backend usbh_stm32_otg_fs = {
 	.transfer_cancel = usbh_dwc_otg_transfer_cancel,
 
 	.base_address = USB_OTG_FS_BASE,
-
-	.fifo_size = {
-		.rx = 160,
-		.tx_np = 76,
-		.tx_p = 76
-	},
-
-	.channels_count = NUM_OF_CHANNELS,
+	.channels_count = USBH_STM32_OTG_FS_CHANNEL_COUNT,
 	.channels = channels
 };

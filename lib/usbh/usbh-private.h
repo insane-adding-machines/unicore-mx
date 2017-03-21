@@ -137,7 +137,7 @@ struct usbh_backend {
 	/**
 	 * Initalize the backend
 	 */
-	usbh_host *(*init)(void);
+	usbh_host *(*init)(const usbh_backend_config *config);
 
 	/** @copydoc usbh_host_speed() */
 	usbh_speed (*speed)(usbh_host *host);
@@ -200,12 +200,15 @@ struct usbh_host {
 	usbh_urb urbs[URB_ARRAY_LENGTH];
 	uint8_t buffer[8];
 
+	/** Backend configuration */
+	const struct usbh_backend_config *config;
+
 #if defined(USBH_HOST_EXTRA)
 	USBH_HOST_EXTRA
 #endif
 };
 
-void usbh_device_ep_dtog_toggle(usbh_device *host, uint8_t ep);
+void usbh_device_ep_dtog_toggle(usbh_device *dev, uint8_t ep);
 
 /**
  * Divide @a a by @a b and return the ceiling of quotient

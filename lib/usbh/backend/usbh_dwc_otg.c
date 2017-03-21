@@ -23,15 +23,13 @@
 #include <unicore-mx/cm3/common.h>
 #include <string.h>
 
-#define BASE_ADDRESS     (host->backend->base_address)
-#define RX_FIFO_SIZE     (host->backend->fifo_size.rx)
-#define TX_NP_FIFO_SIZE  (host->backend->fifo_size.tx_np)
-#define TX_P_FIFO_SIZE   (host->backend->fifo_size.tx_p)
-#define CHANNELS_COUNT   (host->backend->channels_count)
+#define RX_FIFO_SIZE     (get_fifo_depth(host) / 2)
+#define TX_NP_FIFO_SIZE  (get_fifo_depth(host) / 4)
+#define TX_P_FIFO_SIZE   (get_fifo_depth(host) / 4)
 #define CHANNELS_ITEM(i) (&host->backend->channels[i])
 
 
-#define REBASE(REG, ...)		REG(BASE_ADDRESS, ##__VA_ARGS__)
+#define REBASE(REG, ...)	REG(host->backend->base_address, ##__VA_ARGS__)
 
 /* as per specs, 10ms to 20ms */
 #define RESET_HOLD_DURATION (MS2US(10))  /* unit: microseconds (us) */
@@ -105,6 +103,48 @@ static void fifo_to_memory(volatile uint32_t *fifo, void *mem,
 static void memory_to_fifo(const void *mem, volatile uint32_t *fifo,
 		unsigned bytes);
 
+/**
+ * Get the number of host channels the periph support
+ * @param[in] host USB Host
+ * @return channel count
+ * @note if Config do not provide the information, GHWCFG2 is used
+ */
+static inline uint8_t get_chan_count(usbh_host *host)
+{
+	uint8_t value = host->config->chan_count;
+
+	if (!value) {
+		/* see comment on dwc_otg_private.h */
+		value = DWC_OTG_GHWCFG2_NUMHSTCHNL_GET(REBASE(DWC_OTG_GHWCFG2));
+	}
+
+	if (value > host->backend->channels_count) {
+		/* Limit on the number of channel count
+		 * due to compile time limit */
+		value = host->backend->channels_count;
+	}
+
+	return value;
+}
+
+/**
+ * Get the FIFO depth
+ * @param[in] host USB Host
+ * @return fifo depth
+ * @note if Config do not provide the value, GHWCFG3 is used
+ */
+static inline uint16_t get_fifo_depth(usbh_host *host)
+{
+	uint16_t value = host->config->priv_mem / 4;
+
+	if (!value) {
+		/* see comment on dwc_otg_private.h */
+		value = DWC_OTG_GHWCFG3_DFIFODEPTH_GET(REBASE(DWC_OTG_GHWCFG3));
+	}
+
+	return value;
+}
+
 #if defined(USBH_DEBUG)
 const char *chan_state[] = {
 	[USBH_DWC_OTG_CHAN_STATE_FREE] = "FREE",
@@ -134,12 +174,25 @@ static void core_reset(usbh_host *host)
 void usbh_dwc_otg_init(usbh_host *host)
 {
 	core_reset(host);
-	REBASE(DWC_OTG_GUSBCFG) = DWC_OTG_GUSBCFG_FHMOD | DWC_OTG_GUSBCFG_PHYSEL;
+	REBASE(DWC_OTG_GUSBCFG) |= DWC_OTG_GUSBCFG_FHMOD;
 	REBASE(DWC_OTG_PCGCCTL) = 0; /* Restart the PHY clock. */
 	REBASE(DWC_OTG_GINTSTS) = 0xFFFFFFFF;
 	REBASE(DWC_OTG_HPRT) |= DWC_OTG_HPRT_PPWR;
 
 	LOG_LN("DWC_OTG init complete");
+
+	if (host->config->chan_count > host->backend->channels_count) {
+		/* Trying to use more channel than available at compile time. */
+		LOGF_LN("Warning: Application want to use %"PRIu8" channels "
+			"but at compile time only support upto %"PRIu8" enabled.",
+			host->config->chan_count, host->backend->channels_count);
+	}
+
+	LOGF_LN("FIFO Depth: %"PRIu16, get_fifo_depth(host));
+	LOGF_LN("Receive FIFO size: %"PRIu16, RX_FIFO_SIZE);
+	LOGF_LN("Transmit Non Periodic FIFO size: %"PRIu16, TX_NP_FIFO_SIZE);
+	LOGF_LN("Transmit Periodic FIFO size: %"PRIu16, TX_P_FIFO_SIZE);
+	LOGF_LN("Channel count: %"PRIu8, get_chan_count(host));
 }
 
 /**
@@ -151,7 +204,7 @@ static void reset_channels(usbh_host *host)
 	unsigned i;
 	LOG_LN("reseting all channels");
 
-	for (i = 0; i < CHANNELS_COUNT; i++) {
+	for (i = 0; i < get_chan_count(host); i++) {
 		usbh_dwc_otg_chan *ch = CHANNELS_ITEM(i);
 		ch->state = USBH_DWC_OTG_CHAN_STATE_CANCELLED;
 
@@ -215,7 +268,7 @@ static void prepare_fifo(usbh_host *host)
 static void schedule_channels(usbh_host *host)
 {
 	unsigned i;
-	for (i = 0; i < CHANNELS_COUNT; i++) {
+	for (i = 0; i < get_chan_count(host); i++) {
 		usbh_dwc_otg_chan *ch = CHANNELS_ITEM(i);
 
 		if (!ch->need_scheduling) {
@@ -287,7 +340,7 @@ void usbh_dwc_otg_poll(usbh_host *host, uint64_t now)
 		if (now >= host->wait_till) {
 			/* Disable reset sequence */
 			REBASE(DWC_OTG_HPRT) &= ~DWC_OTG_HPRT_PRST;
-			LOG_LN("reset sequence disabled");
+			LOG_LN("reset sequence complete");
 		} else {
 			LOG_LN("reset sequence is in progress");
 			return;
@@ -307,54 +360,97 @@ void usbh_dwc_otg_poll(usbh_host *host, uint64_t now)
 			/* clear any previous interrupts */
 			REBASE(DWC_OTG_GINTSTS) = 0xFFFFFFFF;
 
-			switch (REBASE(DWC_OTG_HPRT) & DWC_OTG_HPRT_PSPD_MASK) {
-				uint32_t hcfg, fslspcs, hfir;
-				usbh_speed speed;
-			case DWC_OTG_HPRT_PSPD_FULL:
-				LOG_LN("FULL SPEED device connected");
-				speed = USBH_SPEED_FULL;
-				fslspcs = DWC_OTG_HCFG_FSLSPCS_48MHz;
-				hfir = 48000;
-				goto next_step;
-			break;
-			case DWC_OTG_HPRT_PSPD_LOW:
-				LOG_LN("LOW SPEED device connected");
-				speed = USBH_SPEED_LOW;
-				fslspcs = DWC_OTG_HCFG_FSLSPCS_6MHz;
-				hfir = 6000;
-				goto next_step;
-			break;
-			default:
-				LOG_LN("unknown speed device connected");
-			break;
-			next_step:
-				hcfg = REBASE(DWC_OTG_HCFG);
-				if ((hcfg & DWC_OTG_HCFG_FSLSPCS_MASK) == fslspcs) {
-					goto process_device;
-				} else {
-					goto change_speed;
-				}
-			break;
-			process_device:
-				REBASE(DWC_OTG_HPRT) &= ~DWC_OTG_HPRT_PENA; /* Clear PENCHNG */
-				prepare_fifo(host);
-				reset_channels(host);
-				LOG_LN("Passing the root device to frontend");
-				usbh_root_device_connected(host, speed);
-			break;
-			change_speed:
-				LOGF_LN("Changing speed, going for HFIR = %"PRIu32, hfir);
-				REBASE(DWC_OTG_HCFG) =
-					(hcfg & ~DWC_OTG_HCFG_FSLSPCS_MASK) | fslspcs;
-				REBASE(DWC_OTG_HFIR) = hfir;
+			if (host->config->feature & USBH_PHY_EXT) {
+				/* External PHY */
+				switch (REBASE(DWC_OTG_HPRT) & DWC_OTG_HPRT_PSPD_MASK) {
+					usbh_speed speed;
+				case DWC_OTG_HPRT_PSPD_FULL:
+					LOG_LN("FULL SPEED device connected");
+					speed = USBH_SPEED_FULL;
+					goto process_device_2;
+				break;
+				case DWC_OTG_HPRT_PSPD_LOW:
+					LOG_LN("LOW SPEED device connected");
+					speed = USBH_SPEED_LOW;
+					goto process_device_2;
+				break;
+				case DWC_OTG_HPRT_PSPD_HIGH:
+					LOG_LN("HIGH SPEED device connected");
+					speed = USBH_SPEED_HIGH;
+					goto process_device_2;
+				break;
+				default:
+					LOG_LN("unknown speed device connected");
+				break;
+				process_device_2:
+					REBASE(DWC_OTG_HPRT) &= ~DWC_OTG_HPRT_PENA; /* Clear PENCHNG */
+					if (speed != USBH_SPEED_HIGH) {
+						REBASE(DWC_OTG_HFIR) = 60000;
+					}
 
-				/* Perform reset **without** clearing PENCHNG or PENA bit.
-				 *  So, that after reset we can process the same interrupt! */
-				REBASE(DWC_OTG_HPRT) = (REBASE(DWC_OTG_HPRT) &
-					~(DWC_OTG_HPRT_PENA | DWC_OTG_HPRT_PENCHNG)) |
-						DWC_OTG_HPRT_PRST;
-				host->wait_till = now + RESET_HOLD_DURATION;
-			break;
+					prepare_fifo(host);
+					reset_channels(host);
+					LOG_LN("Passing the root device to frontend");
+					usbh_root_device_connected(host, speed);
+				break;
+				}
+			} else { /* Internal PHY */
+				switch (REBASE(DWC_OTG_HPRT) & DWC_OTG_HPRT_PSPD_MASK) {
+					uint32_t hcfg, fslspcs, hfir;
+					usbh_speed speed;
+				case DWC_OTG_HPRT_PSPD_FULL:
+					LOG_LN("FULL SPEED device connected");
+					speed = USBH_SPEED_FULL;
+					fslspcs = DWC_OTG_HCFG_FSLSPCS_48MHz;
+					hfir = 48000;
+					goto next_step;
+				break;
+				case DWC_OTG_HPRT_PSPD_LOW:
+					LOG_LN("LOW SPEED device connected");
+					speed = USBH_SPEED_LOW;
+					fslspcs = DWC_OTG_HCFG_FSLSPCS_6MHz;
+					hfir = 6000;
+					goto next_step;
+				break;
+				case DWC_OTG_HPRT_PSPD_HIGH:
+					LOG_LN("HIGH SPEED device connected");
+					speed = USBH_SPEED_HIGH;
+					fslspcs = DWC_OTG_HCFG_FSLSPCS_48MHz;
+					hfir = 48000;
+					goto next_step;
+				break;
+				default:
+					LOG_LN("unknown speed device connected");
+				break;
+				next_step:
+					hcfg = REBASE(DWC_OTG_HCFG);
+					if ((hcfg & DWC_OTG_HCFG_FSLSPCS_MASK) == fslspcs) {
+						goto process_device;
+					} else {
+						goto change_speed;
+					}
+				break;
+				process_device:
+					REBASE(DWC_OTG_HPRT) &= ~DWC_OTG_HPRT_PENA; /* Clear PENCHNG */
+					prepare_fifo(host);
+					reset_channels(host);
+					LOG_LN("Passing the root device to frontend");
+					usbh_root_device_connected(host, speed);
+				break;
+				change_speed:
+					LOGF_LN("Changing speed, going for HFIR = %"PRIu32, hfir);
+					REBASE(DWC_OTG_HCFG) =
+						(hcfg & ~DWC_OTG_HCFG_FSLSPCS_MASK) | fslspcs;
+					REBASE(DWC_OTG_HFIR) = hfir;
+
+					/* Perform reset **without** clearing PENCHNG or PENA bit.
+					 *  So, that after reset we can process the same interrupt! */
+					REBASE(DWC_OTG_HPRT) = (REBASE(DWC_OTG_HPRT) &
+						~(DWC_OTG_HPRT_PENA | DWC_OTG_HPRT_PENCHNG)) |
+							DWC_OTG_HPRT_PRST;
+					host->wait_till = now + RESET_HOLD_DURATION;
+				break;
+				}
 			}
 		} else {
 			/* Clear - port has been disabled due to disconnect
@@ -384,7 +480,7 @@ void usbh_dwc_otg_poll(usbh_host *host, uint64_t now)
 	/* process channel events */
 	if (REBASE(DWC_OTG_GINTSTS) & DWC_OTG_GINTSTS_HCINT) {
 		unsigned i;
-		for (i = 0; i < CHANNELS_COUNT; i++) {
+		for (i = 0; i < get_chan_count(host); i++) {
 			if (REBASE(DWC_OTG_HAINT) & (1 << i)) {
 				process_channel_interrupt(host, i);
 			}
@@ -433,7 +529,7 @@ static int get_any_free_channel(usbh_host *host)
 	LOG_CALL
 
 	unsigned i;
-	for (i = 0; i < CHANNELS_COUNT; i++) {
+	for (i = 0; i < get_chan_count(host); i++) {
 		usbh_dwc_otg_chan *ch = CHANNELS_ITEM(i);
 		if (ch->state == USBH_DWC_OTG_CHAN_STATE_FREE) {
 			LOGF_LN("channel %"PRIu8" is free for use", i);

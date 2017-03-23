@@ -82,6 +82,8 @@ static usbd_device *init(const usbd_backend_config *config)
 		/* Deactivate internal PHY */
 		OTG_HS_GCCFG &= ~OTG_GCCFG_PWRDWN;
 
+		rcc_periph_clock_enable(RCC_OTGHSULPI);
+
 		/* Select External PHY */
 		REBASE(DWC_OTG_GUSBCFG) &= ~DWC_OTG_GUSBCFG_PHYSEL;
 

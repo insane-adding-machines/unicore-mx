@@ -1,7 +1,7 @@
 /*
  * This file is part of the unicore-mx project.
  *
- * Copyright (C) 2016 Kuldeep Singh Dhaka <kuldeepdhaka9@gmail.com>
+ * Copyright (C) 2016, 2017 Kuldeep Singh Dhaka <kuldeepdhaka9@gmail.com>
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -20,8 +20,9 @@
 #ifndef UNICOREMX_USBH_BACKEND_DWC_OTG_H
 #define UNICOREMX_USBH_BACKEND_DWC_OTG_H
 
-#include "../usbh-private.h"
-#include <unicore-mx/usb/usbstd.h>
+#include <unicore-mx/usbh/usbh.h>
+
+typedef struct usbh_urb usbh_urb;
 
 /**
  * The channel will move around with different states.
@@ -77,23 +78,13 @@ struct usbh_dwc_otg_chan {
 
 typedef struct usbh_dwc_otg_chan usbh_dwc_otg_chan;
 
-struct usbh_dwc_otg_priv {
-	uint32_t base_address;
-
-	/* Note: All sizes are in 32-bit words */
-	struct {
-		uint16_t rx; /* Receive size */
-		uint16_t tx_np; /* Transmit non-periodic */
-		uint16_t tx_p; /* Transmit periodic */
-	} fifo_size;
-
+#define USBH_HOST_EXTRA									\
 	uint64_t wait_till;
 
-	uint8_t channels_count;
+#define USBH_BACKEND_EXTRA								\
+	uint32_t base_address;								\
+	uint8_t channels_count;									\
 	usbh_dwc_otg_chan *channels;
-};
-
-typedef struct usbh_dwc_otg_priv usbh_dwc_otg_priv;
 
 void usbh_dwc_otg_init(usbh_host *host);
 void usbh_dwc_otg_poll(usbh_host *host, uint64_t now);

@@ -19,9 +19,10 @@
 
 #include "usbh-private.h"
 
-usbh_host *usbh_init(const usbh_backend *backend)
+usbh_host *usbh_init(const usbh_backend *backend,
+						const usbh_backend_config *config)
 {
-	usbh_host *host = backend->init();
+	usbh_host *host = backend->init(config);
 	unsigned i;
 
 	host->backend = backend;

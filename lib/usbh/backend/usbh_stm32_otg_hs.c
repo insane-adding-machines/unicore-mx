@@ -19,72 +19,89 @@
 
 #include "dwc_otg-private.h"
 #include "../usbh-private.h"
-#include <unicore-mx/stm32/otg_fs.h>
+#include <unicore-mx/stm32/otg_hs.h>
 #include <unicore-mx/stm32/memorymap.h>
 #include <unicore-mx/stm32/rcc.h>
 
 static usbh_host host;
 
-#if !defined(USBH_STM32_OTG_FS_CHANNEL_COUNT)
-# define USBH_STM32_OTG_FS_CHANNEL_COUNT 8
-#elif !(USBH_STM32_OTG_FS_CHANNEL_COUNT > 0)
+#if !defined(USBH_STM32_OTG_HS_CHANNEL_COUNT)
+# define USBH_STM32_OTG_HS_CHANNEL_COUNT 12
+#elif !(USBH_STM32_OTG_HS_CHANNEL_COUNT > 0)
 # error "Got get some sleep, channel count need to be a greater than 0"
 #endif
 
-#define REBASE(REG, ...)	REG(usbh_stm32_otg_fs.base_address, ##__VA_ARGS__)
+#define REBASE(REG, ...)	REG(usbh_stm32_otg_hs.base_address, ##__VA_ARGS__)
 
-static usbh_dwc_otg_chan channels[USBH_STM32_OTG_FS_CHANNEL_COUNT];
+static usbh_dwc_otg_chan channels[USBH_STM32_OTG_HS_CHANNEL_COUNT];
 
 static const usbh_backend_config _config = {
-	.chan_count = USBH_STM32_OTG_FS_CHANNEL_COUNT,
-	.priv_mem = 1280, /* 1.25KB * 1024 */
+	.chan_count = USBH_STM32_OTG_HS_CHANNEL_COUNT,
+	.priv_mem = 4096, /* 4KB * 1024 */
 	.speed = USBH_SPEED_FULL,
 	.feature = USBH_FEATURE_NONE
 };
 
 static usbh_host *init(const usbh_backend_config *config)
 {
-	rcc_periph_clock_enable(RCC_OTGFS);
+	rcc_periph_clock_enable(RCC_OTGHS);
 
 	if (config == NULL) {
 		config = &_config;
 	}
 
-	host.backend = &usbh_stm32_otg_fs;
+	host.backend = &usbh_stm32_otg_hs;
 	host.config = config;
 
-	if (config->feature & USBH_VBUS_SENSE) {
-		if (OTG_FS_CID >= 0x00002000) { /* 2.0 */
-			/* Enable VBUS detection */
-			OTG_FS_GCCFG |= OTG_GCCFG_VBDEN;
-		} else { /* 1.x */
-			/* Enable VBUS sensing in host mode */
-			OTG_FS_GCCFG |= OTG_GCCFG_VBUSASEN;
+	if (config->feature & USBH_PHY_EXT) {
+		/* Deactivate internal PHY */
+		OTG_HS_GCCFG &= ~OTG_GCCFG_PWRDWN;
+
+		rcc_periph_clock_enable(RCC_OTGHSULPI);
+
+		/* Select External PHY */
+		REBASE(DWC_OTG_GUSBCFG) &= ~DWC_OTG_GUSBCFG_PHYSEL;
+
+		/* Select VBUS source */
+		if (config->feature & USBH_VBUS_EXT) {
+			REBASE(DWC_OTG_GUSBCFG) |= DWC_OTG_GUSBCFG_ULPIEVBUSD;
+		} else {
+			REBASE(DWC_OTG_GUSBCFG) &= ~DWC_OTG_GUSBCFG_ULPIEVBUSD;
 		}
 	} else {
-		if (OTG_FS_CID >= 0x00002000) { /* 2.0 */
+		/* Activate internal PHY */
+		OTG_HS_GCCFG |= OTG_GCCFG_PWRDWN;
+
+		/* Select internal PHY */
+		REBASE(DWC_OTG_GUSBCFG) |= DWC_OTG_GUSBCFG_PHYSEL;
+	}
+
+	if (config->feature & USBH_VBUS_SENSE) {
+		if (OTG_HS_CID >= 0x00002000) { /* 2.0 */
+			/* Enable VBUS detection */
+			OTG_HS_GCCFG |= OTG_GCCFG_VBDEN;
+		} else { /* 1.x */
+			/* Enable VBUS sensing in host mode */
+			OTG_HS_GCCFG |= OTG_GCCFG_VBUSASEN;
+		}
+	} else {
+		if (OTG_HS_CID >= 0x00002000) { /* 2.0 */
 			/* Disable VBUS detection. */
-			OTG_FS_GCCFG &= ~OTG_GCCFG_VBDEN;
+			OTG_HS_GCCFG &= ~OTG_GCCFG_VBDEN;
 			REBASE(DWC_OTG_GOTGCTL) |= DWC_OTG_GOTGCTL_AVALOEN |
 											DWC_OTG_GOTGCTL_AVALOVAL;
 		} else { /* 1.x */
 			/* Disable VBUS sensing in host mode. */
-			OTG_FS_GCCFG |= OTG_GCCFG_NOVBUSSENS | OTG_GCCFG_VBUSASEN;
+			OTG_HS_GCCFG |= OTG_GCCFG_NOVBUSSENS | OTG_GCCFG_VBUSASEN;
 		}
 	}
-
-	/* Power up the PHY */
-	OTG_FS_GCCFG |= OTG_GCCFG_PWRDWN;
-
-	/* Internal PHY */
-	REBASE(DWC_OTG_GUSBCFG) |= DWC_OTG_GUSBCFG_PHYSEL;
 
 	usbh_dwc_otg_init(&host);
 
 	return &host;
 }
 
-usbh_backend usbh_stm32_otg_fs = {
+usbh_backend usbh_stm32_otg_hs = {
 	.init = init,
 	.poll = usbh_dwc_otg_poll,
 	.speed = usbh_dwc_otg_speed,
@@ -92,7 +109,7 @@ usbh_backend usbh_stm32_otg_fs = {
 	.transfer_submit = usbh_dwc_otg_transfer_submit,
 	.transfer_cancel = usbh_dwc_otg_transfer_cancel,
 
-	.base_address = USB_OTG_FS_BASE,
-	.channels_count = USBH_STM32_OTG_FS_CHANNEL_COUNT,
+	.base_address = USB_OTG_HS_BASE,
+	.channels_count = USBH_STM32_OTG_HS_CHANNEL_COUNT,
 	.channels = channels
 };

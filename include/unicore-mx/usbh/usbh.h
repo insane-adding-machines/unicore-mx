@@ -251,14 +251,40 @@ struct usbh_transfer {
 #define USBH_INVALID_URB_ID 0
 
 extern usbh_backend usbh_stm32_otg_fs;
+extern usbh_backend usbh_stm32_otg_hs;
 
 #define USBH_STM32_OTG_FS (&usbh_stm32_otg_fs)
+#define USBH_STM32_OTG_HS (&usbh_stm32_otg_hs)
+
+struct usbh_backend_config {
+	/** Number of channels */
+	uint8_t chan_count;
+
+	/** Number of bytes of private memory */
+	uint16_t priv_mem;
+
+	/** Host speed */
+	usbh_speed speed;
+
+	/** Optional features */
+	enum {
+		USBH_FEATURE_NONE = 0,
+		USBH_PHY_EXT = (1 << 0),
+		USBH_VBUS_SENSE = (1 << 1),
+		USBH_VBUS_EXT = (1 << 2)
+	} feature;
+};
+
+typedef struct usbh_backend_config usbh_backend_config;
 
 /**
  * Init the host.
  * @param backend Host backend
+ * @param config Configuration (NULL for default)
+ * @return USB Host
  */
-usbh_host *usbh_init(const usbh_backend *backend);
+usbh_host *usbh_init(const usbh_backend *backend,
+					const usbh_backend_config *config);
 
 /**
  * Search for devices by @a parent

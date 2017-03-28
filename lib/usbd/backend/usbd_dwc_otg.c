@@ -924,11 +924,8 @@ static void process_out_endpoint_interrupt(usbd_device *dev, uint8_t ep_num)
 		if (is_ep_prematured(dev, ep_addr)) {
 			if (urb != NULL){
 				//* ommit this RXC and restart current URB
-				REBASE(DWC_OTG_DOEP0TSIZ) = DWC_OTG_DOEP0TSIZ_STUPCNT_3 |
-						DWC_OTG_DOEP0TSIZ_PKTCNT_1 |
-						DWC_OTG_DOEP0TSIZ_XFRSIZ(urb->transfer.ep_size);
-
-				REBASE(DWC_OTG_DOEP0CTL) |= DWC_OTG_DOEP0CTL_EPENA;
+				REBASE(DWC_OTG_DOEPxCTL, ep_num) |= DWC_OTG_DOEP0CTL_EPENA
+				                                 | DWC_OTG_DOEP0CTL_CNAK;
 			}
 			mark_ep_as_prematured(dev, ep_addr, false);
 		}

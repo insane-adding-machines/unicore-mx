@@ -112,6 +112,16 @@ static usbd_device *init(const usbd_backend_config *config)
 		/* Activate internal PHY */
 		OTG_HS_GCCFG |= OTG_GCCFG_PWRDWN;
 
+		/* Keep the OTG_HS clock enable when using Internal FS PHY in sleep (WFI)
+		 * ST Forum (Not working): https://my.st.com/public/STe2ecommunities/mcu/Lists/cortex_mx_stm32/Flat.aspx?RootFolder=%2Fpublic%2FSTe2ecommunities%2Fmcu%2FLists%2Fcortex_mx_stm32%2FPower%20consumption%20without%20low%20power&FolderCTID=0x01200200770978C69A1141439FE559EB459D7580009C4E14902C3CDE46A77F0FFD06506F5B&currentviews=469
+		 * MicroPython Forum: https://forum.micropython.org/viewtopic.php?t=777&start=30
+		 * ChibiOS Forum: http://www.chibios.com/forum/viewtopic.php?f=16&t=1798
+		 *
+		 * This has not been documented in ERRATA.
+		 */
+		rcc_periph_clock_disable(SCC_OTGHSULPI);
+		rcc_periph_clock_enable(SCC_OTGHS);
+
 		/* Select internal PHY */
 		REBASE(DWC_OTG_GUSBCFG) |= DWC_OTG_GUSBCFG_PHYSEL;
 

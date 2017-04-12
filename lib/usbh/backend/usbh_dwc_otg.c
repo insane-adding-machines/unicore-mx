@@ -876,18 +876,40 @@ static void process_channel_interrupt(usbh_host *host, uint8_t i)
 		LOGF_LN("got CHH for channel %"PRIu8, i);
 
 		REBASE(DWC_OTG_HCxINT, i) = DWC_OTG_HCINT_CHH;
+		REBASE(DWC_OTG_HCxINTMSK, i) = 0;
 
-		if (ch->state != USBH_DWC_OTG_CHAN_STATE_CANCELLED) {
+		switch (ch->state) {
+		case USBH_DWC_OTG_CHAN_STATE_FREE:
 			PREFIX_FRAME_NUM
 			LOGF_LN("cleared CHH for channel %"PRIu8
-				" (without freeing channel)"
-				" since channel is not in cancelled state", i);
-			return;
+				" since channel is already free state", i);
+		break;
+		case USBH_DWC_OTG_CHAN_STATE_CANCELLED:
+			PREFIX_FRAME_NUM
+			LOGF_LN("channel %"PRIu8" marked as free", i);
+			ch->state = USBH_DWC_OTG_CHAN_STATE_FREE;
+		break;
+		default: {
+			/* Exceptional case: CHH received for an active channel.
+			 * We cannot go through the usual path of first transfer_cancel()
+			 * transfer_cancel() does CHH when a channel is assigned to it.
+			 * since the channel is now CHH, we can skip transfer_cancel() */
+			PREFIX_FRAME_NUM
+			LOGF_LN("Got CHH for active [state = %s] channel %"PRIu8
+				" (marking channel as free)", chan_state[ch->state], i);
+			ch->state = USBH_DWC_OTG_CHAN_STATE_FREE;
+			ch->need_scheduling = false;
+
+			usbh_urb *urb = ch->urb;
+			ch->urb = NULL;
+
+			/* Channel no more assigned to URB */
+			urb->backend_tag = INVALID_BACKEND_TAG;
+
+			usbh_urb_free(urb, USBH_ERR_IO);
+		} break;
 		}
 
-		LOGF_LN("channel %"PRIu8" marked as free", i);
-		ch->state = USBH_DWC_OTG_CHAN_STATE_FREE;
-		REBASE(DWC_OTG_HCxINTMSK, i) = 0;
 		return;
 	}
 

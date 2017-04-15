@@ -69,20 +69,25 @@ static const usbd_backend_config _config = {
 /** Initialize the USB device controller hardware of the STM32. */
 static usbd_device *init(const usbd_backend_config *config)
 {
-	rcc_periph_clock_enable(RCC_OTGHS);
 
 	if (config == NULL) {
 		config = &_config;
 	}
 
+    /* Boot up external PHY first */
+	if (config->feature & USBD_PHY_EXT) {
+		rcc_periph_clock_enable(RCC_OTGHSULPI);
+	}
+
 	_usbd_dev.backend = &usbd_stm32_otg_hs;
 	_usbd_dev.config = config;
+
+    rcc_periph_clock_enable(RCC_OTGHS);
 
 	if (config->feature & USBD_PHY_EXT) {
 		/* Deactivate internal PHY */
 		OTG_HS_GCCFG &= ~OTG_GCCFG_PWRDWN;
 
-		rcc_periph_clock_enable(RCC_OTGHSULPI);
 
 		/* Select External PHY */
 		REBASE(DWC_OTG_GUSBCFG) &= ~DWC_OTG_GUSBCFG_PHYSEL;

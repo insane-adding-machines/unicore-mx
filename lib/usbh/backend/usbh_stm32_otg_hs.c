@@ -44,6 +44,12 @@ static const usbh_backend_config _config = {
 
 static usbh_host *init(const usbh_backend_config *config)
 {
+
+	/* Boot up external PHY first */
+	if (config->feature & USBH_PHY_EXT) {
+		rcc_periph_clock_enable(RCC_OTGHSULPI);
+	}
+
 	rcc_periph_clock_enable(RCC_OTGHS);
 
 	if (config == NULL) {
@@ -56,8 +62,6 @@ static usbh_host *init(const usbh_backend_config *config)
 	if (config->feature & USBH_PHY_EXT) {
 		/* Deactivate internal PHY */
 		OTG_HS_GCCFG &= ~OTG_GCCFG_PWRDWN;
-
-		rcc_periph_clock_enable(RCC_OTGHSULPI);
 
 		/* Select External PHY */
 		REBASE(DWC_OTG_GUSBCFG) &= ~DWC_OTG_GUSBCFG_PHYSEL;

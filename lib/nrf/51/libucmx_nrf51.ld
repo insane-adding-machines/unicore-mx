@@ -86,6 +86,7 @@ SECTIONS
 	_data_loadaddr = LOADADDR(.data);
 
 	.bss : {
+		_bss = .;
 		*(.bss*)	/* Read-write zero initialized data */
 		*(COMMON)
 		. = ALIGN(4);

@@ -42,6 +42,9 @@
 #elif defined(SAM3X)
 #       include <libopencmsis/sam/3x/irqhandlers.h>
 
+#elif defined(NRF51)
+#       include <libopencmsis/nrf/51/irqhandlers.h>
+
 #elif defined(LM3S) || defined(LM4F)
 /* Yes, we use the same interrupt table for both LM3S and LM4F */
 #	include <libopencmsis/lm3s/irqhandlers.h>

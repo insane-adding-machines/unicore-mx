@@ -52,7 +52,7 @@ void i2c_disable(uint32_t i2c)
  */
 void i2c_start_tx(uint32_t i2c, uint8_t data)
 {
-    I2C_TASK_STARTTX(i2c) = 1;
+    periph_trigger_task(I2C_TASK_STARTTX(i2c));
     I2C_TXD(i2c) = data;
 }
 
@@ -62,7 +62,7 @@ void i2c_start_tx(uint32_t i2c, uint8_t data)
  */
 void i2c_start_rx(uint32_t i2c)
 {
-    I2C_TASK_STARTRX(i2c) = 1;
+    periph_trigger_task(I2C_TASK_STARTRX(i2c));
 }
 
 /** @brief Signal stop on I2C line.
@@ -71,7 +71,7 @@ void i2c_start_rx(uint32_t i2c)
  */
 void i2c_send_stop(uint32_t i2c)
 {
-    I2C_TASK_STOP(i2c) = 1;
+    periph_trigger_task(I2C_TASK_STOP(i2c));
 }
 
 /** @brief Select Fast (400kHz) mode.
@@ -113,7 +113,7 @@ void i2c_set_frequency(uint32_t i2c, uint32_t freq)
  */
 void i2c_enable_interrupts(uint32_t i2c, uint32_t interrupts)
 {
-    I2C_INTEN(i2c) = interrupts;
+    periph_enable_interrupts(i2c, interrupts);
 }
 
 /** @brief Disable interrupts.
@@ -123,7 +123,7 @@ void i2c_enable_interrupts(uint32_t i2c, uint32_t interrupts)
  */
 void i2c_disable_interrupts(uint32_t i2c, uint32_t interrupts)
 {
-    I2C_INTENCLR(i2c) = interrupts;
+    periph_disable_interrupts(i2c, interrupts);
 }
 
 /** @brief Write Data to TXD register to be sent.
@@ -177,9 +177,7 @@ void i2c_set_address(uint32_t i2c, uint8_t addr)
  */
 void i2c_enable_shorts(uint32_t i2c, uint32_t shorts)
 {
-    /* NRF51 I2C controller has two mutually exclusive shortcuts,
-     * so no need for read-modify-save.*/
-    I2C_SHORTS(i2c) = shorts;
+    periph_enable_shorts(i2c, shorts);
 }
 
 /** @brief Disable shortcuts.
@@ -193,10 +191,7 @@ void i2c_enable_shorts(uint32_t i2c, uint32_t shorts)
  */
 void i2c_disable_shorts(uint32_t i2c, uint32_t shorts)
 {
-    /* NRF51 I2C controller has two mutually exclusive shortcuts,
-     * so no need for read-modify-save, just clear the register. */
-    (void)shorts;
-    I2C_SHORTS(i2c) = 0;
+    periph_disable_shorts(i2c, shorts);
 }
 
 /** @brief Resume I2C transaction.
@@ -208,7 +203,7 @@ void i2c_disable_shorts(uint32_t i2c, uint32_t shorts)
  */
 void i2c_resume(uint32_t i2c)
 {
-    I2C_TASK_RESUME(i2c) = 1;
+    periph_trigger_task(I2C_TASK_RESUME(i2c));
 }
 
 

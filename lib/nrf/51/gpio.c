@@ -33,7 +33,7 @@
  */
 void gpio_set(uint32_t gpios)
 {
-	GPIO_OUTSET = gpios;
+    GPIO_OUTSET = gpios;
 }
 
 /** @brief Atomic clear output
@@ -42,7 +42,7 @@ void gpio_set(uint32_t gpios)
  */
 void gpio_clear(uint32_t gpios)
 {
-	GPIO_OUTCLR = gpios;
+    GPIO_OUTCLR = gpios;
 }
 
 /** @brief Toggle output
@@ -51,9 +51,9 @@ void gpio_clear(uint32_t gpios)
  */
 void gpio_toggle(uint32_t gpios)
 {
-	uint32_t reg_val = GPIO_OUT;
-	GPIO_OUTCLR = reg_val & gpios;
-	GPIO_OUTSET = (~reg_val) & gpios;
+    uint32_t reg_val = GPIO_OUT;
+    GPIO_OUTCLR = reg_val & gpios;
+    GPIO_OUTSET = (~reg_val) & gpios;
 }
 
 /** @brief Read GPIO values
@@ -62,7 +62,7 @@ void gpio_toggle(uint32_t gpios)
  */
 uint32_t gpio_get(uint32_t gpios)
 {
-	return GPIO_IN & gpios;
+    return GPIO_IN & gpios;
 }
 
 /** @brief Set direction (input/output) and pull for a set of gpios.
@@ -73,22 +73,22 @@ uint32_t gpio_get(uint32_t gpios)
  */
 void gpio_setup_mode(uint32_t gpios, uint8_t dir, uint8_t pull)
 {
-	if (GPIO_DIR_INPUT == dir) {
-		GPIO_DIRCLR = gpios;
-	} else {
-		GPIO_DIRSET = gpios;
-	}
+    if (GPIO_DIR_INPUT == dir) {
+        GPIO_DIRCLR = gpios;
+    } else {
+        GPIO_DIRSET = gpios;
+    }
 
-	uint8_t i = 0;
-	while (gpios) {
-		if (gpios & 1) {
-			uint32_t reg_pin_cnf = GPIO_PIN_CNF(i);
-			reg_pin_cnf &= ~PIN_CNF_PULL_MASK;
-			GPIO_PIN_CNF(i) = reg_pin_cnf | PIN_CNF_PULL_MASKED(pull);
-		}
-		++i;
-		gpios >>= 1;
-	}
+    uint8_t i = 0;
+    while (gpios) {
+        if (gpios & 1) {
+            uint32_t reg_pin_cnf = GPIO_PIN_CNF(i);
+            reg_pin_cnf &= ~PIN_CNF_PULL_MASK;
+            GPIO_PIN_CNF(i) = reg_pin_cnf | PIN_CNF_PULL_MASKED(pull);
+        }
+        ++i;
+        gpios >>= 1;
+    }
 }
 
 /** @brief Set drive for gpios.
@@ -100,16 +100,16 @@ void gpio_setup_mode(uint32_t gpios, uint8_t dir, uint8_t pull)
  */
 void gpio_set_drive(uint32_t gpios, uint8_t drive)
 {
-	uint8_t i = 0;
-	while (gpios) {
-		if (gpios & 1) {
-			uint32_t reg_pin_cnf = GPIO_PIN_CNF(i);
-			reg_pin_cnf &= ~PIN_CNF_DRIVE_MASK;
-			GPIO_PIN_CNF(i) = reg_pin_cnf | PIN_CNF_DRIVE_MASKED(drive);
-		}
-		++i;
-		gpios >>= 1;
-	}
+    uint8_t i = 0;
+    while (gpios) {
+        if (gpios & 1) {
+            uint32_t reg_pin_cnf = GPIO_PIN_CNF(i);
+            reg_pin_cnf &= ~PIN_CNF_DRIVE_MASK;
+            GPIO_PIN_CNF(i) = reg_pin_cnf | PIN_CNF_DRIVE_MASKED(drive);
+        }
+        ++i;
+        gpios >>= 1;
+    }
 }
 
 /** @brief Configure Task in GPIO TE Module
@@ -120,12 +120,12 @@ void gpio_set_drive(uint32_t gpios, uint8_t drive)
  * @param[in] init uint8_t Initial state of the pin
  */
 void gpio_configure_task(uint8_t task_num,
-		uint8_t pin_num, uint8_t polarity, uint8_t init)
+        uint8_t pin_num, uint8_t polarity, uint8_t init)
 {
-	GPIO_TE_CONFIG(task_num) = GPIO_TE_CONFIG_MODE_MASKED(GPIO_TE_MODE_TASK)
-		| GPIO_TE_CONFIG_PSEL_MASKED(pin_num)
-		| GPIO_TE_CONFIG_POLARITY_MASKED(polarity)
-		| init;
+    GPIO_TE_CONFIG(task_num) = GPIO_TE_CONFIG_MODE_MASKED(GPIO_TE_MODE_TASK)
+        | GPIO_TE_CONFIG_PSEL_MASKED(pin_num)
+        | GPIO_TE_CONFIG_POLARITY_MASKED(polarity)
+        | init;
 }
 
 /** @brief Configure Event in GPIO TE Module
@@ -136,9 +136,9 @@ void gpio_configure_task(uint8_t task_num,
  */
 void gpio_configure_event(uint8_t event_num, uint8_t pin_num, uint8_t polarity)
 {
-	GPIO_TE_CONFIG(event_num) = GPIO_TE_CONFIG_MODE_MASKED(GPIO_TE_MODE_EVENT)
-		| GPIO_TE_CONFIG_PSEL_MASKED(pin_num)
-		| GPIO_TE_CONFIG_POLARITY_MASKED(polarity);
+    GPIO_TE_CONFIG(event_num) = GPIO_TE_CONFIG_MODE_MASKED(GPIO_TE_MODE_EVENT)
+        | GPIO_TE_CONFIG_PSEL_MASKED(pin_num)
+        | GPIO_TE_CONFIG_POLARITY_MASKED(polarity);
 }
 
 /** @brief Enable GPIO interrupts
@@ -147,7 +147,7 @@ void gpio_configure_event(uint8_t event_num, uint8_t pin_num, uint8_t polarity)
  */
 void gpio_enable_interrupts(uint32_t mask)
 {
-	GPIO_INTENSET = mask;
+    GPIO_INTENSET = mask;
 }
 
 /** @brief Disable GPIO interrupts
@@ -156,7 +156,7 @@ void gpio_enable_interrupts(uint32_t mask)
  */
 void gpio_disable_interrupts(uint32_t mask)
 {
-	GPIO_INTENCLR = mask;
+    GPIO_INTENCLR = mask;
 }
 
 /** @brief Disable all GPIO interrupts
@@ -165,5 +165,5 @@ void gpio_disable_interrupts(uint32_t mask)
  */
 void gpio_clear_interrupts(void)
 {
-	GPIO_INTENCLR = 0xffffffff;
+    GPIO_INTENCLR = 0xffffffff;
 }

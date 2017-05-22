@@ -36,7 +36,7 @@
  */
 void rtc_set_prescaler(uint32_t rtc, uint16_t presc)
 {
-	RTC_PRESCALER(rtc) = presc & 0xfff;
+    RTC_PRESCALER(rtc) = presc & 0xfff;
 }
 
 /** @brief RTC get Counter value.
@@ -45,7 +45,7 @@ void rtc_set_prescaler(uint32_t rtc, uint16_t presc)
  */
 uint32_t rtc_get_counter(uint32_t rtc)
 {
-	return RTC_COUNTER(rtc);
+    return RTC_COUNTER(rtc);
 }
 
 /** @brief Enable events
@@ -55,7 +55,7 @@ uint32_t rtc_get_counter(uint32_t rtc)
  */
 void rtc_enable_events(uint32_t rtc, uint32_t mask)
 {
-	RTC_EVTENSET(rtc) = mask;
+    RTC_EVTENSET(rtc) = mask;
 }
 
 /** @brief Disable events
@@ -65,7 +65,7 @@ void rtc_enable_events(uint32_t rtc, uint32_t mask)
  */
 void rtc_disable_events(uint32_t rtc, uint32_t mask)
 {
-	RTC_EVTENCLR(rtc) = mask;
+    RTC_EVTENCLR(rtc) = mask;
 }
 
 /** @brief Start the RTC
@@ -74,7 +74,7 @@ void rtc_disable_events(uint32_t rtc, uint32_t mask)
  */
 void rtc_start(uint32_t rtc)
 {
-	periph_trigger_task(RTC_TASK_START(rtc));
+    periph_trigger_task(RTC_TASK_START(rtc));
 }
 
 /** @brief Stop the RTC
@@ -83,7 +83,7 @@ void rtc_start(uint32_t rtc)
  */
 void rtc_stop(uint32_t rtc)
 {
-	periph_trigger_task(RTC_TASK_STOP(rtc));
+    periph_trigger_task(RTC_TASK_STOP(rtc));
 }
 
 /** @brief Clear the RTC
@@ -92,7 +92,7 @@ void rtc_stop(uint32_t rtc)
  */
 void rtc_clear(uint32_t rtc)
 {
-	periph_trigger_task(RTC_TASK_CLEAR(rtc));
+    periph_trigger_task(RTC_TASK_CLEAR(rtc));
 }
 
 /** @brief Set compare register
@@ -103,6 +103,6 @@ void rtc_clear(uint32_t rtc)
  */
 void rtc_set_compare(uint32_t rtc, uint8_t cmp, uint32_t value)
 {
-	if (cmp < 4)
-		RTC_CC(rtc, cmp) = value;
+    if (cmp < 4)
+        RTC_CC(rtc, cmp) = value;
 }

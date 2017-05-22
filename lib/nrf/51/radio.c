@@ -37,28 +37,28 @@
  * */
 void radio_set_mode(enum radio_mode mode)
 {
-	volatile uint32_t* override_pos = 0;
-	if ((RADIO_MODE_BLE_1MBIT == mode)
-			&& (FICR_OVERRIDEEN & ~FICR_OVERRIDEEN_BLE_1MBIT)) {
-		/* Need to use Override */
-		override_pos = &FICR_BLE_1MBIT0;
-	} else if ((RADIO_MODE_NRF_1MBIT == mode)
-			&& (FICR_OVERRIDEEN & ~FICR_OVERRIDEEN_NRF_1MBIT)) {
-		override_pos = &FICR_NRF_1MBIT0;
-	}
+    volatile uint32_t* override_pos = 0;
+    if ((RADIO_MODE_BLE_1MBIT == mode)
+            && (FICR_OVERRIDEEN & ~FICR_OVERRIDEEN_BLE_1MBIT)) {
+        /* Need to use Override */
+        override_pos = &FICR_BLE_1MBIT0;
+    } else if ((RADIO_MODE_NRF_1MBIT == mode)
+            && (FICR_OVERRIDEEN & ~FICR_OVERRIDEEN_NRF_1MBIT)) {
+        override_pos = &FICR_NRF_1MBIT0;
+    }
 
-	if (override_pos) {
-		uint8_t i;
-		for (i = 0; i <= 4; ++i, ++override_pos) {
-			RADIO_OVERRIDE(i) = *override_pos;
-		}
+    if (override_pos) {
+        uint8_t i;
+        for (i = 0; i <= 4; ++i, ++override_pos) {
+            RADIO_OVERRIDE(i) = *override_pos;
+        }
 
-		RADIO_OVERRIDE4 |= RADIO_OVERRIDE4_ENABLE;
-	} else {
-		RADIO_OVERRIDE4 &= ~RADIO_OVERRIDE4_ENABLE;
-	}
+        RADIO_OVERRIDE4 |= RADIO_OVERRIDE4_ENABLE;
+    } else {
+        RADIO_OVERRIDE4 &= ~RADIO_OVERRIDE4_ENABLE;
+    }
 
-	RADIO_MODE = mode;
+    RADIO_MODE = mode;
 }
 
 /** @brief Set radio transmission power.
@@ -69,19 +69,19 @@ void radio_set_mode(enum radio_mode mode)
  * */
 void radio_set_txpower(enum radio_txpower txpower)
 {
-	RADIO_TXPOWER = txpower;
+    RADIO_TXPOWER = txpower;
 }
 
 /** @brief Set bit transmission order to LSB first. */
 void radio_set_lsbfirst(void)
 {
-	RADIO_PCNF1 &= ~RADIO_PCNF1_ENDIAN_BIG;
+    RADIO_PCNF1 &= ~RADIO_PCNF1_ENDIAN_BIG;
 }
 
 /** @brief Set bit transmission order to MSB first. */
 void radio_set_msbfirst(void)
 {
-	RADIO_PCNF1 |= RADIO_PCNF1_ENDIAN_BIG;
+    RADIO_PCNF1 |= RADIO_PCNF1_ENDIAN_BIG;
 }
 
 /** @brief Enable on the air data whitening
@@ -90,13 +90,13 @@ void radio_set_msbfirst(void)
  * */
 void radio_enable_whitening(void)
 {
-	RADIO_PCNF1 |= RADIO_PCNF1_WHITEEN;
+    RADIO_PCNF1 |= RADIO_PCNF1_WHITEEN;
 }
 
 /** @brief Disable on the air data whitening. */
 void radio_disable_whitening(void)
 {
-	RADIO_PCNF1 &= ~RADIO_PCNF1_WHITEEN;
+    RADIO_PCNF1 &= ~RADIO_PCNF1_WHITEEN;
 }
 
 /** @brief Set CRC length in number of bytes.
@@ -105,27 +105,27 @@ void radio_disable_whitening(void)
  */
 void radio_set_crclen(uint8_t crc_len)
 {
-	uint32_t reg_crc = RADIO_CRCCNF;
-	reg_crc &= ~RADIO_CRCCNF_LEN_MASK;
-	RADIO_CRCCNF = reg_crc | RADIO_CRCCNF_LEN_MASKED(crc_len);
+    uint32_t reg_crc = RADIO_CRCCNF;
+    reg_crc &= ~RADIO_CRCCNF_LEN_MASK;
+    RADIO_CRCCNF = reg_crc | RADIO_CRCCNF_LEN_MASKED(crc_len);
 }
 
 /** @brief Disable CRC calculation. */
 void radio_disable_crc(void)
 {
-	RADIO_CRCCNF &= ~RADIO_CRCCNF_LEN_MASK;
+    RADIO_CRCCNF &= ~RADIO_CRCCNF_LEN_MASK;
 }
 
 /** @brief Enable the peripheral. */
 void radio_enable(void)
 {
-	RADIO_POWER = RADIO_POWER_ENABLED;
+    RADIO_POWER = RADIO_POWER_ENABLED;
 }
 
 /** @brief Disable the peripheral. */
 void radio_disable(void)
 {
-	RADIO_POWER = RADIO_POWER_DISABLED;
+    RADIO_POWER = RADIO_POWER_DISABLED;
 }
 
 
@@ -135,9 +135,9 @@ void radio_disable(void)
  */
 void radio_set_balen(uint8_t ba_len)
 {
-	uint32_t reg_pcnf1 = RADIO_PCNF1;
-	reg_pcnf1 &= ~RADIO_PCNF1_BALEN_MASK;
-	RADIO_PCNF1 = reg_pcnf1 | RADIO_PCNF1_BALEN_MASKED(ba_len);
+    uint32_t reg_pcnf1 = RADIO_PCNF1;
+    reg_pcnf1 &= ~RADIO_PCNF1_BALEN_MASK;
+    RADIO_PCNF1 = reg_pcnf1 | RADIO_PCNF1_BALEN_MASKED(ba_len);
 }
 
 /** @brief Set maximum transmission length in number of bytes.
@@ -146,9 +146,9 @@ void radio_set_balen(uint8_t ba_len)
  */
 void radio_set_maxlen(uint8_t maxlen)
 {
-	uint32_t reg_pcnf1 = RADIO_PCNF1;
-	reg_pcnf1 &= ~RADIO_PCNF1_MAXLEN_MASK;
-	RADIO_PCNF1 = reg_pcnf1 | RADIO_PCNF1_MAXLEN_MASKED(maxlen);
+    uint32_t reg_pcnf1 = RADIO_PCNF1;
+    reg_pcnf1 &= ~RADIO_PCNF1_MAXLEN_MASK;
+    RADIO_PCNF1 = reg_pcnf1 | RADIO_PCNF1_MAXLEN_MASKED(maxlen);
 }
 
 /** @brief Exclude access address from CRC calculation.
@@ -158,11 +158,11 @@ void radio_set_maxlen(uint8_t maxlen)
  */
 void radio_set_crc_skipaddr(bool is_skip_addr)
 {
-	if (is_skip_addr) {
-		RADIO_CRCCNF |= RADIO_CRCCNF_SKIPADDR;
-	} else {
-		RADIO_CRCCNF &= ~RADIO_CRCCNF_SKIPADDR;
-	}
+    if (is_skip_addr) {
+        RADIO_CRCCNF |= RADIO_CRCCNF_SKIPADDR;
+    } else {
+        RADIO_CRCCNF &= ~RADIO_CRCCNF_SKIPADDR;
+    }
 }
 
 /** @brief Configure the radio to be used in BLE mode.
@@ -173,16 +173,16 @@ void radio_set_crc_skipaddr(bool is_skip_addr)
  */
 void radio_configure_ble(void)
 {
-	radio_set_mode(RADIO_MODE_BLE_1MBIT);
-	RADIO_TIFS = RADIO_BLE_TIFS;
-	radio_set_lsbfirst();
-	radio_enable_whitening();
+    radio_set_mode(RADIO_MODE_BLE_1MBIT);
+    RADIO_TIFS = RADIO_BLE_TIFS;
+    radio_set_lsbfirst();
+    radio_enable_whitening();
 
-	radio_set_crclen(RADIO_BLE_CRCLEN);
-	RADIO_CRCPOLY = RADIO_BLE_CRCPOLY;
-	RADIO_CRCINIT = RADIO_BLE_CRCINIT;
-	radio_set_crc_skipaddr(true);
-	radio_set_balen(3);
+    radio_set_crclen(RADIO_BLE_CRCLEN);
+    RADIO_CRCPOLY = RADIO_BLE_CRCPOLY;
+    RADIO_CRCINIT = RADIO_BLE_CRCINIT;
+    radio_set_crc_skipaddr(true);
+    radio_set_balen(3);
 }
 
 /** @brief Configure the packet.
@@ -191,9 +191,9 @@ void radio_configure_ble(void)
  */
 void radio_configure_packet(uint8_t lf_len_bits, uint8_t s0_len_bytes, uint8_t s1_len_bits)
 {
-	RADIO_PCNF0 = RADIO_PCNF0_LFLEN_MASKED(lf_len_bits)
-		| RADIO_PCNF0_S0LEN_MASKED(s0_len_bytes)
-		| RADIO_PCNF0_S1LEN_MASKED(s1_len_bits);
+    RADIO_PCNF0 = RADIO_PCNF0_LFLEN_MASKED(lf_len_bits)
+        | RADIO_PCNF0_S0LEN_MASKED(s0_len_bytes)
+        | RADIO_PCNF0_S1LEN_MASKED(s1_len_bits);
 }
 
 /** @brief Set radio frequency.
@@ -203,7 +203,7 @@ void radio_configure_packet(uint8_t lf_len_bits, uint8_t s0_len_bytes, uint8_t s
  */
 void radio_set_frequency(uint8_t freq)
 {
-	RADIO_FREQUENCY = freq;
+    RADIO_FREQUENCY = freq;
 }
 
 /** @brief Set Data Whitening Initialization Vector.
@@ -212,7 +212,7 @@ void radio_set_frequency(uint8_t freq)
  */
 void radio_set_datawhiteiv(uint8_t iv)
 {
-	RADIO_DATAWHITEIV = iv;
+    RADIO_DATAWHITEIV = iv;
 }
 
 /* @brief Set Address (base and prefix)
@@ -227,15 +227,15 @@ void radio_set_datawhiteiv(uint8_t iv)
  */
 void radio_set_addr(uint8_t addr_index, uint32_t base, uint8_t prefix)
 {
-	if (addr_index == 0) {
-		RADIO_BASE0 = base;
-	} else {
-		RADIO_BASE1 = base;
-	}
+    if (addr_index == 0) {
+        RADIO_BASE0 = base;
+    } else {
+        RADIO_BASE1 = base;
+    }
 
-	uint32_t reg_prefix = RADIO_PREFIX_AP(addr_index);
-	reg_prefix &= ~RADIO_PREFIX_AP_MASK(addr_index);
-	RADIO_PREFIX_AP_SET(addr_index, reg_prefix | RADIO_PREFIX_AP_MASKED(addr_index, prefix));
+    uint32_t reg_prefix = RADIO_PREFIX_AP(addr_index);
+    reg_prefix &= ~RADIO_PREFIX_AP_MASK(addr_index);
+    RADIO_PREFIX_AP_SET(addr_index, reg_prefix | RADIO_PREFIX_AP_MASKED(addr_index, prefix));
 }
 
 /* @brief Set TX address index
@@ -246,7 +246,7 @@ void radio_set_addr(uint8_t addr_index, uint32_t base, uint8_t prefix)
  */
 void radio_set_tx_address(uint8_t addr_index)
 {
-	RADIO_TXADDRESS = addr_index;
+    RADIO_TXADDRESS = addr_index;
 }
 
 /* @brief Set pointer for RX/TX data
@@ -255,7 +255,7 @@ void radio_set_tx_address(uint8_t addr_index)
  */
 void radio_set_packet_ptr(uint8_t* packet_ptr)
 {
-	RADIO_PACKETPTR = (uint32_t)packet_ptr;
+    RADIO_PACKETPTR = (uint32_t)packet_ptr;
 }
 
 /* @brief Enable shortcuts
@@ -264,7 +264,7 @@ void radio_set_packet_ptr(uint8_t* packet_ptr)
  */
 void radio_enable_shorts(uint16_t shorts)
 {
-	periph_enable_shorts(RADIO_BASE, shorts);
+    periph_enable_shorts(RADIO_BASE, shorts);
 }
 
 /* @brief Disable shortcuts
@@ -273,35 +273,35 @@ void radio_enable_shorts(uint16_t shorts)
  */
 void radio_disable_shorts(uint16_t shorts)
 {
-	periph_disable_shorts(RADIO_BASE, shorts);
+    periph_disable_shorts(RADIO_BASE, shorts);
 }
 
 /* @brief Clear all shortcuts */
 void radio_clear_shorts(void)
 {
-	periph_clear_shorts(RADIO_BASE);
+    periph_clear_shorts(RADIO_BASE);
 }
 
 /* @brief Enable radio Transmitter */
 void radio_enable_tx(void)
 {
-	periph_trigger_task(RADIO_TASK_TXEN);
+    periph_trigger_task(RADIO_TASK_TXEN);
 }
 
 /* @brief Enable radio Receiver */
 void radio_enable_rx(void)
 {
-	periph_trigger_task(RADIO_TASK_RXEN);
+    periph_trigger_task(RADIO_TASK_RXEN);
 }
 
 /* @brief Enable interrupts by mask */
 void radio_enable_interrupts(uint32_t interrupts)
 {
-	periph_enable_interrupts(RADIO_BASE, interrupts);
+    periph_enable_interrupts(RADIO_BASE, interrupts);
 }
 
 /* @brief Disable interrupts by mask */
 void radio_disable_interrupts(uint32_t interrupts)
 {
-	periph_disable_interrupts(RADIO_BASE, interrupts);
+    periph_disable_interrupts(RADIO_BASE, interrupts);
 }

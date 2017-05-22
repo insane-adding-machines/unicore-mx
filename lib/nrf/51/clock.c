@@ -34,16 +34,16 @@
  */
 void clock_start_lfclk(bool wait)
 {
-	periph_trigger_task(CLOCK_TASK_LFCLKSTART);
-	if (wait) {
-		while(!(CLOCK_LFCLKSTAT & CLOCK_LFCLKSTAT_STATE));
-	}
+    periph_trigger_task(CLOCK_TASK_LFCLKSTART);
+    if (wait) {
+        while(!(CLOCK_LFCLKSTAT & CLOCK_LFCLKSTAT_STATE));
+    }
 }
 
 /** @brief Stop Low Frequency Clock */
 void clock_stop_lfclk()
 {
-	periph_trigger_task(CLOCK_TASK_LFCLKSTOP);
+    periph_trigger_task(CLOCK_TASK_LFCLKSTOP);
 }
 
 /** @brief Start High Frequency Crystal Oscillator.
@@ -54,16 +54,16 @@ void clock_stop_lfclk()
  */
 void clock_start_hfclk(bool wait)
 {
-	periph_trigger_task(CLOCK_TASK_HFCLKSTART);
-	if (wait) {
-		while(!(CLOCK_HFCLKSTAT & CLOCK_HFCLKSTAT_STATE));
-	}
+    periph_trigger_task(CLOCK_TASK_HFCLKSTART);
+    if (wait) {
+        while(!(CLOCK_HFCLKSTAT & CLOCK_HFCLKSTAT_STATE));
+    }
 }
 
 /** @brief Stop High Frequency Crystal Oscillator */
 void clock_stop_hfclk()
 {
-	periph_trigger_task(CLOCK_TASK_HFCLKSTOP);
+    periph_trigger_task(CLOCK_TASK_HFCLKSTOP);
 }
 
 /** @brief Select nominal frequency of external crystal for HFCLK.
@@ -75,7 +75,7 @@ void clock_stop_hfclk()
  * */
 void clock_set_xtal_freq(enum clock_xtal_freq freq)
 {
-	CLOCK_XTALFREQ = freq;
+    CLOCK_XTALFREQ = freq;
 }
 
 /** @brief Low Frequency Clock Source.
@@ -84,5 +84,5 @@ void clock_set_xtal_freq(enum clock_xtal_freq freq)
  */
 void clock_set_lfclk_src(enum clock_lfclk_src lfclk_src)
 {
-	CLOCK_LFCLKSRC = lfclk_src;
+    CLOCK_LFCLKSRC = lfclk_src;
 }

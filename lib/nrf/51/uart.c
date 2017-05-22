@@ -1,4 +1,4 @@
-/** @addtogroup uart_defines
+    /** @addtogroup uart_defines
  *
  * @brief <b>Access functions for the NRF51 UART </b>
  * @ingroup NRF51_defines
@@ -33,7 +33,7 @@
  */
 void uart_enable(uint32_t uart)
 {
-	UART_ENABLE(uart) = UART_ENABLE_ENABLED;
+    UART_ENABLE(uart) = UART_ENABLE_ENABLED;
 }
 
 /** @brief Disable the peripheral
@@ -42,7 +42,7 @@ void uart_enable(uint32_t uart)
  */
 void uart_disable(uint32_t uart)
 {
-	UART_ENABLE(uart) = UART_ENABLE_DISABLED;
+    UART_ENABLE(uart) = UART_ENABLE_DISABLED;
 }
 
 /** @brief Configure UART parameters in single call
@@ -59,31 +59,31 @@ void uart_disable(uint32_t uart)
  * @param[in] enable_parity bool If true, enable parity bit
  */
 void uart_configure(uint32_t uart,
-		uint8_t tx_pin, uint8_t rx_pin, uint8_t rts_pin, uint8_t cts_pin,
-		enum uart_baud br, bool enable_parity)
+        uint8_t tx_pin, uint8_t rx_pin, uint8_t rts_pin, uint8_t cts_pin,
+        enum uart_baud br, bool enable_parity)
 {
-	UART_PSELTXD(uart) = UART_PSEL_VAL(tx_pin);
-	UART_PSELRXD(uart) = UART_PSEL_VAL(rx_pin);
-	UART_PSELRTS(uart) = UART_PSEL_VAL(rts_pin);
-	UART_PSELCTS(uart) = UART_PSEL_VAL(cts_pin);
+    UART_PSELTXD(uart) = UART_PSEL_VAL(tx_pin);
+    UART_PSELRXD(uart) = UART_PSEL_VAL(rx_pin);
+    UART_PSELRTS(uart) = UART_PSEL_VAL(rts_pin);
+    UART_PSELCTS(uart) = UART_PSEL_VAL(cts_pin);
 
-	uint32_t reg_config = enable_parity ? UART_CONFIG_PARITY : 0;
-	if (rts_pin <= UART_MAX_PIN || cts_pin <= UART_MAX_PIN) {
-		reg_config |= UART_CONFIG_HWFC;
-	}
+    uint32_t reg_config = enable_parity ? UART_CONFIG_PARITY : 0;
+    if (rts_pin <= UART_MAX_PIN || cts_pin <= UART_MAX_PIN) {
+        reg_config |= UART_CONFIG_HWFC;
+    }
 
-	UART_CONFIG(uart) = reg_config;
-	UART_BAUDRATE(uart) = br;
+    UART_CONFIG(uart) = reg_config;
+    UART_BAUDRATE(uart) = br;
 }
 
 #define __uart_send_byte_sync(uart, byte) do {\
-	UART_TXD((uart)) = byte;\
-	periph_wait_event(UART_EVENT_TXDRDY(uart));\
+    UART_TXD((uart)) = byte;\
+    periph_wait_event(UART_EVENT_TXDRDY(uart));\
 } while (0)
 
 #define __uart_tx_start(uart) do {\
-	periph_clear_event(UART_EVENT_TXDRDY((uart)));\
-	periph_trigger_task(UART_TASK_STARTTX((uart)));\
+    periph_clear_event(UART_EVENT_TXDRDY((uart)));\
+    periph_trigger_task(UART_TASK_STARTTX((uart)));\
 } while (0)
 
 #define __uart_tx_stop(uart) periph_trigger_task(UART_TASK_STOPTX((uart)))
@@ -97,11 +97,11 @@ void uart_configure(uint32_t uart,
  */
 void uart_send_buffer_blocking(uint32_t uart, const uint8_t *buffer, uint16_t len)
 {
-	__uart_tx_start(uart);
-	for (; len; --len, ++buffer) {
-		__uart_send_byte_sync(uart, *buffer);
-	}
-	__uart_tx_stop(uart);
+    __uart_tx_start(uart);
+    for (; len; --len, ++buffer) {
+        __uart_send_byte_sync(uart, *buffer);
+    }
+    __uart_tx_stop(uart);
 }
 
 /** @brief Send zero terminated string synchronously.
@@ -111,10 +111,10 @@ void uart_send_buffer_blocking(uint32_t uart, const uint8_t *buffer, uint16_t le
  */
 void uart_send_string_blocking(uint32_t uart, const char *str)
 {
-	__uart_tx_start(uart);
-	for (; *str; ++str) {
-		__uart_send_byte_sync(uart, *str);
-	}
-	__uart_tx_stop(uart);
+    __uart_tx_start(uart);
+    for (; *str; ++str) {
+        __uart_send_byte_sync(uart, *str);
+    }
+    __uart_tx_stop(uart);
 }
 

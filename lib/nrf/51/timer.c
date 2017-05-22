@@ -34,7 +34,7 @@
  */
 void timer_set_mode(uint32_t timer, enum timer_mode mode)
 {
-	TIMER_MODE(timer) = mode;
+    TIMER_MODE(timer) = mode;
 }
 
 /** @brief Set timer bit mode (width)
@@ -44,7 +44,7 @@ void timer_set_mode(uint32_t timer, enum timer_mode mode)
  */
 void timer_set_bitmode(uint32_t timer, enum timer_bitmode bitmode)
 {
-	TIMER_BITMODE(timer) = bitmode;
+    TIMER_BITMODE(timer) = bitmode;
 }
 
 /** @brief Start the timer
@@ -53,7 +53,7 @@ void timer_set_bitmode(uint32_t timer, enum timer_bitmode bitmode)
  */
 void timer_start(uint32_t timer)
 {
-	periph_trigger_task(TIMER_TASK_START(timer));
+    periph_trigger_task(TIMER_TASK_START(timer));
 }
 
 /** @brief Stop the timer
@@ -62,7 +62,7 @@ void timer_start(uint32_t timer)
  */
 void timer_stop(uint32_t timer)
 {
-	periph_trigger_task(TIMER_TASK_STOP(timer));
+    periph_trigger_task(TIMER_TASK_STOP(timer));
 }
 
 /** @brief Clear the timer
@@ -71,7 +71,7 @@ void timer_stop(uint32_t timer)
  */
 void timer_clear(uint32_t timer)
 {
-	periph_trigger_task(TIMER_TASK_CLEAR(timer));
+    periph_trigger_task(TIMER_TASK_CLEAR(timer));
 }
 
 /** @brief Set prescaler value
@@ -81,7 +81,7 @@ void timer_clear(uint32_t timer)
  */
 void timer_set_prescaler(uint32_t timer, uint8_t presc)
 {
-	TIMER_PRESCALER(timer) = presc & TIMER_PRESCALER_MASK;
+    TIMER_PRESCALER(timer) = presc & TIMER_PRESCALER_MASK;
 }
 
 /** @brief Set compare register
@@ -92,9 +92,9 @@ void timer_set_prescaler(uint32_t timer, uint8_t presc)
  */
 void timer_set_compare(uint32_t timer, uint8_t compare_num, uint32_t compare_val)
 {
-	if (compare_num > 3) {
-		return;
-	}
+    if (compare_num > 3) {
+        return;
+    }
 
-	TIMER_CC(timer, compare_num) = compare_val;
+    TIMER_CC(timer, compare_num) = compare_val;
 }

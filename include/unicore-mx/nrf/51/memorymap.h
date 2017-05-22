@@ -41,6 +41,8 @@
  * from the standard MPU
  */
 #define NRF_MPU_BASE			(APB_BASE)
+#define POWER_BASE			(APB_BASE)
+#define CLOCK_BASE			(APB_BASE)
 
 /* 2.4 GHz Radio */
 #define RADIO_BASE			(APB_BASE + 0x1000)

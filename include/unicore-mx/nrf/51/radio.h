@@ -20,6 +20,7 @@
 
 #include <unicore-mx/cm3/common.h>
 #include <unicore-mx/nrf/memorymap.h>
+#include <unicore-mx/nrf/periph.h>
 
 /* 2.4 GHz Radio */
 
@@ -48,9 +49,9 @@
 
 /* Registers */
 
-#define RADIO_SHORTS			MMIO32(RADIO_BASE + 0x200)
-#define RADIO_INTENSET			MMIO32(RADIO_BASE + 0x304)
-#define RADIO_INTENCLR			MMIO32(RADIO_BASE + 0x308)
+#define RADIO_SHORTS			periph_shorts(RADIO_BASE)
+#define RADIO_INTENSET			periph_intenset(RADIO_BASE)
+#define RADIO_INTENCLR			periph_intenclr(RADIO_BASE)
 #define RADIO_CRCSTATUS			MMIO32(RADIO_BASE + 0x400)
 #define RADIO_RXMATCH			MMIO32(RADIO_BASE + 0x408)
 #define RADIO_RXCRC			MMIO32(RADIO_BASE + 0x40C)
@@ -239,6 +240,9 @@
 /* Override 4 register has special bit and the override value is masked. */
 #define RADIO_OVERRIDE4_ENABLE			(1 << 31)
 #define RADIO_OVERRIDE4_OVERRIDE_MASK			(0x0fffffff)
+
+#define RADIO_POWER_ENABLED			(1)
+#define RADIO_POWER_DISABLED			(0)
 
 /* Bluetooth Low Energy parameters */
 #define RADIO_BLE_TIFS			(150)

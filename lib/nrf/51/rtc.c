@@ -48,26 +48,6 @@ uint32_t rtc_get_counter(uint32_t rtc)
 	return RTC_COUNTER(rtc);
 }
 
-/** @brief Enable peripheral interrupts
- *
- * @param[in] rtc uint32_t RTC base
- * @param[in] mask uint32_t which interrupts to enable
- */
-void rtc_enable_interrupts(uint32_t rtc, uint32_t mask)
-{
-	RTC_INTENSET(rtc) = mask;
-}
-
-/** @brief Disable peripheral interrupts
- *
- * @param[in] rtc uint32_t RTC base
- * @param[in] mask uint32_t which interrupts to disable
- */
-void rtc_disable_interrupts(uint32_t rtc, uint32_t mask)
-{
-	RTC_INTENCLR(rtc) = mask;
-}
-
 /** @brief Enable events
  *
  * @param[in] rtc uint32_t RTC base
@@ -94,7 +74,7 @@ void rtc_disable_events(uint32_t rtc, uint32_t mask)
  */
 void rtc_start(uint32_t rtc)
 {
-	RTC_TASK_START(rtc) = 1;
+	periph_trigger_task(RTC_TASK_START(rtc));
 }
 
 /** @brief Stop the RTC
@@ -103,7 +83,7 @@ void rtc_start(uint32_t rtc)
  */
 void rtc_stop(uint32_t rtc)
 {
-	RTC_TASK_STOP(rtc) = 1;
+	periph_trigger_task(RTC_TASK_STOP(rtc));
 }
 
 /** @brief Clear the RTC
@@ -112,7 +92,7 @@ void rtc_stop(uint32_t rtc)
  */
 void rtc_clear(uint32_t rtc)
 {
-	RTC_TASK_CLEAR(rtc) = 1;
+	periph_trigger_task(RTC_TASK_CLEAR(rtc));
 }
 
 /** @brief Set compare register

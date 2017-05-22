@@ -27,33 +27,13 @@
 
 #include <unicore-mx/nrf/uart.h>
 
-/** @brief Enable interrupts
- *
- * @param[in] uart uint32_t uart base
- * @param[in] mask uint32_t mask of the interrupts to enable
- */
-void uart_enable_interrupts(uint32_t uart, uint32_t mask)
-{
-	UART_INTENSET(uart) = mask;
-}
-
-/** @brief Disable interrupts
- *
- * @param[in] uart uint32_t uart base
- * @param[in] mask uint32_t mask of the interrupts to disable
- */
-void uart_disable_interrupts(uint32_t uart, uint32_t mask)
-{
-	UART_INTENCLR(uart) = mask;
-}
-
 /** @brief Enable the peripheral
  *
  * @param[in] uart uint32_t uart base
  */
 void uart_enable(uint32_t uart)
 {
-	UART_ENABLE(uart) = UART_ENABLE_ENABLE;
+	UART_ENABLE(uart) = UART_ENABLE_ENABLED;
 }
 
 /** @brief Disable the peripheral
@@ -62,7 +42,7 @@ void uart_enable(uint32_t uart)
  */
 void uart_disable(uint32_t uart)
 {
-	UART_ENABLE(uart) = 0;
+	UART_ENABLE(uart) = UART_ENABLE_DISABLED;
 }
 
 /** @brief Configure UART parameters in single call
@@ -98,18 +78,15 @@ void uart_configure(uint32_t uart,
 
 #define __uart_send_byte_sync(uart, byte) do {\
 	UART_TXD((uart)) = byte;\
-	while(!UART_EVENT_TXDRDY((uart)));\
-	UART_EVENT_TXDRDY((uart)) = 0;\
+	periph_wait_event(UART_EVENT_TXDRDY(uart));\
 } while (0)
 
 #define __uart_tx_start(uart) do {\
-	UART_EVENT_TXDRDY((uart)) = 0;\
-	UART_TASK_STARTTX((uart)) = 1;\
+	periph_clear_event(UART_EVENT_TXDRDY((uart)));\
+	periph_trigger_task(UART_TASK_STARTTX((uart)));\
 } while (0)
 
-#define __uart_tx_stop(uart) do {\
-	UART_TASK_STOPTX((uart)) = 1;\
-} while (0)
+#define __uart_tx_stop(uart) periph_trigger_task(UART_TASK_STOPTX((uart)))
 
 
 /** @brief Send buffer synchronously.

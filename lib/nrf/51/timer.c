@@ -53,7 +53,7 @@ void timer_set_bitmode(uint32_t timer, enum timer_bitmode bitmode)
  */
 void timer_start(uint32_t timer)
 {
-	TIMER_TASK_START(timer) = 1;
+	periph_trigger_task(TIMER_TASK_START(timer));
 }
 
 /** @brief Stop the timer
@@ -62,7 +62,7 @@ void timer_start(uint32_t timer)
  */
 void timer_stop(uint32_t timer)
 {
-	TIMER_TASK_STOP(timer) = 1;
+	periph_trigger_task(TIMER_TASK_STOP(timer));
 }
 
 /** @brief Clear the timer
@@ -71,7 +71,7 @@ void timer_stop(uint32_t timer)
  */
 void timer_clear(uint32_t timer)
 {
-	TIMER_TASK_CLEAR(timer) = 1;
+	periph_trigger_task(TIMER_TASK_CLEAR(timer));
 }
 
 /** @brief Set prescaler value
@@ -97,44 +97,4 @@ void timer_set_compare(uint32_t timer, uint8_t compare_num, uint32_t compare_val
 	}
 
 	TIMER_CC(timer, compare_num) = compare_val;
-}
-
-/** @brief Enable shortcuts
- *
- * @param[in] timer uint32_t timer base
- * @param[in] shorts uint32_t mask of the shortcuts to enable
- */
-void timer_enable_shorts(uint32_t timer, uint32_t shorts)
-{
-	TIMER_SHORTS(timer) |= shorts;
-}
-
-/** @brief Disable shortcuts
- *
- * @param[in] timer uint32_t timer base
- * @param[in] shorts uint32_t mask of the shortcuts to disable
- */
-void timer_disable_shorts(uint32_t timer, uint32_t shorts)
-{
-	TIMER_SHORTS(timer) &= ~shorts;
-}
-
-/** @brief Enable interrupts
- *
- * @param[in] timer uint32_t timer base
- * @param[in] interrupts uint32_t mask of the interrupts to enable
- */
-void timer_enable_interrupts(uint32_t timer, uint32_t interrupts)
-{
-	TIMER_INTENSET(timer) = interrupts;
-}
-
-/** @brief Disable interrupts
- *
- * @param[in] timer uint32_t timer base
- * @param[in] interrupts uint32_t mask of the interrupts to disable
- */
-void timer_disable_interrupts(uint32_t timer, uint32_t interrupts)
-{
-	TIMER_INTENCLR(timer) = interrupts;
 }

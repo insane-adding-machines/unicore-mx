@@ -20,6 +20,7 @@
 
 #include <unicore-mx/cm3/common.h>
 #include <unicore-mx/nrf/memorymap.h>
+#include <unicore-mx/nrf/periph.h>
 
 /* Tasks */
 #define POWER_TASK_CONSTLAT			MMIO32(POWER_BASE + 0x078)
@@ -29,8 +30,8 @@
 #define POWER_EVENT_POFWARN			MMIO32(POWER_BASE + 0x108)
 
 /* Registers */
-#define POWER_INTENSET			MMIO32(POWER_BASE + 0x304)
-#define POWER_INTENCLR			MMIO32(POWER_BASE + 0x308)
+#define POWER_INTENSET			periph_intenset(POWER_BASE)
+#define POWER_INTENCLR			periph_intenclr(POWER_BASE)
 #define POWER_RESETREAS			MMIO32(POWER_BASE + 0x400)
 #define POWER_RAMSTATUS			MMIO32(POWER_BASE + 0x428)
 #define POWER_SYSTEMOFF			MMIO32(POWER_BASE + 0x500)

@@ -155,16 +155,18 @@ void usbd_disconnect(usbd_device *dev, bool disconnect)
 {
 	if (!disconnect) {
 		// power-up on connect
-		if ((dev->config->feature & USBD_USE_POWERDOWN) != 0)
-			usbd_enable(dev, true);
+		if ( ((dev->config->feature & USBD_USE_POWERDOWN) != 0)
+		   && (dev->backend->power_control) )
+			dev->backend->power_control(dev, usbd_paActivate);
   }
 	if (dev->backend->disconnect) {
 		dev->backend->disconnect(dev, disconnect);
 	}
 	if (disconnect) {
 		// power-down after disconnect
-		if ((dev->config->feature & USBD_USE_POWERDOWN) != 0)
-			usbd_enable(dev, false);
+		if ( ((dev->config->feature & USBD_USE_POWERDOWN) != 0)
+		   && (dev->backend->power_control) )
+			dev->backend->power_control(dev, usbd_paShutdown );
   }
 }
 
@@ -236,6 +238,7 @@ bool usbd_is_vbus(usbd_device *dev){
 void usbd_enable(usbd_device *dev, bool onoff){
 	if (!onoff)
 		usbd_disconnect(dev, true);
+	else
 	if (dev->backend->power_control)
 		dev->backend->power_control(dev, (onoff)? usbd_paActivate : usbd_paShutdown );
 }

@@ -672,7 +672,10 @@ bool usbd_is_vbus(usbd_device *dev);
  * Controls power state of usb-core and PHY
  * @param[in] dev USB Device
  * @param[in] onoff  - true turn on device in action, and power PHY
- *                     false disable PHY and stops usb-core
+ *                     false disconnects, disable PHY and stops usb-core
+ *  !!! warning: enable(false) - sets core to disconnected state, but
+ *               enable(true)  - not automaticaly release disconnected status,
+ *                               it should be set by disconnect(false)
  */
 void usbd_enable(usbd_device *dev, bool onoff);
 

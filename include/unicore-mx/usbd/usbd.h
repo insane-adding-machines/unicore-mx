@@ -677,6 +677,14 @@ bool usbd_is_vbus(usbd_device *dev);
 void usbd_enable(usbd_device *dev, bool onoff);
 
 /**
+ * Checks power state of usb-core and PHY
+ * @param[in] dev USB Device
+ * @param[in] \return  true  - device in action, and power PHY
+ *                     false - disabled PHY and stops usb-core
+ */
+bool usbd_is_enabled(usbd_device *dev);
+
+/**
  * Perform a transfer
  *
  * Data OUT:

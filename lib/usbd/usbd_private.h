@@ -180,10 +180,20 @@ struct usbd_device {
 };
 
 enum _usbd_power_action{
-	  usbd_paShutdown
+	  usbd_paCheck
+	, usbd_paShutdown
 	, usbd_paActivate
 };
+enum _usbd_power_status{
+	  usbd_psCoreDisabled = 0
+	, usbd_psCoreEnabled  = 1
+	, usbd_psPHYOff       = 0
+	, usbd_psPHYOn        = 2
+	, usbd_psOff          = 0
+	, usbd_psOn           = usbd_psCoreEnabled | usbd_psPHYOn // ~0
+};
 typedef enum _usbd_power_action usbd_power_action;
+typedef unsigned usbd_power_status;
 
 /* Functions provided by the hardware abstraction. */
 struct usbd_backend {
@@ -210,7 +220,7 @@ struct usbd_backend {
 
 	//* power control
 	bool (*is_vbus)(usbd_device *dev);
-	void (*power_control)(usbd_device *dev, usbd_power_action action);
+	usbd_power_status (*power_control)(usbd_device *dev, usbd_power_action action);
 
 	/*
 	 * this is to tell usb generic code

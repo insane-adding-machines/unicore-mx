@@ -80,7 +80,7 @@ static usbd_device *init(const usbd_backend_config *config)
 
 	//* stm32f4 use FS CID=0x1100, HS CID=0x02000600
 	//* stm32f7            0x3000,    CID=0x00003100
-	const unsigned otg_hs_cid_boundary = 0x3000;
+	const unsigned otg_hs_cid_boundary = 0x3100;
 
 	if (config->feature & USBD_VBUS_SENSE) {
 		if (OTG_FS_CID >= otg_hs_cid_boundary) { /* 2.0 HS core*/

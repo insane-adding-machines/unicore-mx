@@ -169,6 +169,8 @@ static void disable_all_non_ep0(usbd_device *dev)
 {
 	unsigned i;
 
+	USBD_LOG_LN(USB_VIO, "USBD:disable endpoints");
+
 	for (i = 1; i < get_ep_count(dev); i++) {
 
 		REBASE(DWC_OTG_DOEPxINT, i) = 0xFFFF;
@@ -401,6 +403,10 @@ static void urb_to_fifo_1pkt(usbd_device *dev, usbd_urb *urb)
 	}
 
 	size_t tx_len = MIN(transfer->ep_size, rem_len);
+	USBD_LOGF_LN(USB_VIO2_URB, "USBD:tx URB%"PRIurb" (%d/%d) + %d"
+							, view_urbid(urb->id) 
+							, transfer->transferred, transfer->length, tx_len
+							);
 
 	/* TX FIFO has enough space to write "tx_len" of data */
 	size_t tx_words = DIVIDE_AND_CEIL(tx_len, 4);
@@ -552,6 +558,9 @@ static void urb_submit_non_ep0(usbd_device *dev, usbd_urb *urb)
 					DWC_OTG_DIEPCTL_MPSIZ(transfer->ep_size) |
 					DWC_OTG_DIEPCTL_CNAK | DWC_OTG_DIEPCTL_TXFNUM(ep_num) |
 					eptyp_map[transfer->ep_type] | DWC_OTG_DIEPCTL_USBAEP;
+
+		USBD_LOGF_LN(USB_VIO, "USBD:submit urb%"PRIurb" on ep8%"PRIx8" DIEPxTSIZ=%x"
+				, view_urbid(urb->id), ep_num, REBASE(DWC_OTG_DIEPxTSIZ, ep_num) );
 
 		/* Push first packet to memory! */
 		if (transfer->length) {
@@ -846,7 +855,8 @@ static void process_in_endpoint_interrupt(usbd_device *dev, uint8_t ep_num)
 			size_t rem = urb->transfer.length - urb->transfer.transferred;
 			uint32_t xfrsiz = MIN(urb->transfer.ep_size, rem);
 			dev->private_data.ep0tsiz_pktcnt--;
-   		USBD_LOGF_LN(USB_VIO, "USBD: new frame: ep0x%"PRIx8" len %d\n", ep_addr, xfrsiz);
+   		USBD_LOGF_LN(USB_VIO2, "USBD: new frame: ep%"PRIx8" len %d\n", ep_addr, xfrsiz);
+		  //USBD_LOGF_LN(USB_VIO3, "USBD:IN%x:new0:DIEP3TSIZ=0x%x", ep_num, REBASE(DWC_OTG_DIEPxTSIZ, 3))
 
 			REBASE(DWC_OTG_DIEP0TSIZ) = DWC_OTG_DIEP0TSIZ_PKTCNT_1 |
 				DWC_OTG_DIEP0TSIZ_XFRSIZ(xfrsiz);
@@ -867,7 +877,7 @@ static void process_in_endpoint_interrupt(usbd_device *dev, uint8_t ep_num)
 			/* Disable Interrupt */
 			REBASE(DWC_OTG_DAINTMSK) &= ~DWC_OTG_DAINTMSK_IEPM(ep_num);
 
-   		USBD_LOGF_LN(USB_VIO, "USBD: last frame: ep0x%"PRIx8"\n", ep_addr);
+   		USBD_LOGF_LN(USB_VIO2, "USBD: last frame: ep%"PRIx8"\n", ep_addr);
 			/* The URB has been processed, do the callback */
 			if (urb != NULL) {
 				usbd_urb_complete(dev, urb, USBD_SUCCESS);
@@ -879,7 +889,7 @@ static void process_in_endpoint_interrupt(usbd_device *dev, uint8_t ep_num)
 
 	if (REBASE(DWC_OTG_DIEPxINT, ep_num) & DWC_OTG_DIEPINT_TXFE) {
 		/* Send more data */
-		USBD_LOGF_LN(USB_VIO2, "Sending more data for endpoint 0x%"PRIx8, ep_addr);
+		USBD_LOGF_LN(USB_VIO2, "Sending more data for ep%"PRIx8, ep_addr);
 
 		if (urb != NULL) {
 			/* As per doc, before writing to FIFO, we need to write to CTL register.
@@ -891,7 +901,7 @@ static void process_in_endpoint_interrupt(usbd_device *dev, uint8_t ep_num)
 	}
 
 	if (REBASE(DWC_OTG_DIEPxINT, ep_num) & DWC_OTG_DIEPINT_ITTXFE) {
-		USBD_LOGF_LN(USB_VIO2, "Data IN Token received when ep0x%"PRIx8" FIFO was empty",
+		USBD_LOGF_LN(USB_VIO2, "Data IN Token received when ep%"PRIx8" FIFO was empty",
 			ep_addr);
 		REBASE(DWC_OTG_DIEPxINT, ep_num) = DWC_OTG_DIEPINT_ITTXFE;
 	}

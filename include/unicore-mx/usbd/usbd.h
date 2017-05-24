@@ -137,12 +137,12 @@ typedef enum usbd_speed usbd_speed;
 
 	/** Optional features */
 enum usbd_backend_features{
-		USBD_FEATURE_NONE = 0,
-		USBD_PHY_EXT = (1 << 0),
-		USBD_VBUS_SENSE = (1 << 1),
-		USBD_VBUS_EXT = (1 << 2)
+		  USBD_FEATURE_NONE   = 0
+		, USBD_PHY_EXT        = (1 << 0)
+		, USBD_VBUS_SENSE     = (1 << 1)
+		, USBD_VBUS_EXT       = (1 << 2)
 		//* provide usb-core auto power-up/down on connect/disconnect
-		, USBD_USE_POWERDOWN		= (1<<3)
+		, USBD_USE_POWERDOWN  = (1 << 3)
 };
 
 struct usbd_backend_config {

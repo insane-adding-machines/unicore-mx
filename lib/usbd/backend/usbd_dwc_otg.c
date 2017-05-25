@@ -682,14 +682,14 @@ static void premature_urb_complete(usbd_device *dev, usbd_urb *urb,
 	uint8_t ep_num = ENDPOINT_NUMBER(transfer->ep_addr);
 
 	if (IS_IN_ENDPOINT(transfer->ep_addr)) {
-		if ((REBASE(DWC_OTG_DIEPxCTL, i) & DWC_OTG_DIEPCTL_EPENA) == 0)
+		if ((REBASE(DWC_OTG_DIEPxCTL, ep_num) & DWC_OTG_DIEPCTL_EPENA) == 0)
 			REBASE(DWC_OTG_DIEPxCTL, ep_num) |= DWC_OTG_DIEPCTL_SNAK;
 		else
 			REBASE(DWC_OTG_DIEPxCTL, ep_num) |= DWC_OTG_DIEPCTL_SNAK | DWC_OTG_DOEPCTL_EPDIS;
 		REBASE(DWC_OTG_DIEPxINT, ep_num) = 0xFFFF;
 		REBASE(DWC_OTG_DAINTMSK) &= ~DWC_OTG_DAINTMSK_IEPM(ep_num);
 	} else {
-		if ((REBASE(DWC_OTG_DOEPxCTL, i) & DWC_OTG_DOEPCTL_EPENA) == 0)
+		if ((REBASE(DWC_OTG_DOEPxCTL, ep_num) & DWC_OTG_DOEPCTL_EPENA) == 0)
 			REBASE(DWC_OTG_DOEPxCTL, ep_num) |= DWC_OTG_DOEPCTL_SNAK;
 		else
 			REBASE(DWC_OTG_DOEPxCTL, ep_num) |= DWC_OTG_DOEPCTL_SNAK | DWC_OTG_DOEPCTL_EPDIS;

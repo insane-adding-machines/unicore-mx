@@ -105,6 +105,8 @@ void dwc_otg_ep_prepare(usbd_device *dev, uint8_t addr, usbd_ep_type type,
 					uint16_t max_size, uint16_t internval,
 					usbd_ep_flags flags);
 void dwc_otg_ep_prepare_end(usbd_device *dev);
+void dwc_otg_stop_ep(usbd_device *dev, uint8_t ep_num);
+bool dwc_otg_is_active_ep(usbd_device *dev, uint8_t ep_addr);
 void dwc_otg_set_ep_dtog(usbd_device *dev, uint8_t addr, bool dtog);
 bool dwc_otg_get_ep_dtog(usbd_device *dev, uint8_t addr);
 void dwc_otg_set_ep_stall(usbd_device *dev, uint8_t addr, bool stall);

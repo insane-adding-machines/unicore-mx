@@ -136,6 +136,9 @@ usbd_power_status otgfs_power_control(usbd_device *dev, usbd_power_action action
 		}
 		case usbd_paShutdown: {
 		/* Wait for AHB idle. */
+			uint32_t save_dis = REBASE(DWC_OTG_DCTL) & DWC_OTG_DCTL_SDIS;
+			//disable device connection before poweroff
+			REBASE(DWC_OTG_DCTL) |= DWC_OTG_DCTL_SDIS;
 			while (( (DWC_OTG_GRSTCTL(base) & DWC_OTG_GRSTCTL_AHBIDL) == 0) );
 			//* drop ISRs, cause stoped Core cant handle them
 			REBASE(DWC_OTG_GINTSTS) = ~( DWC_OTG_GINTSTS_USBSUSP
@@ -148,6 +151,8 @@ usbd_power_status otgfs_power_control(usbd_device *dev, usbd_power_action action
 			//poser down PHY
 			OTG_FS_GCCFG &= ~OTG_GCCFG_PWRDWN;
 			DWC_OTG_PCGCCTL(base) = DWC_OTG_PCGCCTL_STPPCLK; //| DWC_OTG_PCGCCTL_GATEHCLK ;
+			//destore connection disable state after PHY poweroff
+			REBASE(DWC_OTG_DCTL) |= save_dis;
 			break;
 		}
 	}

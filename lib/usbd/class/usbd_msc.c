@@ -664,14 +664,14 @@ static void buf_send_to_host_callback(usbd_device *dev,
 		usbd_urb_id urb_id)
 {
 	(void) urb_id;
-
-	if (status != USBD_SUCCESS) {
-		try_resubmit(dev, transfer, status);
-		return;
-	}
-
 	usbd_msc *ms = transfer->user_data;
 	struct usb_msc_trans *trans = &ms->trans;
+
+	if (status != USBD_SUCCESS) {
+		trans->csw.bCSWStatus = USB_MSC_CSW_STATUS_FAILED;
+		csw_send_to_host(ms, trans);
+		return;
+	}
 
 	trans->byte_count += transfer->transferred;
 
@@ -804,6 +804,23 @@ bool usbd_msc_setup_ep0(usbd_msc *ms,
 		return true;
 		}}
  	}
+	switch (setup_data->bRequest) {
+	case USB_REQ_CLEAR_FEATURE:
+		if (setup_data->wValue == USB_FEAT_ENDPOINT_HALT) {
+			uint8_t ep_addr = setup_data->wIndex;
+			/* according to HAL:
+			 * epIN now should terminate all URB and report CSW with fail
+			 * epOUT here can reset ep and continue receive current URB
+			*/
+			//usbd_transfer_cancel_ep(dev, ep_addr);
+			usbd_urb* urb = usbd_find_active_urb(dev, ep_addr);
+			if (urb == 0)
+				return false;
+			usbd_transfer_cancel(dev, urb->id);
+			return true;
+		}
+		break;
+	}
 
 	return false;
 }

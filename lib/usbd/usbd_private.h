@@ -51,11 +51,31 @@
 
 #if defined(USBD_URB_COUNT) && (USBD_URB_COUNT < 1)
 # error "Sanity check failed!!! go get sleep."				\
-	"URB count less than 1 is meaningless in our universe."
+	"USBD_URB_COUNT less than 1 is meaningless in our universe."
 #endif
 
 #if !defined(USBD_URB_COUNT)
 # define USBD_URB_COUNT 20
+#endif
+
+#if defined(USBD_INTEFACE_MAX) && (USBD_INTEFACE_MAX < 0)
+# error "Sanity check failed!!! go get sleep."				\
+	"USBD_INTEFACE_MAX less than 0 is meaningless in our universe."
+#endif
+
+/**
+ * Maximum number of interface for memory to allocate.
+ * The allocated memory is used keep track of the SET_INTERFACE setting
+ * If the value is 0, no memory is allocated
+ *
+ * @note If a value could not be stored
+ *  (due to no memory allocated OR allocate memory not enought to store the value),
+ * then the following behavour apply:
+ *  - SET_INTEFACE for other than alternate-setting = 0 will always result in STALL.
+ *  - GET_INTEFACE will always result in STALL
+ */
+#if !defined(USBD_INTERFACE_MAX)
+# define USBD_INTERFACE_MAX 8
 #endif
 
 #if defined(__DOXYGEN__)
@@ -82,9 +102,6 @@ typedef struct usbd_urb usbd_urb;
 
 /** Internal collection of device information. */
 struct usbd_device {
-	/** Device descriptor. */
-	const struct usb_device_descriptor *desc;
-
 	/**
 	 * Current configuration of the device.
 	 * If NULL, then the device is in {default, address} state
@@ -92,10 +109,16 @@ struct usbd_device {
 	 */
 	const struct usb_config_descriptor *current_config;
 
-	struct {
-		void *buf;
-		size_t len;
-	} preserve;
+#if (USBD_INTERFACE_MAX > 0)
+	/**
+	 * Store the current alternate setting of interfaces.
+	 * Interface number is used as array index (used to store).
+	 */
+	const struct usb_interface_descriptor *current_iface[USBD_INTERFACE_MAX];
+#endif
+
+	/** Device descriptor and other details. */
+	const struct usbd_info *info;
 
 	struct {
 		/** invoked on bus-reset */

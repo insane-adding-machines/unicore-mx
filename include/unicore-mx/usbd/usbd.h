@@ -421,17 +421,50 @@ typedef void (*usbd_set_config_callback)(usbd_device *dev,
 
 /**
  * @param[in] dev USB Device
- * @param[in] iface Interface
- * @param[in] altsetting Alternate Setting
+ * @param[in] iface Interface (Alternate setting)
  */
 typedef void (*usbd_set_interface_callback)(usbd_device *dev,
-					const struct usb_interface *iface,
-					const struct usb_interface_descriptor *altsetting);
+					const struct usb_interface_descriptor *iface);
 
 typedef void (*usbd_setup_callback)(usbd_device *dev, uint8_t addr,
 					const struct usb_setup_data *setup_data);
 
 typedef void (* usbd_generic_callback)(usbd_device *dev);
+
+struct usbd_info_string {
+	const struct usb_string_descriptor *lang_list;
+
+	/*
+	 * Number of string descriptor
+	 * excluding index 0 string descriptor
+	 */
+	size_t count;
+
+	/* GET_DESCRIPTOR(string) index 0 convert to "lang_list"
+	 * GET_DESCRIPTOR(string) index 1 convert to "data[lang][0]"
+	 * GET_DESCRIPTOR(string) index 2 convert to "data[lang][1]"
+	 * GET_DESCRIPTOR(string) index 255 convert to "data[lang][254]"
+	 */
+	const struct usb_string_descriptor ***data;
+};
+
+struct usbd_info {
+	struct {
+		const struct usb_device_descriptor *desc;
+
+		/* Data for GET_DESCRIPTOR(string) before SET_CONFIG */
+		const struct usbd_info_string *string;
+	} device;
+
+	struct {
+		const struct usb_config_descriptor *desc;
+
+		/* Data for GET_DESCRIPTOR(string) after SET_CONFIG */
+		const struct usbd_info_string *string;
+	} config[] /* Length: .device.desc->bNumConfigurations */;
+};
+
+typedef struct usbd_info usbd_info;
 
 /**
  * Main initialization entry point.
@@ -441,18 +474,11 @@ typedef void (* usbd_generic_callback)(usbd_device *dev);
  *
  * @param[in] backend Backend
  * @param[in] config Backend configuration (NULL for None)
- * @param[in] dev Pointer to USB device descriptor. This must not be changed while
- *            the device is in use.
- * @param[in] ep0_buffer Pointer to array that would hold the data
- *                       received during control requests with DATA
- *                       stage
- * @param[in] ep0_buffer_size Size of control_buffer
+ * @param[in] info Information
  * @return the usb device initialized for use.
  */
 usbd_device* usbd_init(const usbd_backend *backend,
-					const usbd_backend_config *config,
-					const struct usb_device_descriptor *dev,
-					void *ep0_buffer, size_t ep0_buffer_size);
+		const usbd_backend_config *config, const struct usbd_info *info);
 
 /**
  * Called when SETUP packet is received on control endpoint 0

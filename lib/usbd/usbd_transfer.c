@@ -850,7 +850,7 @@ void usbd_ep0_transfer(usbd_device *dev,
 	const struct usb_setup_data *setup_data, void *buf, size_t len,
 	usbd_control_transfer_callback callback)
 {
-	usbd_control_transfer(dev, 0x00, dev->desc->bMaxPacketSize0,
+	usbd_control_transfer(dev, 0x00, dev->info->device.desc->bMaxPacketSize0,
 		setup_data, buf, len, callback);
 }
 

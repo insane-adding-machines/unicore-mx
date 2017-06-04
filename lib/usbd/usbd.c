@@ -43,18 +43,14 @@
 #include "usbd_private.h"
 
 usbd_device* usbd_init(const usbd_backend *backend,
-				const usbd_backend_config *config,
-				const struct usb_device_descriptor *dev_desc,
-				void *ep0_buffer, size_t ep0_buffer_size)
+		const usbd_backend_config *config, const struct usbd_info *info)
 {
 	usbd_device *dev = backend->init(config);
 	if (dev == NULL) {
 		return NULL;
 	}
 
-	dev->desc = dev_desc;
-	dev->preserve.buf = ep0_buffer;
-	dev->preserve.len = ep0_buffer_size;
+	dev->info = info;
 
 	dev->callback.reset = NULL;
 	dev->callback.sof = NULL;

@@ -202,7 +202,7 @@ static void disable_all_non_ep0(usbd_device *dev)
 
 void dwc_otg_ep_prepare_start(usbd_device *dev)
 {
-	uint16_t fifo_word = DIVIDE_AND_CEIL(dev->desc->bMaxPacketSize0, 4);
+	uint16_t fifo_word = DIVIDE_AND_CEIL(dev->info->device.desc->bMaxPacketSize0, 4);
 	fifo_word = MAX(fifo_word, 16);
 
 	dev->private_data.fifo_rx_usage_overall = 16; /* by EP0 and constant */

@@ -60,85 +60,6 @@ struct usbd_control_arg {
 	size_t len; /**< @a buf length */
 };
 
-/**
- * Build usb configuration descriptor on the fly. \n
- * This will use @a buf to store the generate descriptor.
- * @param[in] dev USB Device
- * @param[in] cfg configuration descriptor
- * @param[in] buf Buffer
- * @param[in] len Maximum length of buffer
- * @retval total number of bytes used out of @a len
- */
-static uint16_t build_config_descriptor(const struct usb_config_descriptor *cfg,
-					uint8_t *buf, uint16_t len)
-{
-	struct usb_config_descriptor *output;
-	uint16_t count, total = 0, total_len = 0;
-	uint16_t i, j, k;
-
-	/* preserved for later to write wLength */
-	output = (struct usb_config_descriptor *) buf;
-
-	memcpy(buf, cfg, count = MIN(len, cfg->bLength));
-	buf += count;
-	len -= count;
-	total += count;
-	total_len += cfg->bLength;
-
-	/* For each interface... */
-	for (i = 0; i < cfg->bNumInterfaces; i++) {
-		/* Interface Association Descriptor, if any */
-		if (cfg->interface[i].iface_assoc) {
-			const struct usb_iface_assoc_descriptor *assoc =
-					cfg->interface[i].iface_assoc;
-			memcpy(buf, assoc, count = MIN(len, assoc->bLength));
-			buf += count;
-			len -= count;
-			total += count;
-			total_len += assoc->bLength;
-		}
-		/* For each alternate setting... */
-		for (j = 0; j < cfg->interface[i].num_altsetting; j++) {
-			const struct usb_interface_descriptor *iface =
-					&cfg->interface[i].altsetting[j];
-			/* Copy interface descriptor. */
-			memcpy(buf, iface, count = MIN(len, iface->bLength));
-			buf += count;
-			len -= count;
-			total += count;
-			total_len += iface->bLength;
-			/* Copy extra bytes (function descriptors). */
-			if (iface->extra) {
-				memcpy(buf, iface->extra, count = MIN(len, iface->extra_len));
-				buf += count;
-				len -= count;
-				total += count;
-				total_len += iface->extra_len;
-			}
-			/* For each endpoint... */
-			for (k = 0; k < iface->bNumEndpoints; k++) {
-				const struct usb_endpoint_descriptor *ep = &iface->endpoint[k];
-				memcpy(buf, ep, count = MIN(len, ep->bLength));
-				buf += count;
-				len -= count;
-				total += count;
-				total_len += ep->bLength;
-				/* Copy extra bytes (class specific). */
-				if (ep->extra) {
-					memcpy(buf, ep->extra, count = MIN(len, ep->extra_len));
-					buf += count;
-					len -= count;
-					total += count;
-					total_len += ep->extra_len;
-				}
-			}
-		}
-	}
-
-	output->wTotalLength = total_len;
-	return total;
-}
-
 static inline uint8_t descriptor_type(uint16_t wValue)
 {
 	return wValue >> 8;
@@ -150,179 +71,6 @@ static inline uint8_t descriptor_index(uint16_t wValue)
 }
 
 /**
- * Convert @a utf8 to @a utf16
- * @param[in] utf8 UTF-8 String ('\0' ended)
- * @param[out] utf16 UTF-16 String
- * @param[in] max_count Maximum number of "character" that can be store in @a utf16
- * @return Number of "character" actually stored in @a utf16
- * @return -1 on failure
- */
-static int utf8_to_utf16(const uint8_t *utf8, uint16_t *utf16,
-								size_t max_count)
-{
-	unsigned used = 0;
-	unsigned i = 0;
-
-	for (;;) {
-		uint32_t utf32_ch;
-
-		/* Read input string (utf8) till \0 is not reached */
-		if (utf8[i] == '\0') {
-			break;
-		}
-
-		/* Starting by assuming ASCII */
-		utf32_ch = utf8[i++]; /* 0xxxxxxx */
-
-		/* Reference: https://en.wikipedia.org/wiki/UTF-16 */
-
-		/* utf-8? */
-		if (utf32_ch & 0b10000000) {
-			/* Decoding header */
-			uint8_t trailing_bytes_utf8;
-			if ((utf32_ch & 0b11100000) == 0b11000000) {
-				/* 110xxxxx 10xxxxxx */
-				trailing_bytes_utf8 = 1;
-				utf32_ch &= 0b00011111;
-			} else if ((utf32_ch & 0b11110000) == 0b11100000) {
-				/* 1110xxxx 10xxxxxx 10xxxxxx */
-				trailing_bytes_utf8 = 2;
-				utf32_ch &= 0b00001111;
-			} else if ((utf32_ch & 0b11111000) == 0b11110000) {
-				/* 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx */
-				trailing_bytes_utf8 = 3;
-				utf32_ch &= 0b00000111;
-			} else {
-				/* 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx */
-				/* 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx */
-				/* 5- and 6-byte sequences are not valid in utf-8 */
-				return -1;
-			}
-
-			if (!utf32_ch) {
-				/* The standard specifies that the correct encoding of a
-				 * code point use only the minimum number of bytes required
-				 * to hold the significant bits of the code point */
-				return -1;
-			}
-
-			/* trailing bytes payload */
-			while (trailing_bytes_utf8-- > 0) {
-				utf32_ch = (utf32_ch << 6) | (utf8[i++] & 0b00111111);
-			}
-
-			/* UTF-8 was restricted by RFC 3629 to end at U+10FFFF, in order
-			 * to match the constraints of the UTF-16 character encoding */
-			if (utf32_ch > 0x10FFFF) {
-				return -1;
-			}
-		}
-
-		/* Reference: https://en.wikipedia.org/wiki/UTF-16 */
-
-		/* Converting the utf-32 character to utf-16 character */
-		if ((utf32_ch <= 0xD7FF) || ((utf32_ch >= 0xE000) && (utf32_ch <= 0xFFFF))) {
-			/* normal 16bit data */
-
-			/* Out of memory? */
-			if (!((used + 1) < max_count)) {
-				break;
-			}
-
-			utf16[used++] = (uint16_t) utf32_ch;
-		} else if ((utf32_ch >= 0x10000) && (utf32_ch <= 0x10FFFF)) {
-			/* surrogate pairs */
-			uint16_t surrogate_high, surrogate_low;
-
-			/* memory available to store utf-16 character */
-			if (!((used + 2) < max_count)) {
-				break;
-			}
-
-			/* encode */
-			utf32_ch -= 0x010000;
-			surrogate_low = 0xDC00 + (utf32_ch & 0x3FF);
-			surrogate_high = 0xD800 + (utf32_ch >> 10);
-
-			/* store */
-			utf16[used++] = surrogate_high;
-			utf16[used++] = surrogate_low;
-		} else {
-			/* Cannot convert to utf-16 */
-			return -1;
-		}
-	}
-
-	return used;
-}
-
-/**
- * Find the string for @a lang_id and @a index for @a dev
- * @param[in] usbd_dev USB device
- * @param[in] lang_id Language ID
- * @param[in] index String index
- * @return non-NULL on success (UTF-8)
- * @return NULL on failure
- */
-static const uint8_t *search_utf8_string(usbd_device *dev, uint16_t lang_id,
-			size_t index)
-{
-	const struct usb_string_utf8_data *string =
-		(dev->current_config != NULL) ? dev->current_config->string :
-			dev->desc->string;
-
-	if (string == NULL) {
-		return NULL;
-	}
-
-	for (; string->data != NULL; string++) {
-		if (string->lang_id != lang_id) {
-			continue;
-		}
-
-		if (index >= string->count) {
-			break;
-		}
-
-		return string->data[index];
-	}
-
-	return NULL;
-}
-
-/**
- * Build a list of Language ID that are available
- * @param[in] dev USB Device
- * @param[out] res Result to store
- * @param[in] max_count Maximum number of entries that can be stored in @a res
- * @return Number of entries stored in @a
- * @return -1 on failure
- */
-static int build_available_lang(usbd_device *dev, uint16_t *res,
-						size_t max_count)
-{
-	size_t i;
-	const struct usb_string_utf8_data *string =
-		(dev->current_config != NULL) ? dev->current_config->string :
-			dev->desc->string;
-
-	if (string == NULL) {
-		return -1;
-	}
-
-	for (i = 0; i < max_count; i++) {
-		const struct usb_string_utf8_data *str = &string[i];
-		if (str->data == NULL) {
-			break;
-		}
-
-		res[i] = str->lang_id;
-	}
-
-	return i;
-}
-
-/**
  * Handle GET_DESCRIPTOR(string) request from host
  * @param[in] dev USB Device
  * @param[in] arg Arguments
@@ -331,36 +79,96 @@ static enum usbd_control_result
 standard_get_descriptor_string(usbd_device *dev,
 						struct usbd_control_arg *arg)
 {
-	struct usb_string_descriptor *sd = dev->preserve.buf;
-	const unsigned header_size = sizeof(sd->bLength) +
-						sizeof(sd->bDescriptorType);
-	size_t max_count = (dev->preserve.len - header_size) / sizeof(sd->wData[0]);
-	int used;
+	const struct usbd_info_string *string = NULL;
+	const struct usb_string_descriptor *send = NULL;
 	uint8_t index = descriptor_index(arg->setup->wValue);
+	uint16_t lang_id = arg->setup->wIndex;
+	unsigned i, avail_lang;
 
-	if (!index) {
-		/* Build the list of available langauge strings */
-		used = build_available_lang(dev, sd->wData, max_count);
+	/* Search for the string data */
+	if (dev->current_config != NULL) {
+		for (i = 0; i < dev->info->device.desc->bNumConfigurations; i++) {
+			if (dev->current_config == dev->info->config[i].desc) {
+				string = dev->info->config[i].string;
+				break;
+			}
+		}
 	} else {
-		/* Search for the UTF-8 string and convert it to UTF-16 */
-		const uint8_t *utf8_str;
-		utf8_str = search_utf8_string(dev, arg->setup->wIndex, index - 1);
-		used = (utf8_str == NULL) ? -1 :
-			utf8_to_utf16(utf8_str, sd->wData, max_count);
+		string = dev->info->device.string;
 	}
 
-	if (used < 0) {
+	if (string == NULL) {
+		/* No string descriptor */
 		return USBD_REQ_STALL;
 	}
 
-	/* Copy back data */
-	sd->bLength = header_size + (used * sizeof(sd->wData[0]));
-	sd->bDescriptorType = USB_DT_STRING;
+	if (index > string->count) {
+		/* Out of range */
+		return USBD_REQ_STALL;
+	}
 
-	arg->buf = sd;
-	arg->len = MIN(arg->setup->wLength, sd->bLength);
+	if (!index) {
+		send = string->lang_list;
+	} else {
+		/* Search for the data for the specified language id */
+		avail_lang = (string->lang_list->bLength - 2) / 2;
+		for (i = 0; i < avail_lang; i++) {
+			if (string->lang_list->wData[i] == lang_id) {
+				send = string->data[i][index - 1];
+				break;
+			}
+		}
+	}
+
+	if (send == NULL) {
+		/* No string descriptor to send */
+		return USBD_REQ_STALL;
+	}
+
+	arg->buf = (void *) send;
+	arg->len = MIN(arg->setup->wLength, send->bLength);
 
 	/* we have done it! */
+	return USBD_REQ_HANDLED;
+}
+
+/**
+ * Handle GET_DESCRIPTOR(configuration) request from host
+ * @param[in] dev USB Device
+ * @param[in] arg Arguments
+ */
+static enum usbd_control_result
+standard_get_descriptor_config(usbd_device *dev,
+						struct usbd_control_arg *arg)
+{
+	uint8_t index = descriptor_index(arg->setup->wValue);
+
+	if (index >= dev->info->device.desc->bNumConfigurations) {
+		return USBD_REQ_STALL;
+	}
+
+	const struct usb_config_descriptor *cfg = dev->info->config[index].desc;
+
+	arg->buf = (void *) cfg;
+	arg->len = MIN(arg->setup->wLength, cfg->wTotalLength);
+
+	return USBD_REQ_HANDLED;
+}
+
+/**
+ * Handle GET_DESCRIPTOR(device) request from host
+ * @param[in] dev USB Device
+ * @param[in] arg Arguments
+ */
+static enum usbd_control_result
+standard_get_descriptor_device(usbd_device *dev,
+						struct usbd_control_arg *arg)
+{
+	const struct usb_device_descriptor *dd = dev->info->device.desc;
+
+	arg->buf = (void *) dd;
+	arg->len = MIN(arg->setup->wLength, dd->bLength);
+
 	return USBD_REQ_HANDLED;
 }
 
@@ -373,30 +181,23 @@ static enum usbd_control_result
 standard_get_descriptor(usbd_device *dev, struct usbd_control_arg *arg)
 {
 	uint8_t type = descriptor_type(arg->setup->wValue);
-	uint8_t index = descriptor_index(arg->setup->wValue);
 
 	LOGF_LN("GET_DESCRIPTOR: type = %"PRIu8", index = %"PRIu8,
-					type, index);
+					type, descriptor_index(arg->setup->wValue));
 
 	switch (type) {
 	case USB_DT_DEVICE:
-		arg->buf = (void *) dev->desc;
-		arg->len = MIN(arg->setup->wLength, dev->desc->bLength);
-	return USBD_REQ_HANDLED;
+	return standard_get_descriptor_device(dev, arg);
 	case USB_DT_CONFIGURATION:
-		if (index < dev->desc->bNumConfigurations) {
-			arg->buf = dev->preserve.buf;
-			arg->len = build_config_descriptor(
-							&dev->desc->config[index],
-							dev->preserve.buf,
-							MIN(arg->setup->wLength, dev->preserve.len));
-			return USBD_REQ_HANDLED;
-		}
+	return standard_get_descriptor_config(dev, arg);
 	case USB_DT_STRING:
-		return standard_get_descriptor_string(dev, arg);
+	return standard_get_descriptor_string(dev, arg);
 	}
+
 	return USBD_REQ_STALL;
 }
+
+static uint8_t _set_addr_value;
 
 /**
  * Callback when the SET_ADDRESS stage as completed
@@ -404,8 +205,7 @@ standard_get_descriptor(usbd_device *dev, struct usbd_control_arg *arg)
  */
 static void _set_address_complete(usbd_device *dev)
 {
-	uint8_t *buf = dev->preserve.buf;
-	dev->backend->set_address(dev, buf[0]);
+	dev->backend->set_address(dev, _set_addr_value);
 }
 
 /**
@@ -432,8 +232,7 @@ standard_set_address(usbd_device *dev, struct usbd_control_arg *arg)
 		dev->backend->set_address(dev, new_addr);
 	} else {
 		/* Store the new address in EP0 buffer for complete callback */
-		uint8_t *buf = dev->preserve.buf;
-		buf[0] = new_addr;
+		_set_addr_value = new_addr;
 		arg->complete =
 			(usbd_control_transfer_callback) _set_address_complete;
 	}
@@ -451,8 +250,8 @@ search_config(usbd_device *dev, uint8_t value)
 {
 	unsigned i;
 
-	for (i = 0; i < dev->desc->bNumConfigurations; i++) {
-		const struct usb_config_descriptor *cfg = &dev->desc->config[i];
+	for (i = 0; i < dev->info->device.desc->bNumConfigurations; i++) {
+		const struct usb_config_descriptor *cfg = dev->info->config[i].desc;
 		if (cfg->bConfigurationValue == value) {
 			return cfg;
 		}
@@ -460,6 +259,7 @@ search_config(usbd_device *dev, uint8_t value)
 
 	return NULL;
 }
+
 
 /**
  * Handle SET_CONFIGURATION from host
@@ -470,7 +270,6 @@ search_config(usbd_device *dev, uint8_t value)
 static enum usbd_control_result
 standard_set_configuration(usbd_device *dev, struct usbd_control_arg *arg)
 {
-	unsigned i;
 	const struct usb_config_descriptor *cfg = NULL;
 	uint8_t bConfigValue = arg->setup->wValue;
 
@@ -485,14 +284,12 @@ standard_set_configuration(usbd_device *dev, struct usbd_control_arg *arg)
 
 	dev->current_config = cfg;
 
+#if (USBD_INTERFACE_MAX > 0)
 	if (cfg != NULL) {
-		/* reset all alternate settings configuration */
-		for (i = 0; i < cfg->bNumInterfaces; i++) {
-			if (cfg->interface[i].cur_altsetting) {
-				*cfg->interface[i].cur_altsetting = 0;
-			}
-		}
+		/* Make all pointer NULL */
+		memset(dev->current_iface, 0, sizeof(dev->current_iface));
 	}
+#endif
 
 	/* We have no use for old non EP0 transfer now */
 	LOG_LN("SET_CONFIGURATION: Removing all non endpoint 0 transfer");
@@ -537,65 +334,42 @@ standard_set_configuration(usbd_device *dev, struct usbd_control_arg *arg)
 static enum usbd_control_result
 standard_get_configuration(usbd_device *dev, struct usbd_control_arg *arg)
 {
-	uint8_t *buf = dev->preserve.buf;
-	buf[0] = (dev->current_config != NULL) ?
-		dev->current_config->bConfigurationValue /* configured state */
-		: 0 /* address stage */;
+	const uint8_t *value;
+	static const uint8_t zero = 0;
+	value = (dev->current_config != NULL) ?
+		&(dev->current_config)->bConfigurationValue /* configured state */
+		: &zero /* address stage */;
 
-	arg->buf = buf;
+	arg->buf = (void *) value;
 	arg->len = MIN(arg->setup->wLength, 1);
 
 	return USBD_REQ_HANDLED;
 }
 
 /**
- * Search for Interface with bInterfaceNumber = @a bInterfaceNumber in @a cfg
- * @param[in] cfg Configuration
+ * Search for Interface with @a bInterfaceNumber and
+ *  @a bAlternateSetting in @a cfg
+ * @param[in] cfg Configuration descriptor
  * @param[in] bInterfaceNumber Interface number
- * @return Interface on success
- * @return NULL on failure
- */
-static const struct usb_interface * search_iface(
-				const struct usb_config_descriptor *cfg,
-				uint8_t bInterfaceNumber)
-{
-	unsigned i;
-
-	for (i = 0; i < cfg->bNumInterfaces; i++) {
-		const struct usb_interface *iface = &cfg->interface[i];
-
-		/* interface contain any alternate setting */
-		if (!iface->num_altsetting) {
-			continue;
-		}
-
-		/* match with first alternate setting to check if bInterface exists. */
-		const struct usb_interface_descriptor *alt = &iface->altsetting[0];
-		if (alt->bInterfaceNumber == bInterfaceNumber) {
-			return iface;
-		}
-	}
-
-	return NULL;
-}
-
-/**
- * Search for Alternate setting bAlternateSetting == @a bAlternateSetting
- *  from @a iface
- * @param[in] iface Interface
  * @param[in] bAlternateSetting Alternate setting number
  */
 static const struct usb_interface_descriptor *
-search_iface_altset(const struct usb_interface *iface,
-							uint8_t bAlternateSetting)
+search_iface(const struct usb_config_descriptor *cfg,
+				uint8_t bInterfaceNumber, uint8_t bAlternateSetting)
 {
-	unsigned i;
+	unsigned i = cfg->bLength;
 
-	for (i = 0; i < iface->num_altsetting; i++) {
-		const struct usb_interface_descriptor *alt = &iface->altsetting[i];
-		if (alt->bAlternateSetting == bAlternateSetting) {
-			return alt;
+	while (i < cfg->wTotalLength) {
+		const struct usb_interface_descriptor *iface;
+		iface = ((const void *) cfg) + i;
+
+		if (iface->bDescriptorType == USB_DT_INTERFACE &&
+			iface->bInterfaceNumber == bInterfaceNumber &&
+			iface->bAlternateSetting == bAlternateSetting) {
+			return iface;
 		}
+
+		i += iface->bLength;
 	}
 
 	return NULL;
@@ -610,42 +384,47 @@ search_iface_altset(const struct usb_interface *iface,
 static enum usbd_control_result
 standard_set_interface(usbd_device *dev, struct usbd_control_arg *arg)
 {
-	const struct usb_interface *iface;
-	const struct usb_interface_descriptor *iface_alt;
-
+	const struct usb_interface_descriptor *iface;
 	uint8_t index = arg->setup->wIndex;
 	uint8_t alt_set = arg->setup->wValue;
 
 	LOGF_LN("SET_INTERFACE: num = %"PRIu8", alt-set = %"PRIu8,
 		index,  alt_set);
 
-	/* STALL since the device is in address stage */
+	/* STALL since the device is in address stage (or unconfigured) */
 	if (dev->current_config == NULL) {
 		return USBD_REQ_STALL;
 	}
 
-	/* search for the interface */
-	iface = search_iface(dev->current_config, index);
-	if (iface == NULL) {
-		/* interface not found */
+#if (USBD_INTERFACE_MAX == 0)
+	if (alt_set) {
+		/* SET_INTERFACE for non-zero alternate setting not supported
+		 * because we do not have backing storage to store the information
+		 */
 		return USBD_REQ_STALL;
 	}
+#else
+	if (index >= USBD_INTERFACE_MAX) {
+		/* SET_INTERFACE for the interface is not possible because
+		 * the array is not sufficiently big to store the value
+		 */
+		return USBD_REQ_STALL;
+	}
+#endif
 
 	/* search for the interface alternate setting */
-	iface_alt = search_iface_altset(iface, alt_set);
-	if (iface_alt == NULL) {
+	iface = search_iface(dev->current_config, index, alt_set);
+	if (iface == NULL) {
 		/* interface alternate setting not found */
 		return USBD_REQ_STALL;
 	}
 
-	if (iface->cur_altsetting != NULL) {
-		*iface->cur_altsetting = alt_set;
-	} else if (alt_set > 0) {
-		return USBD_REQ_STALL;
-	}
+#if (USBD_INTERFACE_MAX > 0)
+	dev->current_iface[index] = iface;
+#endif
 
 	if (dev->callback.set_interface != NULL) {
-		dev->callback.set_interface(dev, iface, iface_alt);
+		dev->callback.set_interface(dev, iface);
 	}
 
 	return USBD_REQ_HANDLED;
@@ -660,21 +439,34 @@ standard_set_interface(usbd_device *dev, struct usbd_control_arg *arg)
 static enum usbd_control_result
 standard_get_interface(usbd_device *dev, struct usbd_control_arg *arg)
 {
-	const struct usb_interface *iface;
+	uint8_t index = arg->setup->wIndex;
 
+	/* STALL since the device is in address stage (or unconfigured) */
 	if (dev->current_config == NULL) {
 		return USBD_REQ_STALL;
 	}
 
-	iface = search_iface(dev->current_config, arg->setup->wIndex);
-	if (iface == NULL) {
+#if (USBD_INTERFACE_MAX == 0)
+	/* We have no backing information to provide to host */
+	return USBD_REQ_STALL;
+#else
+	/* We have no backing information to provide to host */
+	if (index >= USBD_INTERFACE_MAX) {
+		/* SET_INTERFACE for the interface is not possible because
+		 * the array is not sufficiently big to store the value
+		 */
+		return USBD_REQ_STALL;
+	}
+#endif
+
+	if (dev->current_iface[index] == NULL) {
+		/* SET_INTERFACE not called yet.
+		 * USB specs not documented the behaviour. resorting to STALL
+		 */
 		return USBD_REQ_STALL;
 	}
 
-	uint8_t *buf = dev->preserve.buf;
-	buf[0] = (iface->cur_altsetting) ? *iface->cur_altsetting : 0;
-
-	arg->buf = buf;
+	arg->buf = (void *) &dev->current_iface[index]->bAlternateSetting;
 	arg->len = MIN(arg->setup->wLength, 1);
 
 	return USBD_REQ_HANDLED;
@@ -688,11 +480,9 @@ standard_device_get_status(usbd_device *dev, struct usbd_control_arg *arg)
 	/* bit 0: self powered */
 	/* bit 1: remote wakeup */
 
-	uint8_t *buf = dev->preserve.buf;
-	buf[0] = 0;
-	buf[1] = 0;
+	static const uint8_t buf[2] = {0, 0};
 
-	arg->buf = buf;
+	arg->buf = (void *) buf;
 	arg->len = MIN(arg->setup->wLength, 2);
 
 	return USBD_REQ_HANDLED;
@@ -704,11 +494,9 @@ standard_interface_get_status(usbd_device *dev, struct usbd_control_arg *arg)
 	(void)dev;
 	/* not defined */
 
-	uint8_t *buf = dev->preserve.buf;
-	buf[0] = 0;
-	buf[1] = 0;
+	static const uint8_t buf[2] = {0, 0};
 
-	arg->buf = buf;
+	arg->buf = (void *) buf;
 	arg->len = MIN(arg->setup->wLength, 2);
 
 	return USBD_REQ_HANDLED;
@@ -717,11 +505,10 @@ standard_interface_get_status(usbd_device *dev, struct usbd_control_arg *arg)
 static enum usbd_control_result
 standard_endpoint_get_status(usbd_device *dev, struct usbd_control_arg *arg)
 {
-	uint8_t *buf = dev->preserve.buf;
-	buf[0] = usbd_get_ep_stall(dev, arg->setup->wIndex) ? 1 : 0;
-	buf[1] = 0;
+	static uint8_t not_halted[2] = {0, 0};
+	static uint8_t halted[2] = {1, 0};
 
-	arg->buf = buf;
+	arg->buf = usbd_get_ep_stall(dev, arg->setup->wIndex) ? halted : not_halted;
 	arg->len = MIN(arg->setup->wLength, 2);
 
 	return USBD_REQ_HANDLED;

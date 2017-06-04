@@ -154,12 +154,12 @@ static void alloc_ep0_buf(usbd_device *dev)
 	USB_EP(0) = reg16 | USB_EP_TYPE_CONTROL;
 
 	USB_EP_ADDR_TX(0) = dev->private_data.pma_used;
-	dev->private_data.pma_used += dev->desc->bMaxPacketSize0;
+	dev->private_data.pma_used += dev->info->device.desc->bMaxPacketSize0;
 
 	USB_EP_ADDR_RX(0) = dev->private_data.pma_used;
-	dev->private_data.pma_used += dev->desc->bMaxPacketSize0;
+	dev->private_data.pma_used += dev->info->device.desc->bMaxPacketSize0;
 
-	USB_EP_COUNT_RX(0) = ep0_count_rx(dev->desc->bMaxPacketSize0);
+	USB_EP_COUNT_RX(0) = ep0_count_rx(dev->info->device.desc->bMaxPacketSize0);
 }
 
 /**

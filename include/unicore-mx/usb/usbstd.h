@@ -134,11 +134,6 @@ struct usb_device_descriptor {
 	uint8_t iProduct;
 	uint8_t iSerialNumber;
 	uint8_t bNumConfigurations;
-
-	const struct usb_config_descriptor *config;
-
-	/* Data for GET_DESCRIPTOR(string) before SET_CONFIG */
-	const struct usb_string_utf8_data *string;
 } __attribute__((packed));
 
 #define USB_DT_DEVICE_SIZE 18
@@ -168,17 +163,6 @@ struct usb_config_descriptor {
 	uint8_t iConfiguration;
 	uint8_t bmAttributes;
 	uint8_t bMaxPower;
-
-	/* Descriptor ends here.  The following are used internally: */
-	const struct usb_interface {
-		uint8_t *cur_altsetting;
-		uint8_t num_altsetting;
-		const struct usb_iface_assoc_descriptor *iface_assoc;
-		const struct usb_interface_descriptor *altsetting;
-	} *interface;
-
-	/* Data for GET_DESCRIPTOR(string) after SET_CONFIG */
-	const struct usb_string_utf8_data *string;
 } __attribute__((packed));
 #define USB_DT_CONFIGURATION_SIZE		9
 
@@ -202,11 +186,6 @@ struct usb_interface_descriptor {
 	uint8_t bInterfaceSubClass;
 	uint8_t bInterfaceProtocol;
 	uint8_t iInterface;
-
-	/* Descriptor ends here.  The following are used internally: */
-	const struct usb_endpoint_descriptor *endpoint;
-	const void *extra;
-	size_t extra_len;
 } __attribute__((packed));
 #define USB_DT_INTERFACE_SIZE			9
 
@@ -218,10 +197,6 @@ struct usb_endpoint_descriptor {
 	uint8_t bmAttributes;
 	uint16_t wMaxPacketSize;
 	uint8_t bInterval;
-
-	/* Descriptor ends here.  The following are used internally: */
-	const void *extra;
-	size_t extra_len;
 } __attribute__((packed));
 #define USB_DT_ENDPOINT_SIZE		7
 
@@ -256,6 +231,11 @@ struct usb_string_descriptor {
 	uint8_t bDescriptorType;
 	uint16_t wData[];
 } __attribute__((packed));
+
+/**
+ * Calculate the device tree language ID list bLength.
+ * @param count Number of languages Or number of character in string */
+#define USB_DT_STRING_SIZE(count) (2 + ((count) * 2))
 
 /* From ECN: Interface Association Descriptors, Table 9-Z */
 struct usb_iface_assoc_descriptor {
@@ -589,12 +569,6 @@ struct usb_iface_assoc_descriptor {
 #define USB_LANGID_UZBEK_LATIN 0x0443
 #define USB_LANGID_UZBEK_CYRILLIC 0x0843
 #define USB_LANGID_VIETNAMESE 0x042A
-
-struct usb_string_utf8_data {
-	const uint8_t **data; /**< Pointer to string array (NULL = end-of-list) */
-	size_t count; /**< Number of item in @a data */
-	uint16_t lang_id; /**< Language ID */
-};
 
 #endif
 

@@ -86,9 +86,6 @@ usbd_msc *usbd_msc_init(usbd_device *dev,
 bool usbd_msc_setup_ep0(usbd_msc *ms,
 				const struct usb_setup_data *setup_data);
 
-void usbd_msc_set_config(usbd_msc *ms,
-				const struct usb_config_descriptor *cfg);
-
 void usbd_msc_start(usbd_msc *ms);
 
 #endif

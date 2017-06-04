@@ -74,7 +74,7 @@ static usbd_device *init(const usbd_backend_config *config)
 		config = &_config;
 	}
 
-    /* Boot up external PHY first */
+	/* Boot up external PHY first */
 	if (config->feature & USBD_PHY_EXT) {
 		rcc_periph_clock_enable(RCC_OTGHSULPI);
 	}
@@ -82,7 +82,7 @@ static usbd_device *init(const usbd_backend_config *config)
 	_usbd_dev.backend = &usbd_stm32_otg_hs;
 	_usbd_dev.config = config;
 
-    rcc_periph_clock_enable(RCC_OTGHS);
+	rcc_periph_clock_enable(RCC_OTGHS);
 
 	if (config->feature & USBD_PHY_EXT) {
 		/* Deactivate internal PHY */

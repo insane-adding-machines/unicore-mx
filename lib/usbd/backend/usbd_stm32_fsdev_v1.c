@@ -104,6 +104,7 @@ static void copy_from_pm(void *vBuf, const volatile void *vPM, uint16_t len)
 	while (len) {
 		*hBuf++ = *hPM;
 		hPM += 2; /* 32bit space */
+		len--;
 	}
 
 	if (odd) {

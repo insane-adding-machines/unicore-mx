@@ -18,6 +18,9 @@
 #ifndef NRF_GPIO_H
 #define NRF_GPIO_H
 
+#include <unicore-mx/cm3/common.h>
+#include <unicore-mx/nrf/memorymap.h>
+
 #if defined(NRF51)
 #	include <unicore-mx/nrf/51/gpio.h>
 #else

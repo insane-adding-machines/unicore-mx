@@ -15,11 +15,10 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBUCMX_GPIO_H
-#define LIBUCMX_GPIO_H
+#ifndef UNICOREMX_GPIO_H
+#define UNICOREMX_GPIO_H
 
-#include <unicore-mx/cm3/common.h>
-#include <unicore-mx/nrf/memorymap.h>
+#include <unicore-mx/nrf/common/gpio_common_all.h>
 
 #define GPIO			(GPIO_BASE)
 
@@ -35,47 +34,45 @@
 
 #define GPIO_PIN_CNF(N)			MMIO32(GPIO_BASE + 0x700 + 0x4 * (N))
 
-#define GPIOPIN0			(1 << 0)
-#define GPIOPIN1			(1 << 1)
-#define GPIOPIN2			(1 << 2)
-#define GPIOPIN3			(1 << 3)
-#define GPIOPIN4			(1 << 4)
-#define GPIOPIN5			(1 << 5)
-#define GPIOPIN6			(1 << 6)
-#define GPIOPIN7			(1 << 7)
-#define GPIOPIN8			(1 << 8)
-#define GPIOPIN9			(1 << 9)
-#define GPIOPIN10			(1 << 10)
-#define GPIOPIN11			(1 << 11)
-#define GPIOPIN12			(1 << 12)
-#define GPIOPIN13			(1 << 13)
-#define GPIOPIN14			(1 << 14)
-#define GPIOPIN15			(1 << 15)
-#define GPIOPIN16			(1 << 16)
-#define GPIOPIN17			(1 << 17)
-#define GPIOPIN18			(1 << 18)
-#define GPIOPIN19			(1 << 19)
-#define GPIOPIN20			(1 << 20)
-#define GPIOPIN21			(1 << 21)
-#define GPIOPIN22			(1 << 22)
-#define GPIOPIN23			(1 << 23)
-#define GPIOPIN24			(1 << 24)
-#define GPIOPIN25			(1 << 25)
-#define GPIOPIN26			(1 << 26)
-#define GPIOPIN27			(1 << 27)
-#define GPIOPIN28			(1 << 28)
-#define GPIOPIN29			(1 << 29)
-#define GPIOPIN30			(1 << 30)
-#define GPIOPIN31			(1 << 31)
-
 #define GPIOPINN(n)			(1 << (n))
 
-#define PIN_CNF_DIR			(1 << 0)
-#define PIN_CNF_INPUT			(1 << 1)
+/** @defgroup gpio_cnf GPIO Pin Configuration
+@ingroup gpio_defines
+If mode specifies input, configuration can be
+@li Analog input
+@li Floating input
+@li Pull up/down input
 
-#define PIN_CNF_PULL_SHIFT			(2)
-#define PIN_CNF_PULL_MASK			(3 << PIN_CNF_PULL_SHIFT)
-#define PIN_CNF_PULL_MASKED(V)			(((V) << PIN_CNF_PULL_SHIFT) & PIN_CNF_PULL_MASK)
+If mode specifies output, configuration can be
+@li Digital push-pull
+@li Digital open drain
+@li Alternate function push-pull or analog output
+@li Alternate function open drain or analog output
+@{*/
+/* CNF[1:0] values when MODE[1:0] is 00 (input mode) */
+/** Analog Input */
+#define GPIO_CNF_INPUT_ANALOG		(0 << 1)
+/** Digital Input Floating */
+#define GPIO_CNF_INPUT_FLOAT		(1 << 1) /* Default */
+/* CNF[1:0] values when MODE[1:0] is != 00 (output mode) */
+/** Digital Output Open Drain */
+#define GPIO_CNF_OUTPUT_OPENDRAIN	(0 << 3)
+/** Digital Output Pushpull */
+#define GPIO_CNF_OUTPUT_PUSHPULL	(1 << 3)
+/**@}*/
+
+
+/* Pin mode (MODE[1:0]) values */
+/** @defgroup gpio_mode GPIO Pin Mode
+@ingroup gpio_defines
+@li Input (default after reset)
+@li Output mode
+@{*/
+#define GPIO_MODE_INPUT			(0 << 0)
+#define GPIO_MODE_OUTPUT		(1 << 0)
+#define GPIO_MODE_ANALOG		(1 << 1)
+/**@}*/
+
 
 #define PIN_CNF_DRIVE_SHIFT			(8)
 #define PIN_CNF_DRIVE_MASK			(7 << PIN_CNF_DRIVE_SHIFT)
@@ -139,9 +136,13 @@
 #define GPIO_INPUT_CONNECT			(0)
 #define GPIO_INPUT_DISCONNECT		(1)
 
-#define GPIO_PULL_NONE			(0)
-#define GPIO_PULL_DOWN			(1)
-#define GPIO_PULL_UP			(3)
+/** @defgroup gpio_pup GPIO Output Pin Pullup
+@ingroup gpio_defines
+@{*/
+#define GPIO_PUPD_NONE			0x0
+#define GPIO_PUPD_PULLDOWN		0x1
+#define GPIO_PUPD_PULLUP		0x2
+/**@}*/
 
 #define GPIO_DRIVE_S0S1			(0)
 #define GPIO_DRIVE_H0S1			(1)
@@ -166,14 +167,9 @@
 
 BEGIN_DECLS
 
-void gpio_set(uint32_t gpios);
-void gpio_clear(uint32_t gpios);
-void gpio_toggle(uint32_t gpios);
-uint32_t gpio_get(uint32_t gpios);
 
-void gpio_setup_mode(uint32_t gpios, uint8_t dir, uint8_t pull);
-
-void gpio_set_drive(uint32_t gpios, uint8_t drive);
+void gpio_set_mode(uint32_t gpioport, uint8_t mode, uint32_t cnf,
+		   uint16_t gpios);
 
 void gpio_configure_task(uint8_t task_num,
 		uint8_t pin_num, uint8_t polarity, uint8_t init);

@@ -29,28 +29,34 @@
 
 /** @brief Atomic set output
  *
+ * @param[in] gpioport uint32_t
  * @param[in] gpios uint32_t
  */
-void gpio_set(uint32_t gpios)
+void gpio_set(uint32_t gpioport, uint32_t gpios)
 {
+    (void) gpioport;
     GPIO_OUTSET = gpios;
 }
 
 /** @brief Atomic clear output
  *
+ * @param[in] gpioport uint32_t
  * @param[in] gpios uint32_t
  */
-void gpio_clear(uint32_t gpios)
+void gpio_clear(uint32_t gpioport, uint32_t gpios)
 {
+    (void) gpioport;
     GPIO_OUTCLR = gpios;
 }
 
 /** @brief Toggle output
  *
+ * @param[in] gpioport uint32_t
  * @param[in] gpios uint32_t
  */
-void gpio_toggle(uint32_t gpios)
+void gpio_toggle(uint32_t gpioport, uint32_t gpios)
 {
+    (void) gpioport;
     uint32_t reg_val = GPIO_OUT;
     GPIO_OUTCLR = reg_val & gpios;
     GPIO_OUTSET = (~reg_val) & gpios;
@@ -58,54 +64,35 @@ void gpio_toggle(uint32_t gpios)
 
 /** @brief Read GPIO values
  *
+ * @param[in] gpioport uint32_t
  * @param[in] gpios uint32_t
  */
-uint32_t gpio_get(uint32_t gpios)
+uint32_t gpio_get(uint32_t gpioport, uint32_t gpios)
 {
+    (void) gpioport;
     return GPIO_IN & gpios;
 }
 
-/** @brief Set direction (input/output) and pull for a set of gpios.
- *
- * @param[in] gpios uint32_t
- * @param[in] dir uint8_t
- * @param[in] pull uint8_t
- */
-void gpio_setup_mode(uint32_t gpios, uint8_t dir, uint8_t pull)
+/** @brief Set GPIO Pin Mode
+
+Sets the mode (input/output) and configuration (analog/digitial and
+open drain/push pull), for a set of GPIO pins on a given GPIO port.
+
+@param[in] gpioport Unsigned int32. Port identifier @ref gpio_port_id
+@param[in] mode Unsigned int8. Pin mode @ref gpio_mode
+@param[in] cnf Unsigned int32. Pin configuration @ref gpio_cnf
+@param[in] gpios Unsigned int16. Pin identifiers @ref gpio_pin_id
+	     If multiple pins are to be set, use bitwise OR '|' to separate
+	     them.
+*/
+void gpio_set_mode(uint32_t gpioport, uint8_t mode, uint32_t cnf, uint16_t gpios)
 {
-    if (GPIO_DIR_INPUT == dir) {
-        GPIO_DIRCLR = gpios;
-    } else {
-        GPIO_DIRSET = gpios;
-    }
+    (void) gpioport;
 
     uint8_t i = 0;
     while (gpios) {
         if (gpios & 1) {
-            uint32_t reg_pin_cnf = GPIO_PIN_CNF(i);
-            reg_pin_cnf &= ~PIN_CNF_PULL_MASK;
-            GPIO_PIN_CNF(i) = reg_pin_cnf | PIN_CNF_PULL_MASKED(pull);
-        }
-        ++i;
-        gpios >>= 1;
-    }
-}
-
-/** @brief Set drive for gpios.
- *
- * Some peripherals require this to be configured in a certain way.
- *
- * @param[in] gpios uint32_t
- * @param[in] drive uint8_t
- */
-void gpio_set_drive(uint32_t gpios, uint8_t drive)
-{
-    uint8_t i = 0;
-    while (gpios) {
-        if (gpios & 1) {
-            uint32_t reg_pin_cnf = GPIO_PIN_CNF(i);
-            reg_pin_cnf &= ~PIN_CNF_DRIVE_MASK;
-            GPIO_PIN_CNF(i) = reg_pin_cnf | PIN_CNF_DRIVE_MASKED(drive);
+            GPIO_PIN_CNF(i) = cnf | mode;
         }
         ++i;
         gpios >>= 1;

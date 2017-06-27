@@ -132,7 +132,7 @@ void flash_clear_bsy_flag(void)
  * This loops indefinitely until an operation (write or erase) has completed
  * by testing the busy flag.
  */
-void flash_wait_for_last_operation(void)
+void __attribute__((weak)) flash_wait_for_last_operation(void)
 {
 	while ((FLASH_SR & FLASH_SR_BSY) == FLASH_SR_BSY);
 }

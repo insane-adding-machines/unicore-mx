@@ -24,14 +24,15 @@ FP_FLAGS ?= -msoft-float
 CC		= $(PREFIX)-gcc
 AR		= $(PREFIX)-ar
 TGT_CFLAGS	= -Os -Wall -Wextra -I../../../include -fno-common \
-		  -mcpu=cortex-m0 -mthumb $(FP_FLAGS) -Wstrict-prototypes \
+		  -mcpu=cortex-m0 -mthumb $(FP_FLAGS) \
+		  -Wredundant-decls -Wmissing-prototypes -Wstrict-prototypes \
 		  -ffunction-sections -fdata-sections -MD -DNRF51
 TGT_CFLAGS      += $(DEBUG_FLAGS)
 # ARFLAGS	= rcsv
 ARFLAGS		= rcs
 OBJS		= gpio.o rtc.o clock.o ppi.o uart.o radio.o timer.o i2c.o
 
-VPATH += ../../usb:../../cm3
+VPATH += ../../cm3
 
 include ../../Makefile.include
 

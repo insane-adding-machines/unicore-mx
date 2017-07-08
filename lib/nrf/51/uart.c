@@ -76,6 +76,35 @@ void uart_configure(uint32_t uart,
     UART_BAUDRATE(uart) = br;
 }
 
+void uart_set_pins(uint32_t uart, uint8_t rx, uint8_t tx)
+{
+    UART_PSELTXD(uart) = UART_PSEL_VAL(tx);
+    UART_PSELRXD(uart) = UART_PSEL_VAL(rx);
+}
+
+void uart_set_baudrate(uint32_t uart, enum uart_baud br)
+{
+    UART_BAUDRATE(uart) = br;
+}
+
+void uart_set_databits(uint32_t uart, int bits)
+{
+
+}
+
+void uart_set_stopbits(uint32_t uart, int bits)
+{
+
+}
+
+void uart_set_parity(uint32_t uart, int parity)
+{
+}
+
+void uart_set_flow_control(uint32_t uart, int flow)
+{
+}
+
 #define __uart_send_byte_sync(uart, byte) do {\
     UART_TXD((uart)) = byte;\
     periph_wait_event(UART_EVENT_TXDRDY(uart));\
@@ -88,6 +117,11 @@ void uart_configure(uint32_t uart,
 
 #define __uart_tx_stop(uart) periph_trigger_task(UART_TASK_STOPTX((uart)))
 
+void uart_send(uint32_t uart, uint16_t byte) {
+    __uart_tx_start(uart);
+    UART_TXD((uart)) = byte;
+    __uart_tx_stop(uart);
+}
 
 /** @brief Send buffer synchronously.
  *

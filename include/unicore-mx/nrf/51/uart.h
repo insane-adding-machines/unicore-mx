@@ -134,6 +134,7 @@ BEGIN_DECLS
 
 #define uart_enable_interrupts			periph_enable_interrupts
 #define uart_disable_interrupts			periph_disable_interrupts
+#define uart_clear_interrupts			periph_clear_interrupts
 
 void uart_enable(uint32_t uart);
 void uart_disable(uint32_t uart);
@@ -143,6 +144,7 @@ void uart_configure(uint32_t uart,
 
 void uart_send_buffer_blocking(uint32_t uart, const uint8_t *buffer, uint16_t len);
 void uart_send_string_blocking(uint32_t uart, const char *str);
+void uart_send(uint32_t uart, uint16_t byte);
 
 END_DECLS
 

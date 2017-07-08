@@ -128,7 +128,7 @@
 #define periph_disable_shorts(base, shorts)   periph_shorts(base) &= (~(shorts))
 #define periph_clear_shorts(base)             periph_shorts(base) = (0)
 
-#define periph_enable_interrupts(base, mask)     periph_intenset(base) = (mask)
+#define periph_enable_interrupts(base, mask)     periph_intenset(base) |= (mask)
 #define periph_disable_interrupts(base, mask)    periph_intenclr(base) = (mask)
 #define periph_clear_interrupts(base)            periph_intenclr(base) = (0xffffffff)
 

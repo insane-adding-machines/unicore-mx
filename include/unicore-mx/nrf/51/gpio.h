@@ -169,7 +169,7 @@ BEGIN_DECLS
 
 
 void gpio_mode_setup(uint32_t gpioport, uint8_t mode, uint32_t cnf,
-		   uint16_t gpios);
+		   uint32_t gpios);
 
 void gpio_configure_task(uint8_t task_num,
 		uint8_t pin_num, uint8_t polarity, uint8_t init);

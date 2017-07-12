@@ -85,7 +85,7 @@ open drain/push pull), for a set of GPIO pins on a given GPIO port.
 	     If multiple pins are to be set, use bitwise OR '|' to separate
 	     them.
 */
-void gpio_mode_setup(uint32_t gpioport, uint8_t mode, uint32_t cnf, uint16_t gpios)
+void gpio_mode_setup(uint32_t gpioport, uint8_t mode, uint32_t cnf, uint32_t gpios)
 {
     (void) gpioport;
 

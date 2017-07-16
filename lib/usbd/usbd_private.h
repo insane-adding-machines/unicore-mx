@@ -234,22 +234,7 @@ struct usbd_backend {
 #endif
 };
 
-#if defined(USBD_DEBUG)
-extern void usbd_log_puts(const char *arg);
-extern void usbd_log_printf(const char *fmt, ...)
-	__attribute__((format(printf, 1, 2)));
-# include <inttypes.h>
-# define LOG(str) usbd_log_puts(str)
-# define LOGF(fmt,...) usbd_log_printf(fmt, ##__VA_ARGS__)
-#else
-# define LOG(str)
-# define LOGF(fmt,...)
-#endif
-
-#define NEW_LINE "\n"
-#define LOG_LN(str) LOG(str); LOG(NEW_LINE)
-#define LOGF_LN(fmt,...) LOGF(fmt, __VA_ARGS__); LOG(NEW_LINE)
-#define LOG_CALL LOG("inside "); LOG_LN(__func__);
+#include <usbd_log.h>
 
 #define IS_URB_ID_INVALID(urb_id) ((urb_id) == USBD_INVALID_URB_ID)
 #define IS_URB_INVALID(urb) IS_URB_ID_INVALID((urb)->id)

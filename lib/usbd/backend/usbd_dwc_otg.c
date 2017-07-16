@@ -169,6 +169,8 @@ static void disable_all_non_ep0(usbd_device *dev)
 {
 	unsigned i;
 
+	USBD_LOG_LN(USB_VIO, "USBD:disable endpoints");
+
 	for (i = 1; i < get_ep_count(dev); i++) {
 
 		REBASE(DWC_OTG_DOEPxINT, i) = 0xFFFF;
@@ -243,6 +245,8 @@ void dwc_otg_ep_prepare(usbd_device *dev, uint8_t addr,
 	if (IS_IN_ENDPOINT(addr)) {
 		/* FIXME: underflow */
 		dev->private_data.fifo_remaining -= fifo_word; /* IN */
+		USBD_LOGF_LN(USB_VIO_INIT, "USBD: EP%dIN avail %x"
+		                         , num, REBASE(DWC_OTG_DIEPxTXFSTS, num) );
 
 		REBASE(DWC_OTG_DIEPxTXF, num) = DWC_OTG_DIEPTXF_INEPTXFD(fifo_word) |
 					DWC_OTG_DIEPTXF_INEPTXSA(dev->private_data.fifo_remaining);
@@ -250,6 +254,10 @@ void dwc_otg_ep_prepare(usbd_device *dev, uint8_t addr,
 		REBASE(DWC_OTG_DIEPxCTL, num) = DWC_OTG_DIEPCTL_SNAK |
 						DWC_OTG_DIEPCTL_SD0PID | eptyp_map[type] |
 						DWC_OTG_DIEPCTL_USBAEP | DWC_OTG_DIEPCTL_TXFNUM(num);
+
+		USBD_LOGF_LN(USB_VIO_INIT, "USBD: EP%dIN assign at %x[%x] avail %x"
+		                         , num, dev->private_data.fifo_remaining, fifo_word
+		                         , REBASE(DWC_OTG_DIEPxTXFSTS, num) );
 	} else {
 		if (type == USBD_EP_CONTROL) {
 			dev->private_data.fifo_rx_usage_overall += 13; /* Setup */
@@ -332,7 +340,7 @@ void dwc_otg_set_ep_stall(usbd_device *dev, uint8_t addr, bool stall)
 {
 	uint8_t num = ENDPOINT_NUMBER(addr);
 
-	LOGF_LN("STALL endpoint 0x%"PRIx8" = %s", addr, stall ? "Yes" : "No");
+	USBD_LOGF_LN(USB_VIO, "STALL ep0x%"PRIx8" = %s", addr, stall ? "Yes" : "No");
 
 	/* DIEP0CTL, DIEPxCTL, DOEP0CTL, DOEPxCTL have same STALL layout */
 	volatile uint32_t *reg_ptr = IS_IN_ENDPOINT(addr) ?
@@ -389,12 +397,16 @@ static void urb_to_fifo_1pkt(usbd_device *dev, usbd_urb *urb)
 	size_t rem_len = transfer->length - transfer->transferred;
 
 	if (!rem_len) {
-		LOGF_LN("No more data to send URB %"PRIu64" (endpoint 0x%"PRIx8") "
-			"(intending ZLP?)", urb->id, transfer->ep_addr);
+		USBD_LOGF_LN(USB_VURB, "No more data to send URB %"PRIurb" (ep0x%"PRIx8") "
+			"(intending ZLP?)", view_urbid(urb->id), transfer->ep_addr);
 		return;
 	}
 
 	size_t tx_len = MIN(transfer->ep_size, rem_len);
+	USBD_LOGF_LN(USB_VIO2_URB, "USBD:tx URB%"PRIurb" (%d/%d) + %d"
+							, view_urbid(urb->id) 
+							, transfer->transferred, transfer->length, tx_len
+							);
 
 	/* TX FIFO has enough space to write "tx_len" of data */
 	size_t tx_words = DIVIDE_AND_CEIL(tx_len, 4);
@@ -546,6 +558,9 @@ static void urb_submit_non_ep0(usbd_device *dev, usbd_urb *urb)
 					DWC_OTG_DIEPCTL_MPSIZ(transfer->ep_size) |
 					DWC_OTG_DIEPCTL_CNAK | DWC_OTG_DIEPCTL_TXFNUM(ep_num) |
 					eptyp_map[transfer->ep_type] | DWC_OTG_DIEPCTL_USBAEP;
+
+		USBD_LOGF_LN(USB_VIO, "USBD:submit urb%"PRIurb" on ep8%"PRIx8" DIEPxTSIZ=%x"
+				, view_urbid(urb->id), ep_num, REBASE(DWC_OTG_DIEPxTSIZ, ep_num) );
 
 		/* Push first packet to memory! */
 		if (transfer->length) {
@@ -727,7 +742,7 @@ static void fifo_to_urb_1pkt(usbd_device *dev, usbd_urb *urb, uint16_t bcnt)
 
 	if (bcnt < transfer->ep_size) {
 		if (transfer->ep_type == USBD_EP_BULK) {
-			LOGF_LN("Short packet received for Bulk endpoint 0x%"PRIx8,
+			USBD_LOGF_LN(USB_VIO, "Short packet received for Bulk endpoint 0x%"PRIx8,
 						transfer->ep_addr);
 
 			if (transfer->flags & USBD_FLAG_SHORT_PACKET) {
@@ -775,7 +790,7 @@ static void handle_rxflvl_interrupt(usbd_device *dev)
 		[15] = "RESERVED_15"
 	};
 
-	LOGF_LN("GRXSTSP: rxstsp = %s, ep_num = %"PRIu8", bcnt = %"PRIu16,
+	USBD_LOGF_LN(USB_VIO, "GRXSTSP: %s, ep%"PRIu8", bcnt = %"PRIu16,
 		map_pktsts[DWC_OTG_GRXSTSP_PKTSTS_GET(rxstsp)], ep_num, bcnt);
 #endif
 
@@ -790,7 +805,7 @@ static void handle_rxflvl_interrupt(usbd_device *dev)
 	} break;
 	case DWC_OTG_GRXSTSP_PKTSTS_SETUP: {
 		if (bcnt != 8) {
-			LOG_LN("SETUP packet in FIFO not equal to 8");
+			USBD_LOG_LN(USB_VSETUP,"SETUP packet in FIFO not equal to 8");
 			break;
 		}
 
@@ -798,11 +813,13 @@ static void handle_rxflvl_interrupt(usbd_device *dev)
 		uint32_t *io = (void *) setup_data;
 		io[0] = REBASE(DWC_OTG_FIFO, 0);
 		io[1] = REBASE(DWC_OTG_FIFO, 0);
-		LOGF_LN("bmRequestType: 0x%02"PRIx8, setup_data->bmRequestType);
-		LOGF_LN("bRequest: 0x%02"PRIx8, setup_data->bRequest);
-		LOGF_LN("wValue: 0x%04"PRIx16, setup_data->wValue);
-		LOGF_LN("wIndex: 0x%04"PRIx16, setup_data->wIndex);
-		LOGF_LN("wLength: %"PRIu16, setup_data->wLength);
+		USBD_LOGF_LN(USB_VSETUP, "SETUP:reqType 0x%02"PRIx8"; Request 0x%02"PRIx8
+		                         ";Value 0x%04"PRIx16";Index 0x%04"PRIx16
+		                         ";Length: %"PRIu16
+		             , setup_data->bmRequestType, setup_data->bRequest
+		             , setup_data->wValue, setup_data->wIndex
+		             , setup_data->wLength
+		             );
 	} break;
 	case DWC_OTG_GRXSTSP_PKTSTS_SETUP_COMP: {
 		/* Enable Interrupt to receive the SETUP packet */
@@ -824,7 +841,7 @@ static void process_in_endpoint_interrupt(usbd_device *dev, uint8_t ep_num)
 
 	if (REBASE(DWC_OTG_DIEPxINT, ep_num) & DWC_OTG_DIEPINT_EPDISD) {
 		REBASE(DWC_OTG_DIEPxINT, ep_num) = DWC_OTG_DIEPINT_EPDISD;
-		LOGF_LN("Endpoint disabled 0x%"PRIx8, ep_addr);
+		USBD_LOGF_LN(USB_VIO, "ep0x%"PRIx8" disabled", ep_addr);
 	}
 
 	usbd_urb *urb = usbd_find_active_urb(dev, ep_addr);
@@ -832,14 +849,14 @@ static void process_in_endpoint_interrupt(usbd_device *dev, uint8_t ep_num)
 	if (REBASE(DWC_OTG_DIEPxINT, ep_num) & DWC_OTG_DIEPINT_XFRC) {
 		REBASE(DWC_OTG_DIEPxINT, ep_num) = DWC_OTG_DIEPINT_XFRC;
 
-		LOGF_LN("Transfer Complete: endpoint 0x%"PRIx8, ep_addr);
-
 		if (!ep_num && urb != NULL && dev->private_data.ep0tsiz_pktcnt) {
 			/* We are still sending data! */
 
 			size_t rem = urb->transfer.length - urb->transfer.transferred;
 			uint32_t xfrsiz = MIN(urb->transfer.ep_size, rem);
 			dev->private_data.ep0tsiz_pktcnt--;
+   		USBD_LOGF_LN(USB_VIO2, "USBD: new frame: ep%"PRIx8" len %d\n", ep_addr, xfrsiz);
+		  //USBD_LOGF_LN(USB_VIO3, "USBD:IN%x:new0:DIEP3TSIZ=0x%x", ep_num, REBASE(DWC_OTG_DIEPxTSIZ, 3))
 
 			REBASE(DWC_OTG_DIEP0TSIZ) = DWC_OTG_DIEP0TSIZ_PKTCNT_1 |
 				DWC_OTG_DIEP0TSIZ_XFRSIZ(xfrsiz);
@@ -860,6 +877,7 @@ static void process_in_endpoint_interrupt(usbd_device *dev, uint8_t ep_num)
 			/* Disable Interrupt */
 			REBASE(DWC_OTG_DAINTMSK) &= ~DWC_OTG_DAINTMSK_IEPM(ep_num);
 
+   		USBD_LOGF_LN(USB_VIO2, "USBD: last frame: ep%"PRIx8"\n", ep_addr);
 			/* The URB has been processed, do the callback */
 			if (urb != NULL) {
 				usbd_urb_complete(dev, urb, USBD_SUCCESS);
@@ -871,7 +889,7 @@ static void process_in_endpoint_interrupt(usbd_device *dev, uint8_t ep_num)
 
 	if (REBASE(DWC_OTG_DIEPxINT, ep_num) & DWC_OTG_DIEPINT_TXFE) {
 		/* Send more data */
-		LOGF_LN("Sending more data for endpoint 0x%"PRIx8, ep_addr);
+		USBD_LOGF_LN(USB_VIO2, "Sending more data for ep%"PRIx8, ep_addr);
 
 		if (urb != NULL) {
 			/* As per doc, before writing to FIFO, we need to write to CTL register.
@@ -883,7 +901,7 @@ static void process_in_endpoint_interrupt(usbd_device *dev, uint8_t ep_num)
 	}
 
 	if (REBASE(DWC_OTG_DIEPxINT, ep_num) & DWC_OTG_DIEPINT_ITTXFE) {
-		LOGF_LN("Data IN Token received when endpoint 0x%"PRIx8" FIFO was empty",
+		USBD_LOGF_LN(USB_VIO2, "Data IN Token received when ep%"PRIx8" FIFO was empty",
 			ep_addr);
 		REBASE(DWC_OTG_DIEPxINT, ep_num) = DWC_OTG_DIEPINT_ITTXFE;
 	}
@@ -901,13 +919,12 @@ static void process_out_endpoint_interrupt(usbd_device *dev, uint8_t ep_num)
 	const uint8_t ep_addr = ep_num;
 
 	if (REBASE(DWC_OTG_DOEPxINT, ep_num) & DWC_OTG_DOEPINT_EPDISD) {
-		LOGF_LN("Endpoint disabled 0x%"PRIx8, ep_addr);
+		USBD_LOGF_LN(USB_VIO, "ep0x%"PRIx8" disabled", ep_addr);
 		REBASE(DWC_OTG_DOEPxINT, ep_num) = DWC_OTG_DOEPINT_EPDISD;
 	}
 
 	if (REBASE(DWC_OTG_DOEPxINT, ep_num) & DWC_OTG_DOEPINT_BBLERR) {
-		LOGF_LN("Received more data than expected on endpoint 0x%"PRIx8,
-			ep_addr);
+		USBD_LOGF_LN(USB_VIO, "Received more data than expected on ep0x%"PRIx8,ep_addr);
 		usbd_urb *urb = usbd_find_active_urb(dev, ep_addr);
 		REBASE(DWC_OTG_DOEPxINT, ep_num) = DWC_OTG_DOEPINT_BBLERR;
 		premature_urb_complete(dev, urb, USBD_ERR_BABBLE);
@@ -916,11 +933,11 @@ static void process_out_endpoint_interrupt(usbd_device *dev, uint8_t ep_num)
 	if (REBASE(DWC_OTG_DOEPxINT, ep_num) & DWC_OTG_DOEPINT_XFRC) {
 		REBASE(DWC_OTG_DOEPxINT, ep_num) = DWC_OTG_DOEPINT_XFRC;
 
-		LOGF_LN("Transfer Complete: endpoint 0x%"PRIx8, ep_addr);
 		usbd_urb *urb = usbd_find_active_urb(dev, ep_addr);
 
 		if (!ep_num && urb != NULL && dev->private_data.ep0tsiz_pktcnt) {
 			/* We are still expecting data! */
+			USBD_LOGF_LN(USB_VIO, "Transfer chunk Complete: ep0x%"PRIx8, ep_addr);
 
 			dev->private_data.ep0tsiz_pktcnt--;
 
@@ -930,6 +947,7 @@ static void process_out_endpoint_interrupt(usbd_device *dev, uint8_t ep_num)
 
 			REBASE(DWC_OTG_DOEP0CTL) |= DWC_OTG_DOEP0CTL_EPENA;
 		} else {
+			USBD_LOGF_LN(USB_VIO, "Transfer Complete: ep0x%"PRIx8, ep_addr);
 			/* Set NAK on the endpoint */
 			REBASE(DWC_OTG_DOEPxCTL, ep_num) |= DWC_OTG_DOEPCTL_SNAK;
 
@@ -946,7 +964,7 @@ static void process_out_endpoint_interrupt(usbd_device *dev, uint8_t ep_num)
 	}
 
 	if (REBASE(DWC_OTG_DOEPxINT, ep_num) & DWC_OTG_DOEPINT_STUP) {
-		LOGF_LN("Setup phase done for endpoint 0x%"PRIx8, ep_addr);
+		USBD_LOGF_LN(USB_VSETUP, "Setup phase done for ep0x%"PRIx8, ep_addr);
 		REBASE(DWC_OTG_DOEPxINT, ep_num) = DWC_OTG_DOEPINT_STUP;
 
 		REBASE(DWC_OTG_DOEPxTSIZ, ep_num) |= DWC_OTG_DOEPTSIZ_STUPCNT_3;
@@ -955,8 +973,7 @@ static void process_out_endpoint_interrupt(usbd_device *dev, uint8_t ep_num)
 
 	if (REBASE(DWC_OTG_DOEPxINT, ep_num) & DWC_OTG_DOEPINT_OTEPDIS) {
 		REBASE(DWC_OTG_DOEPxINT, ep_num) = DWC_OTG_DOEPINT_OTEPDIS;
-		LOGF_LN("Data OUT Token received when endpoint 0x%"PRIx8" was disable",
-			ep_addr);
+		USBD_LOGF_LN(USB_VIO, "Data OUT Token received when ep0x%"PRIx8" was disable", ep_addr);
 	}
 }
 
@@ -980,6 +997,7 @@ static inline void alloc_fifo_for_ep0_only(usbd_device *dev)
 void dwc_otg_poll(usbd_device *dev)
 {
 	if (REBASE(DWC_OTG_GINTSTS) & DWC_OTG_GINTSTS_ENUMDNE) {
+		USBD_LOG_LN(USB_VIO_INIT,"USBD:enumerated");
 		REBASE(DWC_OTG_DCFG) &= ~DWC_OTG_DCFG_DAD_MASK;
 		disable_all_non_ep0(dev);
 		alloc_fifo_for_ep0_only(dev);

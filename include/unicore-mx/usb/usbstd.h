@@ -110,9 +110,9 @@ struct usb_setup_data {
 #define USB_DT_INTERFACE_ASSOCIATION		11
 
 /* USB Standard Feature Selectors - Table 9-6 */
-#define USB_FEAT_ENDPOINT_HALT			0
-#define USB_FEAT_DEVICE_REMOTE_WAKEUP		1
-#define USB_FEAT_TEST_MODE			2
+#define USB_FEATURE_ENDPOINT_HALT			0
+#define USB_FEATURE_DEVICE_REMOTE_WAKEUP	1
+#define USB_FEATURE_TEST_MODE				2
 
 /* Information Returned by a GetStatus() Request to a Device - Figure 9-4 */
 #define USB_DEV_STATUS_SELF_POWERED		0x01

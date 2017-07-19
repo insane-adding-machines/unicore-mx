@@ -36,4 +36,7 @@
 
 #include <unicore-mx/stm32/common/syscfg_common_l1f2347.h>
 
+#define SYSCFG_PMC_USB_PU_SHIFT (0)
+#define SYSCFG_PMC_USB_PU (1 << SYSCFG_PMC_USB_PU_SHIFT)
+
 #endif

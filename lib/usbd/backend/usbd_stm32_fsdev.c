@@ -2,7 +2,7 @@
  * This file is part of the unicore-mx project.
  *
  * Copyright (C) 2010 Gareth McMullin <gareth@blacksphere.co.nz>
- * Copyright (C) 2015, 2016 Kuldeep Singh Dhaka <kuldeepdhaka9@gmail.com>
+ * Copyright (C) 2015-2017 Kuldeep Singh Dhaka <kuldeepdhaka9@gmail.com>
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -18,13 +18,286 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "stm32_fsdev_private.h"
+#include <stdint.h>
+
+struct stm32_fsdev_private_data {
+	/** The number of bytes of endpoint buffer memory used.
+	 *  @note used by backend */
+	uint16_t pma_used;
+};
+
+#define USBD_DEVICE_EXTRA \
+	struct stm32_fsdev_private_data private_data;
+
 #include "../usbd_private.h"
 
 #include <unicore-mx/cm3/common.h>
 #include <unicore-mx/stm32/rcc.h>
 #include <unicore-mx/stm32/st_usbfs.h>
 #include <unicore-mx/usbd/usbd.h>
+
+#if defined(STM32F3)
+# include <unicore-mx/stm32/dbgmcu.h>
+#endif
+
+#if defined(STM32L1)
+# include <unicore-mx/stm32/syscfg.h>
+#endif
+
+static struct usbd_device _usbd_dev;
+
+/*
+ * Internal D+ pullup: YES
+ *  - F04x, F07x
+ *  - L0x2
+ *  - L1xxxx
+ *  - L43x, L44x, L45x, L46x
+ *
+ * Internal D+ pullup: NO
+ *  - F102xx, F103xx
+ *  - F302x{6,8,B,C,D,E}, F303x{B,C,D,E}, F373xx
+ *
+ * Memory scheme: 1x16 bits/word
+ *  - F102xx, F103xx
+ *  - F302x{B,C}, F303x{B,C}
+ *  - L1xxxx
+ *
+ * Memory scheme: 2x16 bits/word
+ *  - F04x, F07x
+ *  - F302x{6,8,D,E}, F303x{D,E}, F373xx
+ *  - L0x2
+ *  - L43x, L44x, L45x, L46x
+ *
+ * Memory size: 512
+ *  - F102xx, F103xx
+ *  - F302x{B,C}, F303x{B,C}, F373xx
+ *  - L1xxxx
+ *
+ * Memory size: 1024
+ *  - F04x, F07x
+ *  - F302x{6,8,D,E}
+ *  - F303x{D,E}
+ *  - L0x2
+ *  - L43x, L44x, L45x, L46x
+ *
+ * Take away:
+ * ==========
+ *
+ *  Variant 1 ("old")
+ *   - Memory scheme: 1x16 bits/word
+ *   - Internal D+ pullup: No
+ *   - Memory size: 512
+ *
+ *   - F102xx, F103xx
+ *   - F302x{B,C}, F303x{B,C}
+ *
+ *  Variant 2 ("new")
+ *   - Memory scheme: 2x16 bits/word
+ *   - Internal D+ pullup: Yes
+ *   - Memory size: 1024
+ *
+ *   - F04x, F07x
+ *   - L0x2
+ *   - L43x, L44x, L45x, L46x
+ *
+ *  Variant 3
+ *   - Internal D+ pullup: NO
+ *   - Memory scheme: 2x16 bits/word
+ *   - Memory size: 512
+ *
+ *   - F373xx
+ *
+ *  Variant 4
+ *   - Internal D+ pullup: YES
+ *   - Memory scheme: 1x16 bits/word
+ *   - Memory size: 512
+ *
+ *   - L1xxxx
+ *
+ *  Variant 5
+ *   - Internal D+ pullup: NO
+ *   - Memory scheme: 2x16 bits/word
+ *   - Memory size: 1024
+ *
+ *   - F302x{6,8,D,E}, F303x{D,E}
+ *
+ * Note: L1xxxx has D+ pull-up in SYSCFG_PMC register
+ *
+ * Note: STM32F0 (M0) and STM32L0(M0+) do not support unaligned memory access,
+ *  Using compile time __ARM_FEATURE_UNALIGNED macro to enable special code.
+ */
+
+#define ENDPOINT_COUNT 8
+
+#if defined(STM32F0) || defined(STM32L0) || defined(STM32L1) || defined(STM32L4)
+# define INTERNAL_DP_PULLUP
+#endif /* defined(STM32F0) || defined(STM32L0) || defined(STM32L1) || defined(STM32L4) */
+
+#if defined(STM32F0) || defined(STM32L0) || defined(STM32L4)
+# define MEMORY_SIZE 1024
+#elif defined(STM32L1) || defined(STM32F1)
+# define MEMORY_SIZE 512
+#elif defined(STM32F3)
+static const usbd_backend_config _config_512 = {
+	.ep_count = ENDPOINT_COUNT,
+	.priv_mem = 512,
+	.speed = USBD_SPEED_FULL,
+	.feature = USBD_FEATURE_NONE
+};
+
+static const usbd_backend_config _config_1024 = {
+	.ep_count = ENDPOINT_COUNT,
+	.priv_mem = 1024,
+	.speed = USBD_SPEED_FULL,
+	.feature = USBD_FEATURE_NONE
+};
+
+static const usbd_backend_config *get_default_config(void)
+{
+	switch (DBGMCU_IDCODE & 0xFFF) {
+	case 0x422: /* F303x{B,C} F302x{B,C} */
+	case 0x432: /* F373xx */
+	return &_config_512;
+	default:
+	return &_config_1024;
+	}
+}
+#endif /* defined(STM32F3) */
+
+#if defined(MEMORY_SIZE)
+static const usbd_backend_config _config = {
+	.ep_count = ENDPOINT_COUNT,
+	.priv_mem = MEMORY_SIZE,
+	.speed = USBD_SPEED_FULL,
+	.feature = USBD_FEATURE_NONE
+};
+
+#define get_default_config() (&_config)
+#endif /* defined(MEMORY_SIZE) */
+
+
+/* PMA_U16_STRIDE: 2 = 1x16 word, 1 = 2x16 word */
+#if defined(STM32F0) || defined(STM32L0) || defined(STM32L4)
+# define PMA_U16_STRIDE 1
+# define init_pma_u16_stride() /* Compile time */
+#elif defined(STM32F1) || defined(STM32L1)
+# define PMA_U16_STRIDE 2
+# define init_pma_u16_stride() /* Compile time */
+#elif defined(STM32F3)
+static uint8_t PMA_U16_STRIDE;
+static void init_pma_u16_stride(void)
+{
+	switch (DBGMCU_IDCODE & 0xFFF) {
+	case 0x422: /* F303x{B,C} F302x{B,C} */
+		PMA_U16_STRIDE = 2;
+	break;
+	default:
+		PMA_U16_STRIDE = 1;
+	break;
+	}
+}
+#endif /* defined(STM32F3) */
+
+/**
+ * Read 16bit from PMA at @a usb_local
+ * @param usb_local PMA Address (in USB Local)
+ * @return result
+ */
+static inline uint16_t get_u16_pma(uint16_t usb_local)
+{
+	return MMIO16(USB_PMA_BASE + (usb_local * PMA_U16_STRIDE));
+}
+
+/**
+ * Write 16bit @a value to PMA at @a usb_local
+ * @param usb_local PMA Address (in USB Local)
+ * @param value Value to write
+ */
+static inline void set_u16_pma(uint16_t usb_local, uint16_t value)
+{
+	MMIO16(USB_PMA_BASE + (usb_local * PMA_U16_STRIDE)) = value;
+}
+
+/**
+ * Write data of @a len from @a vBuf to @a usb_local
+ * @param usb_local PMA Address (in USB Local)
+ * @param vBuf Buffer location
+ * @param len Number of bytes
+ */
+static void write_to_pma(uint16_t usb_local, const void *vBuf, uint16_t len)
+{
+	volatile uint16_t *hPM =
+		&MMIO16(USB_PMA_BASE + (usb_local * PMA_U16_STRIDE));
+
+	len = DIVIDE_AND_CEIL(len, 2);
+
+#if !defined(__ARM_FEATURE_UNALIGNED)
+	if(((uintptr_t) vBuf) & 0x01) {
+		const uint8_t *uBuf = vBuf;
+
+		while (len--) {
+			*hPM = (uBuf[1] << 8) | uBuf[0];
+			hPM += PMA_U16_STRIDE;
+			uBuf += 2;
+		}
+
+		return;
+	}
+#endif /* !defined(__ARM_FEATURE_UNALIGNED) */
+
+	const uint16_t *hBuf = vBuf;
+
+	while (len--) {
+		*hPM = *hBuf++;
+		hPM += PMA_U16_STRIDE;
+	}
+}
+
+/**
+ * Read data of @a len from @a usb_local to @a vBuf
+ * @param vBuf Buffer location
+ * @param usb_local PMA Address (in USB Local)
+ * @param len Number of bytes
+ */
+static void read_from_pma(void *vBuf, uint16_t usb_local, uint16_t len)
+{
+	const volatile uint16_t *hPM =
+		&MMIO16(USB_PMA_BASE + (usb_local * PMA_U16_STRIDE));
+	bool odd = !!(len & 1);
+	len /= 2;
+
+#if !defined(__ARM_FEATURE_UNALIGNED)
+	if(((uintptr_t) vBuf) & 0x01) {
+		uint8_t *uBuf = vBuf;
+
+		while (len--) {
+			register uint16_t value = *hPM;
+			hPM += PMA_U16_STRIDE;
+			*uBuf++ = value;
+			*uBuf++ = value >> 8;
+		}
+
+		if (odd) {
+			*uBuf = *(volatile uint8_t *) hPM;
+		}
+
+		return;
+	}
+#endif /* !defined(__ARM_FEATURE_UNALIGNED) */
+
+	uint16_t *hBuf = vBuf;
+
+	while (len--) {
+		*hBuf++ = *hPM;
+		hPM += PMA_U16_STRIDE;
+	}
+
+	if (odd) {
+		*(uint8_t *) hBuf = *(volatile uint8_t *) hPM;
+	}
+}
+
+/* ------------------------------------------------------------------ */
 
 static inline void ep_set_stat(uint8_t num, bool rx, uint16_t stat);
 static inline void ep_clear_ctr(uint8_t num, bool rx);
@@ -72,20 +345,45 @@ static inline void ep_set_type(uint8_t num, uint16_t eptype)
 	USB_EP(num) = ep;
 }
 
-void stm32_fsdev_init(usbd_device *dev)
+/** Initialize the USB device controller hardware of the STM32. */
+static usbd_device *init(const usbd_backend_config *config)
 {
+	rcc_periph_clock_enable(RCC_USB);
+
+#if defined(STM32L1)
+	rcc_periph_clock_enable(RCC_SYSCFG);
+#endif /* defined(STM32L1) */
+
+	if (config == NULL) {
+		config = get_default_config();
+	}
+
+	init_pma_u16_stride();
+
+	_usbd_dev.backend = &usbd_stm32_fsdev;
+	_usbd_dev.config = config;
+	_usbd_dev.private_data.pma_used = 0;
+
 	USB_BTABLE = 0;
 	USB_ISTR = 0;
 
 	/* Enable RESET, SUSPEND, RESUME and CTR interrupts. */
 	USB_CNTR = USB_CNTR_RESETM | USB_CNTR_CTRM | USB_CNTR_SUSPM | USB_CNTR_WKUPM;
 
-	dev->private_data.pma_used = 0;
+#if defined(INTERNAL_DP_PULLUP)
+# if defined(STM32L1)
+	SYSCFG_PMC |= SYSCFG_PMC_USB_PU;
+# else /* defined(STM32L1) */
+	USB_BCDR |= USB_BCDR_DPPU;
+# endif /* defined(STM32L1) */
+#endif /* defined(INTERNAL_DP_PULLUP) */
 
-	LOGF_LN("endpoint count: %"PRIu8, dev->config->ep_count);
+	LOGF_LN("endpoint count: %"PRIu8, config->ep_count);
+
+	return &_usbd_dev;
 }
 
-void stm32_fsdev_set_address(usbd_device *dev, uint8_t addr)
+static void set_address(usbd_device *dev, uint8_t addr)
 {
 	(void) dev;
 
@@ -95,7 +393,7 @@ void stm32_fsdev_set_address(usbd_device *dev, uint8_t addr)
 	USB_DADDR = USB_DADDR_ADD(addr) | USB_DADDR_EF;
 }
 
-uint8_t stm32_fsdev_get_address(usbd_device *dev)
+static uint8_t get_address(usbd_device *dev)
 {
 	(void) dev;
 
@@ -153,13 +451,13 @@ static void alloc_ep0_buf(usbd_device *dev)
 				USB_EP_DTOG_RX | USB_EP_DTOG_TX;
 	USB_EP(0) = reg16 | USB_EP_TYPE_CONTROL;
 
-	USB_EP_ADDR_TX(0) = dev->private_data.pma_used;
+	set_u16_pma(USB_EP_ADDR_TX(0), dev->private_data.pma_used);
 	dev->private_data.pma_used += dev->info->device.desc->bMaxPacketSize0;
 
-	USB_EP_ADDR_RX(0) = dev->private_data.pma_used;
+	set_u16_pma(USB_EP_ADDR_RX(0), dev->private_data.pma_used);
 	dev->private_data.pma_used += dev->info->device.desc->bMaxPacketSize0;
 
-	USB_EP_COUNT_RX(0) = ep0_count_rx(dev->info->device.desc->bMaxPacketSize0);
+	set_u16_pma(USB_EP_COUNT_RX(0), ep0_count_rx(dev->info->device.desc->bMaxPacketSize0));
 }
 
 /**
@@ -217,7 +515,7 @@ static uint16_t calc_ep_count_rx(uint16_t *size)
 	return reg;
 }
 
-void stm32_fsdev_ep_prepare_start(usbd_device *dev)
+static void ep_prepare_start(usbd_device *dev)
 {
 	disable_non_ep0(dev);
 	alloc_ep0_buf(dev);
@@ -230,7 +528,7 @@ static const uint16_t eptype_map[] = {
 	[USBD_EP_INTERRUPT] = USB_EP_TYPE_INTERRUPT
 };
 
-void stm32_fsdev_ep_prepare(usbd_device *dev, uint8_t addr, usbd_ep_type type,
+static void ep_prepare(usbd_device *dev, uint8_t addr, usbd_ep_type type,
 				uint16_t max_size, uint16_t interval, usbd_ep_flags flags)
 {
 	LOG_CALL
@@ -259,10 +557,10 @@ void stm32_fsdev_ep_prepare(usbd_device *dev, uint8_t addr, usbd_ep_type type,
 			max_size += 1;
 		}
 
-		USB_EP_ADDR_TX(num) = dev->private_data.pma_used;
+		set_u16_pma(USB_EP_ADDR_TX(num), dev->private_data.pma_used);
 	} else {
-		USB_EP_ADDR_RX(num) = dev->private_data.pma_used;
-		USB_EP_COUNT_RX(num) = calc_ep_count_rx(&max_size);
+		set_u16_pma(USB_EP_ADDR_RX(num), dev->private_data.pma_used);
+		set_u16_pma(USB_EP_COUNT_RX(num), calc_ep_count_rx(&max_size));
 	}
 
 	dev->private_data.pma_used += max_size;
@@ -273,7 +571,7 @@ void stm32_fsdev_ep_prepare(usbd_device *dev, uint8_t addr, usbd_ep_type type,
 	}
 }
 
-void stm32_fsdev_set_ep_stall(usbd_device *dev, uint8_t addr, bool stall)
+static void set_ep_stall(usbd_device *dev, uint8_t addr, bool stall)
 {
 	(void) dev;
 
@@ -312,7 +610,7 @@ void stm32_fsdev_set_ep_stall(usbd_device *dev, uint8_t addr, bool stall)
 	}
 }
 
-bool stm32_fsdev_get_ep_stall(usbd_device *dev, uint8_t addr)
+static bool get_ep_stall(usbd_device *dev, uint8_t addr)
 {
 	(void) dev;
 
@@ -325,7 +623,7 @@ bool stm32_fsdev_get_ep_stall(usbd_device *dev, uint8_t addr)
 	}
 }
 
-void stm32_fsdev_set_ep_dtog(usbd_device *dev, uint8_t addr, bool dtog)
+static void set_ep_dtog(usbd_device *dev, uint8_t addr, bool dtog)
 {
 	(void) dev;
 
@@ -340,7 +638,7 @@ void stm32_fsdev_set_ep_dtog(usbd_device *dev, uint8_t addr, bool dtog)
 	}
 }
 
-bool stm32_fsdev_get_ep_dtog(usbd_device *dev, uint8_t addr)
+static bool get_ep_dtog(usbd_device *dev, uint8_t addr)
 {
 	(void) dev;
 
@@ -366,13 +664,13 @@ static void process_setup_interrupt(usbd_device *dev, uint8_t num)
 
 	struct usb_setup_data setup_data __attribute__((aligned(2)));
 
-	uint16_t len = USB_EP_COUNT_RX_COUNT_GET(USB_EP_COUNT_RX(num));
+	uint16_t len = USB_EP_COUNT_RX_COUNT_GET(get_u16_pma(USB_EP_COUNT_RX(num)));
 
 	if (len != 8) {
 		LOGF("SETUP packet not equal to length 8");
 	}
 
-	dev->backend->copy_from_pm(&setup_data, USB_EP_RX_PMA_BUF(num), 8);
+	read_from_pma(&setup_data, get_u16_pma(USB_EP_ADDR_RX(num)), 8);
 
 	LOGF_LN("bmRequestType: 0x%02"PRIx8, setup_data.bmRequestType);
 	LOGF_LN("bRequest: 0x%02"PRIx8, setup_data.bRequest);
@@ -427,7 +725,7 @@ static void process_out_interrupt(usbd_device *dev, uint8_t num)
 {
 	LOG_CALL
 
-	uint16_t len = USB_EP_COUNT_RX_COUNT_GET(USB_EP_COUNT_RX(num));
+	uint16_t len = USB_EP_COUNT_RX_COUNT_GET(get_u16_pma(USB_EP_COUNT_RX(num)));
 
 	ep_clear_ctr(num, true);
 
@@ -450,7 +748,7 @@ static void process_out_interrupt(usbd_device *dev, uint8_t num)
 
 	if (storable_len) {
 		void *buffer = usbd_urb_get_buffer_pointer(dev, urb, storable_len);
-		dev->backend->copy_from_pm(buffer, USB_EP_RX_PMA_BUF(num), storable_len);
+		read_from_pma(buffer, get_u16_pma(USB_EP_ADDR_RX(num)), storable_len);
 		usbd_urb_inc_data_pointer(dev, urb, storable_len);
 	}
 
@@ -506,7 +804,7 @@ static void process_in_interrupt(usbd_device *dev, uint8_t num)
 	}
 
 	usbd_transfer *transfer = &urb->transfer;
-	uint16_t old_len = USB_EP_COUNT_TX(num) & 0x3FF;
+	uint16_t old_len = get_u16_pma(USB_EP_COUNT_TX(num)) & 0x3FF;
 	usbd_urb_inc_data_pointer(dev, urb, old_len);
 	size_t rem = transfer->length - transfer->transferred;
 
@@ -524,7 +822,7 @@ static void process_in_interrupt(usbd_device *dev, uint8_t num)
 					break;
 				}
 
-				USB_EP_COUNT_TX(num) = 0;
+				set_u16_pma(USB_EP_COUNT_TX(num), 0);
 
 				if ((USB_EP(num) & USB_EP_STAT_TX_MASK) == USB_EP_STAT_TX_STALL) {
 					if (transfer->ep_type != USBD_EP_CONTROL) {
@@ -546,16 +844,16 @@ static void process_in_interrupt(usbd_device *dev, uint8_t num)
 	/* sending more data */
 	size_t len = MIN(rem, transfer->ep_size);
 	void *buffer = usbd_urb_get_buffer_pointer(dev, urb, len);
-	dev->backend->copy_to_pm(USB_EP_TX_PMA_BUF(num), buffer, len);
+	write_to_pma(get_u16_pma(USB_EP_ADDR_TX(num)), buffer, len);
 
-	USB_EP_COUNT_TX(num) = len & 0x3FF;
+	set_u16_pma(USB_EP_COUNT_TX(num), len & 0x3FF);
 	if ((USB_EP(num) & USB_EP_STAT_TX_MASK) != USB_EP_STAT_TX_STALL) {
 		/* Endpoint not stalled, convert it to valid */
 		ep_set_stat(num, false, USB_EP_STAT_TX_VALID);
 	}
 }
 
-void stm32_fsdev_poll(usbd_device *dev)
+static void poll(usbd_device *dev)
 {
 	uint16_t istr;
 	while((istr = USB_ISTR) & USB_ISTR_CTR) {
@@ -624,7 +922,7 @@ void stm32_fsdev_poll(usbd_device *dev)
 	}
 }
 
-void stm32_fsdev_enable_sof(usbd_device *dev, bool enable)
+static void enable_sof(usbd_device *dev, bool enable)
 {
 	(void) dev;
 
@@ -635,7 +933,7 @@ void stm32_fsdev_enable_sof(usbd_device *dev, bool enable)
 	}
 }
 
-usbd_speed stm32_fsdev_get_speed(usbd_device *dev)
+static usbd_speed get_speed(usbd_device *dev)
 {
 	(void) dev;
 
@@ -658,10 +956,10 @@ static void urb_submit_in(usbd_device *dev, usbd_urb *urb)
 
 	if (len) {
 		void *buffer = usbd_urb_get_buffer_pointer(dev, urb, len);
-		dev->backend->copy_to_pm(USB_EP_TX_PMA_BUF(num), buffer, len);
+		write_to_pma(get_u16_pma(USB_EP_ADDR_TX(num)), buffer, len);
 	}
 
-	USB_EP_COUNT_TX(num) = len & 0x3FF;
+	set_u16_pma(USB_EP_COUNT_TX(num), len & 0x3FF);
 
 	/* control endpoint will override stall stat */
 	if (transfer->ep_type == USBD_EP_CONTROL ||
@@ -699,7 +997,7 @@ static void urb_submit_out(usbd_device *dev, usbd_urb *urb)
 	}
 }
 
-void stm32_fsdev_urb_submit(usbd_device *dev, usbd_urb *urb)
+static void urb_submit(usbd_device *dev, usbd_urb *urb)
 {
 #if defined(USBD_DEBUG)
 	uint8_t num = ENDPOINT_NUMBER(urb->transfer.ep_addr);
@@ -717,7 +1015,7 @@ void stm32_fsdev_urb_submit(usbd_device *dev, usbd_urb *urb)
 #endif
 }
 
-void stm32_fsdev_urb_cancel(usbd_device *dev, usbd_urb *urb)
+static void urb_cancel(usbd_device *dev, usbd_urb *urb)
 {
 	(void) dev;
 	uint8_t addr = urb->transfer.ep_addr;
@@ -735,9 +1033,55 @@ void stm32_fsdev_urb_cancel(usbd_device *dev, usbd_urb *urb)
 	}
 }
 
-uint16_t stm32_fsdev_frame_number(usbd_device *dev)
+static uint16_t frame_number(usbd_device *dev)
 {
 	(void) dev;
 
 	return USB_FNR_FN_GET(USB_FNR);
 }
+
+#if defined(INTERNAL_DP_PULLUP)
+static void disconnect(usbd_device *dev, bool disconnect)
+{
+	(void) dev;
+
+	if(disconnect) {
+		USB_CNTR |= USB_CNTR_PDWN;
+# if defined(STM32L1)
+		SYSCFG_PMC &= ~SYSCFG_PMC_USB_PU;
+# else /* defined(STM32L1) */
+		USB_BCDR &= ~USB_BCDR_DPPU;
+# endif
+	} else {
+		USB_CNTR &= ~USB_CNTR_PDWN;
+# if defined(STM32L1)
+		SYSCFG_PMC |= SYSCFG_PMC_USB_PU;
+#else /* defined(STM32L1) */
+		USB_BCDR |= USB_BCDR_DPPU;
+#endif /* defined(STM32L1) */
+	}
+}
+#endif /* defined(INTERNAL_DP_PULLUP) */
+
+const struct usbd_backend usbd_stm32_fsdev = {
+	.init = init,
+	.set_address = set_address,
+	.get_address = get_address,
+	.ep_prepare_start = ep_prepare_start,
+	.ep_prepare = ep_prepare,
+	.get_ep_dtog = get_ep_dtog,
+	.set_ep_dtog = set_ep_dtog,
+	.set_ep_stall = set_ep_stall,
+	.get_ep_stall = get_ep_stall,
+	.poll = poll,
+	.enable_sof = enable_sof,
+	.get_speed = get_speed,
+	.urb_submit = urb_submit,
+	.urb_cancel = urb_cancel,
+
+#if defined(INTERNAL_DP_PULLUP)
+	.disconnect = disconnect,
+#endif /* defined(INTERNAL_DP_PULLUP) */
+
+	.frame_number = frame_number
+};

@@ -43,9 +43,12 @@ OBJS            += gpio_common_all.o gpio_common_f0234.o
 OBJS            += adc_common_v2.o adc_common_v2_multi.o
 OBJS            += timer_common_all.o
 
-# FIXME: USB device and host stack not being compiled
+OBJS            += usbd.o usbd_ep0.o usbd_transfer.o
+OBJS            += usbd_stm32_fsdev.o
+OBJS            += usbd_msc.o
 
-VPATH += ../../usbd:../:../../cm3:../common
+VPATH += ../:../../cm3:../common
 VPATH += ../../ethernet
+VPATH += ../../usbd:../../usbd/class:../../usbd/backend
 
 include ../../Makefile.include

@@ -131,6 +131,44 @@ reg BTABLE 0x50
 
 #endif /* defined(__UCD__) */
 
+/* --- USB BTABLE registers (USB Local) ----------------------------- */
+
+#define USB_EP_ADDR_TX(ep) (USB_BTABLE + ((ep) * 8) + 0)
+
+/* Alias of USB_EP_ADDR_TX */
+#define USB_EP_ADDR_TX_0(ep) USB_EP_ADDR_TX(ep)
+#define USB_EP_ADDR_RX_0(ep) USB_EP_ADDR_TX(ep)
+
+#define USB_EP_COUNT_TX(ep) (USB_BTABLE + ((ep) * 8) + 2)
+
+/* Alias of USB_EP_COUNT_TX */
+#define USB_EP_COUNT_TX_0(ep) USB_EP_COUNT_TX(ep)
+#define USB_EP_COUNT_RX_0(ep) USB_EP_COUNT_TX(ep)
+
+#define USB_EP_ADDR_RX(ep) (USB_BTABLE + ((ep) * 8) + 4)
+
+/* Alias of USB_EP_ADDR_RX */
+#define USB_EP_ADDR_TX_1(ep) USB_EP_ADDR_RX(ep)
+#define USB_EP_ADDR_RX_1(ep) USB_EP_ADDR_RX(ep)
+
+#define USB_EP_COUNT_RX(ep) (USB_BTABLE + ((ep) * 8) + 6)
+
+#define USB_EP_COUNT_TX_1(ep) USB_EP_COUNT_RX(ep)
+#define USB_EP_COUNT_RX_1(ep) USB_EP_COUNT_RX(ep)
+
+#define USB_EP_COUNT_RX_BL_SIZE_SHIFT (15)
+#define USB_EP_COUNT_RX_BL_SIZE (1 << USB_EP_COUNT_RX_BL_SIZE_SHIFT)
+
+#define USB_EP_COUNT_RX_NUM_BLOCK_SHIFT (10)
+#define USB_EP_COUNT_RX_NUM_BLOCK_MASK (0x1f << (USB_EP_COUNT_RX_NUM_BLOCK_SHIFT))
+#define USB_EP_COUNT_RX_NUM_BLOCK(v) (((v) << (USB_EP_COUNT_RX_NUM_BLOCK_SHIFT)) & (USB_EP_COUNT_RX_NUM_BLOCK_MASK))
+#define USB_EP_COUNT_RX_NUM_BLOCK_GET(v) (((v) & (USB_EP_COUNT_RX_NUM_BLOCK_MASK)) >> (USB_EP_COUNT_RX_NUM_BLOCK_SHIFT))
+
+#define USB_EP_COUNT_RX_COUNT_SHIFT (0)
+#define USB_EP_COUNT_RX_COUNT_MASK (0x3ff << (USB_EP_COUNT_RX_COUNT_SHIFT))
+#define USB_EP_COUNT_RX_COUNT(v) (((v) << (USB_EP_COUNT_RX_COUNT_SHIFT)) & (USB_EP_COUNT_RX_COUNT_MASK))
+#define USB_EP_COUNT_RX_COUNT_GET(v) (((v) & (USB_EP_COUNT_RX_COUNT_MASK)) >> (USB_EP_COUNT_RX_COUNT_SHIFT))
+
 #endif
 #else
 #error "st_usbfs_common.h should not be included explicitly, only via st_usbfs.h"

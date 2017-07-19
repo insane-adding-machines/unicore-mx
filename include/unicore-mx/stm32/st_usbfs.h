@@ -31,6 +31,8 @@
 #       include <unicore-mx/stm32/l0/st_usbfs.h>
 #elif defined(STM32L1)
 #       include <unicore-mx/stm32/l1/st_usbfs.h>
+#elif defined(STM32L4)
+#       include <unicore-mx/stm32/l4/st_usbfs.h>
 #else
 #       error "STM32 family not defined or not supported."
 #endif

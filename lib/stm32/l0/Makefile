@@ -41,7 +41,7 @@ OBJS		+= adc_common_v2.o
 OBJS		+= crs_common_all.o
 
 OBJS		+= usbd.o usbd_ep0.o usbd_transfer.o
-OBJS		+= usbd_stm32_fsdev.o usbd_stm32_fsdev_v2.o
+OBJS		+= usbd_stm32_fsdev.o
 OBJS		+= usbd_msc.o
 
 VPATH += ../:../../cm3:../common

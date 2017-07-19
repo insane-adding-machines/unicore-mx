@@ -113,14 +113,12 @@ BEGIN_DECLS
 typedef struct usbd_backend usbd_backend;
 typedef struct usbd_device usbd_device;
 
-extern const usbd_backend usbd_stm32_fsdev_v1;
-extern const usbd_backend usbd_stm32_fsdev_v2;
+extern const usbd_backend usbd_stm32_fsdev;
 extern const usbd_backend usbd_stm32_otg_fs;
 extern const usbd_backend usbd_stm32_otg_hs;
 extern const usbd_backend usbd_efm32lg;
 
-#define USBD_STM32_FSDEV_V1	(&usbd_stm32_fsdev_v1)
-#define USBD_STM32_FSDEV_V2	(&usbd_stm32_fsdev_v2)
+#define USBD_STM32_FSDEV	(&usbd_stm32_fsdev)
 #define USBD_STM32_OTG_FS	(&usbd_stm32_otg_fs)
 #define USBD_STM32_OTG_HS	(&usbd_stm32_otg_hs)
 #define USBD_EFM32LG		(&usbd_efm32lg)

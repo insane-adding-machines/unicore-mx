@@ -17,13 +17,6 @@
 
 /* THIS FILE SHOULD NOT BE INCLUDED DIRECTLY !
  * Use top-level <unicore-mx/stm32/st_usbfs.h>
- *
- * Additional definitions for F1, F3, L1 devices:
- * -F102, F103 (RM0008)
- * -F302x{B,C}; *NOT* F302x{6,8,D,E} !! (USB_BTABLE access issues) (RM0365)
- * -F303x{B,C}; *NOT* F303x{D,E} !! (USB_BTABLE access issues) (RM0316)
- * -F37x (RM0313)
- * -L1xx (RM0038)
  */
 
 /** @cond */
@@ -33,58 +26,6 @@
 #define UNICOREMX_ST_USBFS_V1_H
 
 #include <unicore-mx/stm32/common/st_usbfs_common.h>
-
-/* --- USB BTABLE Registers ------------------------------------------------ */
-
-#if defined(___UCD__)
-
-family
- name USB_EP
- register 16 32
- instance (USB_PMA_BASE + (USB_BTABLE * 2))
- internal_only true
-
-register
- name ADDR_TX
- name ADDR_TX_0
- name ADDR_RX_0
- offset 0
- variable ep (ep) * 8 * 2
-
-register
- name COUNT_TX
- name COUNT_TX_0
- name COUNT_RX_0
- offset 4
- variable ep (ep) * 8 * 2
-
-register
- name ADDR_RX
- name ADDR_TX_1
- name ADDR_RX_1
- offset 8
- variable ep (ep) * 8 * 2
-
-register
- name COUNT_RX
- name COUNT_TX_1
- name COUNT_RX_1
- offset 12
- variable ep (ep) * 8 * 2
-
-bit BL_SIZE 15
-bits NUM_BLOCK 5 10
-bits COUNT 10 0
-
-#endif
-
-/* --- USB BTABLE manipulators --------------------------------------------- */
-
-#define USB_EP_TX_PMA_BUF(ep) \
-	((volatile void *)(USB_PMA_BASE + (USB_EP_ADDR_TX(ep) * 2)))
-
-#define USB_EP_RX_PMA_BUF(ep) \
-	((volatile void *)(USB_PMA_BASE + (USB_EP_ADDR_RX(ep) * 2)))
 
 #endif
 /** @cond */

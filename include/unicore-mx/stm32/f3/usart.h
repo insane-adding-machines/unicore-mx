@@ -98,6 +98,13 @@
 #define UART4_ISR			USART_ISR(UART4_BASE)
 #define UART5_ISR			USART_ISR(UART5_BASE)
 
+#define USART_SR(usart_base)	USART_ISR(usart_base)
+#define USART1_SR			USART1_ISR
+#define USART2_SR			USART2_ISR
+#define USART3_SR			USART3_ISR
+#define UART4_SR			UART4_ISR
+#define UART5_SR			UART5_ISR
+
 /* Interrupt flag clear register (USART_ICR) */
 #define USART_ICR(usart_base)		MMIO32((usart_base) + 0x20)
 #define USART1_ICR			USART_ICR(USART1_BASE)

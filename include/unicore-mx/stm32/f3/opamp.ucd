@@ -1,0 +1,105 @@
+/** @defgroup dma_defines DMA Defines
+ *
+ * @ingroup STM32F3xx_defines
+ *
+ * @brief <b>Defined Constants and Types for the STM32F3xx OPAMP Controller</b>
+ *
+ * @version 1.0.0
+ *
+ * @date 9 July 2017
+ *
+ * LGPL License Terms @ref lgpl_license
+ */
+
+/*
+ * Copyright (C) 2017 Kuldeep Singh Dhaka <kuldeep@madresistor.com>
+ *
+ * This library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef UNICOREMX_OPAMP_H
+#define UNICOREMX_OPAMP_H
+
+#define OPAMP1 0
+#define OPAMP2 1
+#define OPAMP3 2
+#define OPAMP4 3
+
+#if defined(__UCD__)
+
+family
+ name OPAMP
+ instance OPAMP_BASE
+ internal true
+
+register
+ name CSR
+ offset 0x38
+ variable num (num) * 0x4
+
+bit LOCK 31
+bit OUTCAL 30
+bit TSTREF 29
+bits TRIMOFFSETN 5 24
+bits TRIMOFFSETP 5 19
+bit USER_TRIM 18
+bits
+ name PGA_GAIN
+ offset 14
+ size 4
+ value 2 0x0
+ value 4 0x1
+ value 8 0x2
+ value 16 0x3
+ value 2_FB_VM0 0x8
+ value 4_FB_VM0 0x9
+ value 8_FB_VM0 0xA
+ value 16_FB_VM0 0xB
+ value 2_FB_VM1 0xC
+ value 4_FB_VM1 0xD
+ value 8_FB_VM1 0xE
+ value 16_FB_VM1 0xF
+
+bits
+ name CALSEL
+ offset 12
+ size 2
+ value 3P3_VDDA 0
+ value 10_VDDA 1
+ value 50_VDDA 2
+ value 90_VDDA 3
+
+bit CALON 11
+
+bits VPS_SEL 2 9
+bits VMS_SEL 1 8
+
+bit TCM_EN 7
+bits
+ name VM_SEL
+ offset 5
+ size 2
+ value VM0 0
+ value VM1 1
+ value RES_FB 2
+ value FOLLOWER 3
+
+bits VP_SEL 2 2
+bit FORCE_VP 1
+bit EN 0
+
+#endif
+
+#endif
+

@@ -735,8 +735,8 @@ static void _control_data_callback(usbd_device *dev,
 
 	/* User want to stall the transfer */
 	if (feedback & USBD_CONTROL_TRANSFER_STALL) {
-		usbd_set_ep_stall(dev, ENDPOINT_NUMBER(transfer->ep_addr), true);
-		usbd_set_ep_stall(dev, ENDPOINT_NUMBER(transfer->ep_addr) | 0x80, true);
+		usbd_set_ep_stall(dev, transfer->ep_addr, true);
+		usbd_set_ep_stall(dev, transfer->ep_addr ^ 0x80, true);
 		return;
 	}
 
@@ -813,8 +813,8 @@ void usbd_control_transfer(usbd_device *dev, uint8_t ep_addr,
 	void *buf, size_t len, usbd_control_transfer_callback callback)
 {
 	/* Data stage and status stage both have DTOG = 1 */
-	dev->backend->set_ep_dtog(dev, ep_addr | 0x80, true);
-	dev->backend->set_ep_dtog(dev, ep_addr & 0x7F, true);
+	dev->backend->set_ep_dtog(dev, ep_addr, true);
+	dev->backend->set_ep_dtog(dev, ep_addr ^ 0x80, true);
 
 	if (!setup_data->wLength) {
 		/* wLength is zero, directly proceed to status IN stage! */
@@ -830,8 +830,8 @@ void usbd_control_transfer(usbd_device *dev, uint8_t ep_addr,
 			 */
 			LOGF_LN("STALL: User provide less buffer than "
 						"the host is going to send");
-			usbd_set_ep_stall(dev, ep_addr | 0x80, true);
-			usbd_set_ep_stall(dev, ep_addr & 0x7F, true);
+			usbd_set_ep_stall(dev, ep_addr, true);
+			usbd_set_ep_stall(dev, ep_addr ^ 0x80, true);
 			return;
 		}
 	}

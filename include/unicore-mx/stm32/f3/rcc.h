@@ -365,6 +365,12 @@
 /**@}*/
 
 /* --- RCC_CFGR3 values ---------------------------------------------------- */
+#define RCC_CFGR3_TIM34SW			(1 << 25)
+#define RCC_CFGR3_TIM2SW			(1 << 24)
+#define RCC_CFGR3_TIM20SW			(1 << 15)
+#define RCC_CFGR3_TIM17SW			(1 << 13)
+#define RCC_CFGR3_TIM16SW			(1 << 11)
+#define RCC_CFGR3_TIM15SW			(1 << 10)
 #define RCC_CFGR3_TIM8SW			(1 << 9)
 #define RCC_CFGR3_TIM1SW			(1 << 8)
 #define RCC_CFGR3_I2C2SW			(1 << 5)

@@ -79,19 +79,11 @@ static usbd_device *init(const usbd_backend_config *config)
 	return &_usbd_dev;
 }
 
-#if defined(STM32L0) || defined(STM32F0)
-/* Some core dont not supported unaligned memory access.
- *  STM32L0 has Cortex-M0+
- *  STM32F0 has Cortex-M0
- */
-# define CORE_DONT_SUPPORT_UNALIGNED_ACCESS
-#endif
-
 static void copy_to_pm(volatile void *vPM, const void *vBuf, uint16_t len)
 {
 	volatile uint16_t *hPM = vPM;
 
-#if defined(CORE_DONT_SUPPORT_UNALIGNED_ACCESS)
+#if !defined(__ARM_FEATURE_UNALIGNED)
 	if(((uintptr_t) vBuf) & 0x01) {
 		const uint8_t *uBuf = vBuf;
 		len /= 2;
@@ -104,7 +96,7 @@ static void copy_to_pm(volatile void *vPM, const void *vBuf, uint16_t len)
 		*(uint8_t *) hPM = *uBuf;
 		return;
 	}
-#endif /* defined(CORE_DONT_SUPPORT_UNALIGNED_ACCESS) */
+#endif /* !defined(__ARM_FEATURE_UNALIGNED) */
 
 	const uint16_t *hBuf = vBuf;
 	len = DIVIDE_AND_CEIL(len, 2);
@@ -120,7 +112,7 @@ static void copy_from_pm(void *vBuf, const volatile void *vPM, uint16_t len)
 	uint8_t odd = len & 1;
 	len /= 2;
 
-#if defined(CORE_DONT_SUPPORT_UNALIGNED_ACCESS)
+#if !defined(__ARM_FEATURE_UNALIGNED)
 	if(((uintptr_t) vBuf) & 0x01) {
 		uint8_t *uBuf = vBuf;
 
@@ -136,7 +128,7 @@ static void copy_from_pm(void *vBuf, const volatile void *vPM, uint16_t len)
 
 		return;
 	}
-#endif /* defined(CORE_DONT_SUPPORT_UNALIGNED_ACCESS) */
+#endif /* !defined(__ARM_FEATURE_UNALIGNED) */
 
 	uint16_t *hBuf = vBuf;
 

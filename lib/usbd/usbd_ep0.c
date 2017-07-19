@@ -53,6 +53,7 @@ enum usbd_control_result {
  * Control request arguments.
  */
 struct usbd_control_arg {
+	usbd_device *device;
 	const struct usb_setup_data *setup; /**< setup data */
 	/** Complete callback (after status stage) */
 	usbd_control_transfer_callback complete;
@@ -72,29 +73,28 @@ static inline uint8_t descriptor_index(uint16_t wValue)
 
 /**
  * Handle GET_DESCRIPTOR(string) request from host
- * @param[in] dev USB Device
  * @param[in] arg Arguments
  */
 static enum usbd_control_result
-standard_get_descriptor_string(usbd_device *dev,
-						struct usbd_control_arg *arg)
+standard_get_descriptor_string(struct usbd_control_arg *arg)
 {
 	const struct usbd_info_string *string = NULL;
 	const struct usb_string_descriptor *send = NULL;
 	uint8_t index = descriptor_index(arg->setup->wValue);
 	uint16_t lang_id = arg->setup->wIndex;
 	unsigned i, avail_lang;
+	const struct usbd_info *info = arg->device->info;
 
 	/* Search for the string data */
-	if (dev->current_config != NULL) {
-		for (i = 0; i < dev->info->device.desc->bNumConfigurations; i++) {
-			if (dev->current_config == dev->info->config[i].desc) {
-				string = dev->info->config[i].string;
+	if (arg->device->current_config != NULL) {
+		for (i = 0; i < info->device.desc->bNumConfigurations; i++) {
+			if (arg->device->current_config == info->config[i].desc) {
+				string = info->config[i].string;
 				break;
 			}
 		}
 	} else {
-		string = dev->info->device.string;
+		string = info->device.string;
 	}
 
 	if (string == NULL) {
@@ -134,20 +134,20 @@ standard_get_descriptor_string(usbd_device *dev,
 
 /**
  * Handle GET_DESCRIPTOR(configuration) request from host
- * @param[in] dev USB Device
  * @param[in] arg Arguments
  */
 static enum usbd_control_result
-standard_get_descriptor_config(usbd_device *dev,
-						struct usbd_control_arg *arg)
+standard_get_descriptor_config(struct usbd_control_arg *arg)
 {
 	uint8_t index = descriptor_index(arg->setup->wValue);
+	const struct usb_config_descriptor *cfg;
+	const struct usbd_info *info = arg->device->info;
 
-	if (index >= dev->info->device.desc->bNumConfigurations) {
+	if (index >= info->device.desc->bNumConfigurations) {
 		return USBD_REQ_STALL;
 	}
 
-	const struct usb_config_descriptor *cfg = dev->info->config[index].desc;
+	cfg = info->config[index].desc;
 
 	arg->buf = (void *) cfg;
 	arg->len = MIN(arg->setup->wLength, cfg->wTotalLength);
@@ -157,14 +157,12 @@ standard_get_descriptor_config(usbd_device *dev,
 
 /**
  * Handle GET_DESCRIPTOR(device) request from host
- * @param[in] dev USB Device
  * @param[in] arg Arguments
  */
 static enum usbd_control_result
-standard_get_descriptor_device(usbd_device *dev,
-						struct usbd_control_arg *arg)
+standard_get_descriptor_device(struct usbd_control_arg *arg)
 {
-	const struct usb_device_descriptor *dd = dev->info->device.desc;
+	const struct usb_device_descriptor *dd = arg->device->info->device.desc;
 
 	arg->buf = (void *) dd;
 	arg->len = MIN(arg->setup->wLength, dd->bLength);
@@ -174,11 +172,10 @@ standard_get_descriptor_device(usbd_device *dev,
 
 /**
  * Handle GET_DESCRIPTOR request from host
- * @param[in] dev USB Device
  * @param[in] arg Arguments
  */
 static enum usbd_control_result
-standard_get_descriptor(usbd_device *dev, struct usbd_control_arg *arg)
+standard_get_descriptor(struct usbd_control_arg *arg)
 {
 	uint8_t type = descriptor_type(arg->setup->wValue);
 
@@ -187,11 +184,11 @@ standard_get_descriptor(usbd_device *dev, struct usbd_control_arg *arg)
 
 	switch (type) {
 	case USB_DT_DEVICE:
-	return standard_get_descriptor_device(dev, arg);
+	return standard_get_descriptor_device(arg);
 	case USB_DT_CONFIGURATION:
-	return standard_get_descriptor_config(dev, arg);
+	return standard_get_descriptor_config(arg);
 	case USB_DT_STRING:
-	return standard_get_descriptor_string(dev, arg);
+	return standard_get_descriptor_string(arg);
 	}
 
 	return USBD_REQ_STALL;
@@ -210,12 +207,11 @@ static void _set_address_complete(usbd_device *dev)
 
 /**
  * Handle SET_ADDRESS request from host
- * @param[in] dev USB Device
  * @param[in] arg Arguments
  * @return Result
  */
 static enum usbd_control_result
-standard_set_address(usbd_device *dev, struct usbd_control_arg *arg)
+standard_set_address(struct usbd_control_arg *arg)
 {
 	uint8_t new_addr = arg->setup->wValue;
 	LOGF_LN("SET_ADDRESS: %"PRIu8, new_addr);
@@ -228,8 +224,8 @@ standard_set_address(usbd_device *dev, struct usbd_control_arg *arg)
 	/*
 	 * Some parts require the address to be set before status stage.
 	 */
-	if (dev->backend->set_address_before_status) {
-		dev->backend->set_address(dev, new_addr);
+	if (arg->device->backend->set_address_before_status) {
+		arg->device->backend->set_address(arg->device, new_addr);
 	} else {
 		/* Store the new address in EP0 buffer for complete callback */
 		_set_addr_value = new_addr;
@@ -263,15 +259,15 @@ search_config(usbd_device *dev, uint8_t value)
 
 /**
  * Handle SET_CONFIGURATION from host
- * @param[in] dev USB Device
  * @param[in] arg Arguments
  * @return Result
  */
 static enum usbd_control_result
-standard_set_configuration(usbd_device *dev, struct usbd_control_arg *arg)
+standard_set_configuration(struct usbd_control_arg *arg)
 {
 	const struct usb_config_descriptor *cfg = NULL;
 	uint8_t bConfigValue = arg->setup->wValue;
+	struct usbd_device *dev = arg->device;
 
 	LOGF_LN("SET_CONFIGURATION: %"PRIu8, bConfigValue);
 
@@ -289,7 +285,7 @@ standard_set_configuration(usbd_device *dev, struct usbd_control_arg *arg)
 		/* Make all pointer NULL */
 		memset(dev->current_iface, 0, sizeof(dev->current_iface));
 	}
-#endif
+#endif /* (USBD_INTERFACE_MAX > 0) */
 
 	/* We have no use for old non EP0 transfer now */
 	LOG_LN("SET_CONFIGURATION: Removing all non endpoint 0 transfer");
@@ -327,18 +323,20 @@ standard_set_configuration(usbd_device *dev, struct usbd_control_arg *arg)
 
 /**
  * Handle GET_CONFIGURATION from host
- * @param[in] dev USB Device
  * @param[in] arg Arguments
  * @return Result
  */
 static enum usbd_control_result
-standard_get_configuration(usbd_device *dev, struct usbd_control_arg *arg)
+standard_get_configuration(struct usbd_control_arg *arg)
 {
 	const uint8_t *value;
-	static const uint8_t zero = 0;
-	value = (dev->current_config != NULL) ?
-		&(dev->current_config)->bConfigurationValue /* configured state */
-		: &zero /* address stage */;
+	static const uint8_t ZERO = 0;
+	const struct usb_config_descriptor *config;
+
+	config = arg->device->current_config;
+	value = (config != NULL) ?
+		&config->bConfigurationValue /* configured state */
+		: &ZERO /* address stage */;
 
 	arg->buf = (void *) value;
 	arg->len = MIN(arg->setup->wLength, 1);
@@ -377,12 +375,11 @@ search_iface(const struct usb_config_descriptor *cfg,
 
 /**
  * Handle SET_INTERFACE from host
- * @param[in] dev USB Device
  * @param[in] arg Arguments
  * @return Result
  */
 static enum usbd_control_result
-standard_set_interface(usbd_device *dev, struct usbd_control_arg *arg)
+standard_set_interface(struct usbd_control_arg *arg)
 {
 	const struct usb_interface_descriptor *iface;
 	uint8_t index = arg->setup->wIndex;
@@ -392,7 +389,7 @@ standard_set_interface(usbd_device *dev, struct usbd_control_arg *arg)
 		index,  alt_set);
 
 	/* STALL since the device is in address stage (or unconfigured) */
-	if (dev->current_config == NULL) {
+	if (arg->device->current_config == NULL) {
 		return USBD_REQ_STALL;
 	}
 
@@ -403,28 +400,28 @@ standard_set_interface(usbd_device *dev, struct usbd_control_arg *arg)
 		 */
 		return USBD_REQ_STALL;
 	}
-#else
-	if (index >= USBD_INTERFACE_MAX) {
+#else /* (USBD_INTERFACE_MAX == 0) */
+	if ((index >= USBD_INTERFACE_MAX) && alt_set) {
 		/* SET_INTERFACE for the interface is not possible because
 		 * the array is not sufficiently big to store the value
 		 */
 		return USBD_REQ_STALL;
 	}
-#endif
+#endif /* (USBD_INTERFACE_MAX == 0) */
 
 	/* search for the interface alternate setting */
-	iface = search_iface(dev->current_config, index, alt_set);
+	iface = search_iface(arg->device->current_config, index, alt_set);
 	if (iface == NULL) {
 		/* interface alternate setting not found */
 		return USBD_REQ_STALL;
 	}
 
 #if (USBD_INTERFACE_MAX > 0)
-	dev->current_iface[index] = iface;
-#endif
+	arg->device->current_iface[index] = iface;
+#endif /* (USBD_INTERFACE_MAX > 0) */
 
-	if (dev->callback.set_interface != NULL) {
-		dev->callback.set_interface(dev, iface);
+	if (arg->device->callback.set_interface != NULL) {
+		arg->device->callback.set_interface(arg->device, iface);
 	}
 
 	return USBD_REQ_HANDLED;
@@ -432,24 +429,25 @@ standard_set_interface(usbd_device *dev, struct usbd_control_arg *arg)
 
 /**
  * Handle GET_INTERFACE from host
- * @param[in] dev USB Device
  * @param[in] arg Arguments
  * @return Result
  */
 static enum usbd_control_result
-standard_get_interface(usbd_device *dev, struct usbd_control_arg *arg)
+standard_get_interface(struct usbd_control_arg *arg)
 {
-	uint8_t index = arg->setup->wIndex;
-
-	/* STALL since the device is in address stage (or unconfigured) */
-	if (dev->current_config == NULL) {
-		return USBD_REQ_STALL;
-	}
-
 #if (USBD_INTERFACE_MAX == 0)
 	/* We have no backing information to provide to host */
 	return USBD_REQ_STALL;
-#else
+
+#else /* (USBD_INTERFACE_MAX == 0) */
+	uint8_t index = arg->setup->wIndex;
+	const struct usb_interface_descriptor *iface;
+
+	/* STALL since the device is in address stage (or unconfigured) */
+	if (arg->device->current_config == NULL) {
+		return USBD_REQ_STALL;
+	}
+
 	/* We have no backing information to provide to host */
 	if (index >= USBD_INTERFACE_MAX) {
 		/* SET_INTERFACE for the interface is not possible because
@@ -457,65 +455,60 @@ standard_get_interface(usbd_device *dev, struct usbd_control_arg *arg)
 		 */
 		return USBD_REQ_STALL;
 	}
-#endif
 
-	if (dev->current_iface[index] == NULL) {
+	iface = arg->device->current_iface[index];
+
+	if (iface == NULL) {
 		/* SET_INTERFACE not called yet.
 		 * USB specs not documented the behaviour. resorting to STALL
 		 */
 		return USBD_REQ_STALL;
 	}
 
-	arg->buf = (void *) &dev->current_iface[index]->bAlternateSetting;
+	arg->buf = (void *) &iface->bAlternateSetting;
 	arg->len = MIN(arg->setup->wLength, 1);
 
 	return USBD_REQ_HANDLED;
+#endif /* (USBD_INTERFACE_MAX == 0) */
 }
 
 static enum usbd_control_result
-standard_device_get_status(usbd_device *dev, struct usbd_control_arg *arg)
+standard_device_get_status(struct usbd_control_arg *arg)
 {
-	(void)dev;
+	static const uint16_t VALUE = 0;
 
-	/* bit 0: self powered */
-	/* bit 1: remote wakeup */
-
-	static const uint8_t buf[2] = {0, 0};
-
-	arg->buf = (void *) buf;
+	arg->buf = (void *) &VALUE;
 	arg->len = MIN(arg->setup->wLength, 2);
 
 	return USBD_REQ_HANDLED;
 }
 
 static enum usbd_control_result
-standard_interface_get_status(usbd_device *dev, struct usbd_control_arg *arg)
+standard_interface_get_status(struct usbd_control_arg *arg)
 {
-	(void)dev;
-	/* not defined */
+	static const uint16_t VALUE = 0;
 
-	static const uint8_t buf[2] = {0, 0};
-
-	arg->buf = (void *) buf;
+	arg->buf = (void *) &VALUE;
 	arg->len = MIN(arg->setup->wLength, 2);
 
 	return USBD_REQ_HANDLED;
 }
 
 static enum usbd_control_result
-standard_endpoint_get_status(usbd_device *dev, struct usbd_control_arg *arg)
+standard_endpoint_get_status(struct usbd_control_arg *arg)
 {
-	static uint8_t not_halted[2] = {0, 0};
-	static uint8_t halted[2] = {1, 0};
+	static const uint16_t NOT_HALTED = 0;
+	static const uint16_t HALTED = 1;
+	bool stalled = usbd_get_ep_stall(arg->device, arg->setup->wIndex);
 
-	arg->buf = usbd_get_ep_stall(dev, arg->setup->wIndex) ? halted : not_halted;
+	arg->buf = (void *) (stalled ? &HALTED : &NOT_HALTED);
 	arg->len = MIN(arg->setup->wLength, 2);
 
 	return USBD_REQ_HANDLED;
 }
 
 static enum usbd_control_result
-standard_request_device(usbd_device *dev, struct usbd_control_arg *arg)
+standard_request_device(struct usbd_control_arg *arg)
 {
 	switch (arg->setup->bRequest) {
 	case USB_REQ_CLEAR_FEATURE:
@@ -527,22 +520,21 @@ standard_request_device(usbd_device *dev, struct usbd_control_arg *arg)
 		if (arg->setup->wValue == USB_FEAT_TEST_MODE) {
 			/* Test mode code goes here. */
 		}
-
 	break;
 	case USB_REQ_SET_ADDRESS:
-	return standard_set_address(dev, arg);
+	return standard_set_address(arg);
 	case USB_REQ_SET_CONFIGURATION:
-	return standard_set_configuration(dev, arg);
+	return standard_set_configuration(arg);
 	case USB_REQ_GET_CONFIGURATION:
-	return standard_get_configuration(dev, arg);
+	return standard_get_configuration(arg);
 	case USB_REQ_GET_DESCRIPTOR:
-	return standard_get_descriptor(dev, arg);
+	return standard_get_descriptor(arg);
 	case USB_REQ_GET_STATUS:
 		/*
 		 * GET_STATUS always responds with zero reply.
 		 * The application may override this behaviour.
 		 */
-	return standard_device_get_status(dev, arg);
+	return standard_device_get_status(arg);
 	case USB_REQ_SET_DESCRIPTOR:
 		/* SET_DESCRIPTOR is optional and not implemented. */
 	break;
@@ -552,7 +544,7 @@ standard_request_device(usbd_device *dev, struct usbd_control_arg *arg)
 }
 
 static enum usbd_control_result
-standard_request_interface(usbd_device *dev, struct usbd_control_arg *arg)
+standard_request_interface(struct usbd_control_arg *arg)
 {
 	switch (arg->setup->bRequest) {
 	case USB_REQ_CLEAR_FEATURE:
@@ -560,36 +552,36 @@ standard_request_interface(usbd_device *dev, struct usbd_control_arg *arg)
 		/* not defined */
 	break;
 	case USB_REQ_GET_INTERFACE:
-	return standard_get_interface(dev, arg);
+	return standard_get_interface(arg);
 	case USB_REQ_SET_INTERFACE:
-	return standard_set_interface(dev, arg);
+	return standard_set_interface(arg);
 	case USB_REQ_GET_STATUS:
-	return standard_interface_get_status(dev, arg);
+	return standard_interface_get_status(arg);
 	}
 
 	return USBD_REQ_STALL;
 }
 
 static enum usbd_control_result
-standard_request_endpoint(usbd_device *dev, struct usbd_control_arg *arg)
+standard_request_endpoint(struct usbd_control_arg *arg)
 {
 	switch (arg->setup->bRequest) {
 	case USB_REQ_CLEAR_FEATURE:
 		if (arg->setup->wValue == USB_FEAT_ENDPOINT_HALT) {
 			uint8_t ep_addr = arg->setup->wIndex;
-			usbd_set_ep_dtog(dev, ep_addr, false);
-			usbd_set_ep_stall(dev, ep_addr, false);
+			usbd_set_ep_dtog(arg->device, ep_addr, false);
+			usbd_set_ep_stall(arg->device, ep_addr, false);
 			return USBD_REQ_HANDLED;
 		}
 	break;
 	case USB_REQ_SET_FEATURE:
 		if (arg->setup->wValue == USB_FEAT_ENDPOINT_HALT) {
-			usbd_set_ep_stall(dev, arg->setup->wIndex, true);
+			usbd_set_ep_stall(arg->device, arg->setup->wIndex, true);
 			return USBD_REQ_HANDLED;
 		}
 	break;
 	case USB_REQ_GET_STATUS:
-	return standard_endpoint_get_status(dev, arg);
+	return standard_endpoint_get_status(arg);
 	case USB_REQ_SET_SYNCH_FRAME:
 		/* FIXME: SYNCH_FRAME is not implemented. */
 		/*
@@ -603,15 +595,15 @@ standard_request_endpoint(usbd_device *dev, struct usbd_control_arg *arg)
 }
 
 static enum usbd_control_result
-standard_request(usbd_device *dev, struct usbd_control_arg *arg)
+standard_request(struct usbd_control_arg *arg)
 {
 	switch (arg->setup->bmRequestType & USB_REQ_TYPE_RECIPIENT) {
 	case USB_REQ_TYPE_DEVICE:
-	return standard_request_device(dev, arg);
+	return standard_request_device(arg);
 	case USB_REQ_TYPE_INTERFACE:
-	return standard_request_interface(dev, arg);
+	return standard_request_interface(arg);
 	case USB_REQ_TYPE_ENDPOINT:
-	return standard_request_endpoint(dev, arg);
+	return standard_request_endpoint(arg);
 	default:
 	return USBD_REQ_STALL;
 	}
@@ -625,13 +617,14 @@ void usbd_ep0_setup(usbd_device *dev, const struct usb_setup_data *setup_data)
 	}
 
 	struct usbd_control_arg arg = {
+		.device = dev,
 		.setup = setup_data,
 		.complete = NULL,
 		.buf = NULL,
 		.len = 0
 	};
 
-	if (standard_request(dev, &arg) == USBD_REQ_HANDLED) {
+	if (standard_request(&arg) == USBD_REQ_HANDLED) {
 		usbd_ep0_transfer(dev, setup_data, arg.buf, arg.len,
 			arg.complete);
 		return;

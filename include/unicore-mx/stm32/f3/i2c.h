@@ -191,6 +191,8 @@
 /* NBYTES[7:0]: Number of bytes (23,16) */
 #define I2C_CR2_NBYTES_SHIFT            16
 #define I2C_CR2_NBYTES_MASK             (0xFF << I2C_CR2_NBYTES_SHIFT)
+#define I2C_CR2_NBYTES_VAL(v)    \
+		(((v) << I2C_CR2_NBYTES_SHIFT) & I2C_CR2_NBYTES_MASK)
 
 /* NACK: NACK generation (slave mode) */
 #define I2C_CR2_NACK			(1 << 15)
@@ -354,7 +356,7 @@
 #define I2C_ICR_ALERTCF			(1 << 13)
 
 /* TIMOUTCF: Timeout detection flag clear */
-#define I2C_ICR_TIMOUTCF		(1 << 12)
+#define I2C_ICR_TIMEOUTCF		(1 << 12)
 
 /* PECCF: PEC Error flag clear */
 #define I2C_ICR_PECCF			(1 << 11)

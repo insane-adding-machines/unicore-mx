@@ -31,22 +31,30 @@
 #include <unicore-mx/nrf/periph.h>
 
 #define OSTICK_PRESCALE_MS_SHIFT  5
+
 #ifdef OSTICK_USE_RTC0
 #define OSTICK_TIMER RTC0
+#define ostick_isr rtc0_isr
 #elif defined(OSTICK_USE_RTC1)
 #define OSTICK_TIMER RTC1
+#define ostick_isr rtc1_isr
 #elif defined(OSTICK_USE_RTC2)
 #define OSTICK_TIMER RTC2
+#define ostick_isr rtc2_isr
 #else
 #define OSTICK_TIMER RTC0
+#define ostick_isr rtc0_isr
 #endif
+
+void (*_ostick_handler)();
 
 /** @brief Initialize the ostick
  *
  * @param[in] interval_ms: The interval of the ostick in ms
  */
-void ostick_init(uint16_t interval_ms)
+void ostick_init(uint16_t interval_ms, void (*ostick_handler)())
 {
+    _ostick_handler = ostick_handler;
     clock_start_lfclk(1);
     rtc_set_prescaler(OSTICK_TIMER, interval_ms<<OSTICK_PRESCALE_MS_SHIFT);
 }
@@ -63,6 +71,7 @@ void ostick_start()
 void ostick_isr()
 {
     rtc_clear(OSTICK_TIMER);
+    (*_ostick_handler)();
 }
 
 /** @brief Stop the ostick */

@@ -27,6 +27,7 @@
 
 #include <unicore-mx/nrf/ostick.h>
 #include <unicore-mx/nrf/rtc.h>
+#include <unicore-mx/nrf/gpio.h>
 #include <unicore-mx/nrf/clock.h>
 #include <unicore-mx/nrf/periph.h>
 
@@ -54,6 +55,7 @@ void (*_ostick_handler)();
  */
 void ostick_init(uint16_t interval_ms, void (*ostick_handler)())
 {
+    /*gpio_mode_setup(GPIO, GPIO_DIR_OUTPUT, GPIO_PUPD_NONE, GPIO19);*/
     _ostick_handler = ostick_handler;
     clock_start_lfclk(1);
     rtc_set_prescaler(OSTICK_TIMER, interval_ms<<OSTICK_PRESCALE_MS_SHIFT);
@@ -64,13 +66,15 @@ void ostick_start()
 {
     periph_enable_irq(OSTICK_TIMER);
     rtc_enable_interrupt(OSTICK_TIMER, RTC_INTEN_TICK);
+    rtc_enable_events(OSTICK_TIMER, RTC_INTEN_TICK);
     rtc_start(OSTICK_TIMER);
 }
 
 /** @brief Ostick interupt routine */
 void ostick_isr()
 {
-    rtc_clear(OSTICK_TIMER);
+     /*gpio_toggle(GPIO, GPIO19);*/
+     RTC_EVENT_TICK(OSTICK_TIMER) = 0;
     (*_ostick_handler)();
 }
 

@@ -139,7 +139,7 @@ BEGIN_DECLS
 void uart_enable(uint32_t uart);
 void uart_disable(uint32_t uart);
 void uart_configure(uint32_t uart,
-		uint8_t txd, uint8_t rxd, uint8_t rts, uint8_t cts,
+		uint32_t txd, uint32_t rxd, uint32_t rts, uint32_t cts,
 		enum uart_baud br, bool enable_parity);
 
 void uart_send_buffer_blocking(uint32_t uart, const uint8_t *buffer, uint16_t len);

@@ -60,6 +60,11 @@
 #define GPIO30			(1 << 30)
 #define GPIO31			(1 << 31)
 #define GPIO_ALL			0xffffffff
+#define GPIO2PIN(b) ({ \
+    int i = 0;\
+    while( !((b >> i++) & 0x01) );\
+    i-1; \
+})
 /**@}*/
 
 BEGIN_DECLS

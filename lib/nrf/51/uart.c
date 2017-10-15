@@ -26,6 +26,7 @@
  */
 
 #include <unicore-mx/nrf/uart.h>
+#include <unicore-mx/nrf/gpio.h>
 
 /** @brief Enable the peripheral
  *
@@ -59,13 +60,13 @@ void uart_disable(uint32_t uart)
  * @param[in] enable_parity bool If true, enable parity bit
  */
 void uart_configure(uint32_t uart,
-        uint8_t tx_pin, uint8_t rx_pin, uint8_t rts_pin, uint8_t cts_pin,
+        uint32_t tx_pin, uint32_t rx_pin, uint32_t rts_pin, uint32_t cts_pin,
         enum uart_baud br, bool enable_parity)
 {
-    UART_PSELTXD(uart) = UART_PSEL_VAL(tx_pin);
-    UART_PSELRXD(uart) = UART_PSEL_VAL(rx_pin);
-    UART_PSELRTS(uart) = UART_PSEL_VAL(rts_pin);
-    UART_PSELCTS(uart) = UART_PSEL_VAL(cts_pin);
+    UART_PSELTXD(uart) = UART_PSEL_VAL(GPIO2PIN(tx_pin));
+    UART_PSELRXD(uart) = UART_PSEL_VAL(GPIO2PIN(rx_pin));
+    UART_PSELRTS(uart) = UART_PSEL_VAL(GPIO2PIN(rts_pin));
+    UART_PSELCTS(uart) = UART_PSEL_VAL(GPIO2PIN(cts_pin));
 
     uint32_t reg_config = enable_parity ? UART_CONFIG_PARITY : 0;
     if (rts_pin <= UART_MAX_PIN || cts_pin <= UART_MAX_PIN) {
@@ -76,10 +77,10 @@ void uart_configure(uint32_t uart,
     UART_BAUDRATE(uart) = br;
 }
 
-void uart_set_pins(uint32_t uart, uint8_t rx, uint8_t tx)
+void uart_set_pins(uint32_t uart, uint32_t rx, uint32_t tx)
 {
-    UART_PSELTXD(uart) = UART_PSEL_VAL(tx);
-    UART_PSELRXD(uart) = UART_PSEL_VAL(rx);
+    UART_PSELTXD(uart) = UART_PSEL_VAL(GPIO2PIN(tx));
+    UART_PSELRXD(uart) = UART_PSEL_VAL(GPIO2PIN(rx));
 }
 
 void uart_set_baudrate(uint32_t uart, enum uart_baud br)
@@ -119,7 +120,7 @@ void uart_set_flow_control(uint32_t uart, int flow)
 
 void uart_send(uint32_t uart, uint16_t byte) {
     __uart_tx_start(uart);
-    UART_TXD((uart)) = byte;
+    __uart_send_byte_sync(uart, byte);
     __uart_tx_stop(uart);
 }
 

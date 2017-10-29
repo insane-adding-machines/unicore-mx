@@ -63,10 +63,7 @@ void uart_configure(uint32_t uart,
         uint32_t tx_pin, uint32_t rx_pin, uint32_t rts_pin, uint32_t cts_pin,
         enum uart_baud br, bool enable_parity)
 {
-    UART_PSELTXD(uart) = UART_PSEL_VAL(GPIO2PIN(tx_pin));
-    UART_PSELRXD(uart) = UART_PSEL_VAL(GPIO2PIN(rx_pin));
-    UART_PSELRTS(uart) = UART_PSEL_VAL(GPIO2PIN(rts_pin));
-    UART_PSELCTS(uart) = UART_PSEL_VAL(GPIO2PIN(cts_pin));
+    uart_set_pins(uart, rx_pin, tx_pin, cts_pin, rts_pin);
 
     uint32_t reg_config = enable_parity ? UART_CONFIG_PARITY : 0;
     if (rts_pin <= UART_MAX_PIN || cts_pin <= UART_MAX_PIN) {
@@ -74,13 +71,15 @@ void uart_configure(uint32_t uart,
     }
 
     UART_CONFIG(uart) = reg_config;
-    UART_BAUDRATE(uart) = br;
+    uart_set_baudrate(uart, br);
 }
 
-void uart_set_pins(uint32_t uart, uint32_t rx, uint32_t tx)
+void uart_set_pins(uint32_t uart, uint32_t rx, uint32_t tx, uint32_t cts, uint32_t rts)
 {
     UART_PSELTXD(uart) = UART_PSEL_VAL(GPIO2PIN(tx));
     UART_PSELRXD(uart) = UART_PSEL_VAL(GPIO2PIN(rx));
+    UART_PSELRTS(uart) = UART_PSEL_VAL(GPIO2PIN(rts));
+    UART_PSELCTS(uart) = UART_PSEL_VAL(GPIO2PIN(cts));
 }
 
 void uart_set_baudrate(uint32_t uart, enum uart_baud br)
@@ -88,68 +87,36 @@ void uart_set_baudrate(uint32_t uart, enum uart_baud br)
     UART_BAUDRATE(uart) = br;
 }
 
-void uart_set_databits(uint32_t uart, int bits)
-{
-
-}
-
-void uart_set_stopbits(uint32_t uart, int bits)
-{
-
-}
-
 void uart_set_parity(uint32_t uart, int parity)
 {
+    UART_CONFIG(uart) |= parity ? UART_CONFIG_PARITY : 0;
 }
 
 void uart_set_flow_control(uint32_t uart, int flow)
 {
+    UART_CONFIG(uart) |= flow ? UART_CONFIG_HWFC : 0;
 }
 
-#define __uart_send_byte_sync(uart, byte) do {\
-    UART_TXD((uart)) = byte;\
-    periph_wait_event(UART_EVENT_TXDRDY(uart));\
-} while (0)
-
-#define __uart_tx_start(uart) do {\
-    periph_clear_event(UART_EVENT_TXDRDY((uart)));\
-    periph_trigger_task(UART_TASK_STARTTX((uart)));\
-} while (0)
-
-#define __uart_tx_stop(uart) periph_trigger_task(UART_TASK_STOPTX((uart)))
+void uart_start_tx(uint32_t uart) {
+    periph_trigger_task(UART_TASK_STARTTX((uart)));
+}
 
 void uart_send(uint32_t uart, uint16_t byte) {
-    __uart_tx_start(uart);
-    __uart_send_byte_sync(uart, byte);
-    __uart_tx_stop(uart);
+    UART_TXD((uart)) = byte;
 }
 
-/** @brief Send buffer synchronously.
- *
- * @param[in] uart uint32_t uart base
- * @param[in] buffer const uint8_t* buffer to send
- * @param[in] len uint16_t length of the buffer
- */
-void uart_send_buffer_blocking(uint32_t uart, const uint8_t *buffer, uint16_t len)
-{
-    __uart_tx_start(uart);
-    for (; len; --len, ++buffer) {
-        __uart_send_byte_sync(uart, *buffer);
-    }
-    __uart_tx_stop(uart);
+void uart_stop_tx(uint32_t uart) {
+    periph_trigger_task(UART_TASK_STOPTX((uart)));
 }
 
-/** @brief Send zero terminated string synchronously.
- *
- * @param[in] uart uint32_t uart base
- * @param[in] buffer const char* string to send
- */
-void uart_send_string_blocking(uint32_t uart, const char *str)
-{
-    __uart_tx_start(uart);
-    for (; *str; ++str) {
-        __uart_send_byte_sync(uart, *str);
-    }
-    __uart_tx_stop(uart);
+void uart_start_rx(uint32_t uart) {
+    periph_trigger_task(UART_TASK_STARTRX((uart)));
 }
 
+uint16_t uart_recv(uint32_t uart) {
+    return UART_RXD(uart);
+}
+
+void uart_stop_rx(uint32_t uart) {
+    periph_trigger_task(UART_TASK_STOPRX((uart)));
+}

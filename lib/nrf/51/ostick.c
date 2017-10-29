@@ -36,26 +36,30 @@
 #ifdef OSTICK_USE_RTC0
 #define OSTICK_TIMER RTC0
 #define ostick_isr rtc0_isr
+#define OSTICK_NVIC NVIC_RTC0_IRQ
 #elif defined(OSTICK_USE_RTC1)
 #define OSTICK_TIMER RTC1
 #define ostick_isr rtc1_isr
+#define OSTICK_NVIC NVIC_RTC1_IRQ
 #elif defined(OSTICK_USE_RTC2)
 #define OSTICK_TIMER RTC2
 #define ostick_isr rtc2_isr
+#define OSTICK_NVIC NVIC_RTC2_IRQ
 #else
 #define OSTICK_TIMER RTC0
 #define ostick_isr rtc0_isr
+#define OSTICK_NVIC NVIC_RTC0_IRQ
 #endif
 
-void (*_ostick_handler)();
+void (*_ostick_handler)(void);
 
 /** @brief Initialize the ostick
  *
  * @param[in] interval_ms: The interval of the ostick in ms
  */
-void ostick_init(uint16_t interval_ms, void (*ostick_handler)())
+void ostick_init(uint16_t interval_ms, void (*ostick_handler)(void))
 {
-    /*gpio_mode_setup(GPIO, GPIO_DIR_OUTPUT, GPIO_PUPD_NONE, GPIO19);*/
+    nvic_set_priority(OSTICK_NVIC, 0);
     _ostick_handler = ostick_handler;
     clock_start_lfclk(1);
     rtc_set_prescaler(OSTICK_TIMER, interval_ms<<OSTICK_PRESCALE_MS_SHIFT);
@@ -73,7 +77,6 @@ void ostick_start()
 /** @brief Ostick interupt routine */
 void ostick_isr()
 {
-     /*gpio_toggle(GPIO, GPIO19);*/
      RTC_EVENT_TICK(OSTICK_TIMER) = 0;
     (*_ostick_handler)();
 }

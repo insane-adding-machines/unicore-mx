@@ -22,7 +22,7 @@
 
 BEGIN_DECLS
 
-void ostick_init(uint16_t interval_ms, void (*ostick_handler)());
+void ostick_init(uint16_t interval_ms, void (*ostick_handler)(void));
 void ostick_start(void);
 void ostick_isr(void);
 void ostick_stop(void);

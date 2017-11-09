@@ -26,6 +26,24 @@
  */
 
 #include <unicore-mx/nrf/timer.h>
+#include <unicore-mx/nrf/clock.h>
+
+/** @brief Get timer ticks
+ *
+ * @param[in] timer uint32_t timer base
+ * @param[out] ticks uint32_t: current ticks value
+ */
+uint32_t timer_get_ticks(uint32_t timer)
+{
+  uint32_t ticks;
+  uint32_t cc;
+
+  cc = TIMER0_CC0;
+  TIMER_TASK_CAPTURE(timer, 0) = 1;
+  ticks = TIMER_CC(timer, 0);
+  TIMER_CC(timer, 0) = cc;
+  return ticks;
+}
 
 /** @brief Set timer mode (counter/timer)
  *
@@ -97,4 +115,25 @@ void timer_set_compare(uint32_t timer, uint8_t compare_num, uint32_t compare_val
     }
 
     TIMER_CC(timer, compare_num) = compare_val;
+}
+
+/** @brief Get the timer tick frequency
+ *
+ * @param[in] timer uint32_t timer base
+ * @param[in] us uint32_t time in useconds
+ * @param[out] uint32_t frequency of ticking
+ */
+uint32_t timer_get_freq(uint32_t timer)
+{
+    return CLOCK_PCLK16M/(1<<TIMER_PRESCALER(timer));
+}
+
+/** @brief Get compare register
+ *
+ * @param[in] timer uint32_t timer base
+ * @param[in] compare_num uint8_t compare number (0-3)
+ * @param[out] uint32_t compare register value
+ */
+uint32_t timer_get_cc(uint32_t timer, uint8_t compare_num) {
+    return TIMER_CC(timer, compare_num);
 }

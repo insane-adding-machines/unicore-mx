@@ -55,7 +55,7 @@
 #define TIMER1_TASK_SHUTDOWN			TIMER_TASK_SHUTDOWN(TIMER1)
 #define TIMER2_TASK_SHUTDOWN			TIMER_TASK_SHUTDOWN(TIMER2)
 
-#define TIMER_TASK_CAPTURE(T, C)			MMIO32((T) + 0x040 + 0x4 * (C))
+#define TIMER_TASK_CAPTURE(T, C)			MMIO32((T) + 0x040 + (uint32_t)(0x4 * (C)))
 #define TIMER0_TASK_CAPTURE(C)			TIMER_TASK_CAPTURE(TIMER0, C)
 #define TIMER1_TASK_CAPTURE(C)			TIMER_TASK_CAPTURE(TIMER1, C)
 #define TIMER2_TASK_CAPTURE(C)			TIMER_TASK_CAPTURE(TIMER2, C)
@@ -77,7 +77,7 @@
 
 /* Events */
 
-#define TIMER_EVENT_COMPARE(T, C)			MMIO32((T) + 0x140 + 0x4 * (C))
+#define TIMER_EVENT_COMPARE(T, C)			MMIO32((T) + 0x140 + (uint32_t)(0x4 * (C)))
 #define TIMER0_EVENT_COMPARE(C)			TIMER_EVENT_COMPARE(TIMER0, C)
 #define TIMER1_EVENT_COMPARE(C)			TIMER_EVENT_COMPARE(TIMER1, C)
 #define TIMER2_EVENT_COMPARE(C)			TIMER_EVENT_COMPARE(TIMER2, C)
@@ -197,6 +197,7 @@ BEGIN_DECLS
 #define timer_enable_interrupts			periph_enable_interrupts
 #define timer_disable_interrupts			periph_disable_interrupts
 
+uint32_t timer_get_ticks(uint32_t timer);
 void timer_set_mode(uint32_t timer, enum timer_mode mode);
 void timer_set_bitmode(uint32_t timer, enum timer_bitmode bitmode);
 void timer_start(uint32_t timer);
@@ -204,6 +205,8 @@ void timer_stop(uint32_t timer);
 void timer_clear(uint32_t timer);
 void timer_set_prescaler(uint32_t timer, uint8_t presc);
 void timer_set_compare(uint32_t timer, uint8_t compare_num, uint32_t compare_val);
+uint32_t timer_get_cc(uint32_t timer, uint8_t compare_num);
+uint32_t timer_get_freq(uint32_t timer);
 
 END_DECLS
 

@@ -22,56 +22,56 @@
 #include <unicore-mx/stm32/memorymap.h>
 
 /* --- SDIO registers ------------------------------------------------------ */
-
+/////#define USART_CR1(usart_base)       MMIO32((usart_base) + 0x00)
 /* SDIO power control register (SDIO_POWER) */
-#define SDIO_POWER			MMIO32(SDIO_BASE + 0x00)
+#define SDIO_POWER(sdio_base)           MMIO32((sdio_base) + 0x00)
 
 /* SDI clock control register (SDIO_CLKCR) */
-#define SDIO_CLKCR			MMIO32(SDIO_BASE + 0x04)
+#define SDIO_CLKCR(sdio_base)           MMIO32((sdio_base) + 0x04)
 
 /* SDIO argument register (SDIO_ARG) */
-#define SDIO_ARG			MMIO32(SDIO_BASE + 0x08)
+#define SDIO_ARG(sdio_base)             MMIO32((sdio_base) + 0x08)
 
 /* SDIO command register (SDIO_CMD) */
-#define SDIO_CMD			MMIO32(SDIO_BASE + 0x0C)
+#define SDIO_CMD(sdio_base)             MMIO32((sdio_base) + 0x0C)
 
 /* SDIO command response register (SDIO_RESPCMD) */
-#define SDIO_RESPCMD			MMIO32(SDIO_BASE + 0x10)
+#define SDIO_RESPCMD(sdio_base)         MMIO32((sdio_base) + 0x10)
 
 /* SDIO response 1..4 register (SDIO_RESPx) */
-#define SDIO_RESP1			MMIO32(SDIO_BASE + 0x14)
-#define SDIO_RESP2			MMIO32(SDIO_BASE + 0x18)
-#define SDIO_RESP3			MMIO32(SDIO_BASE + 0x1C)
-#define SDIO_RESP4			MMIO32(SDIO_BASE + 0x20)
+#define SDIO_RESP1(sdio_base)			MMIO32((sdio_base) + 0x14)
+#define SDIO_RESP2(sdio_base)			MMIO32((sdio_base) + 0x18)
+#define SDIO_RESP3(sdio_base)			MMIO32((sdio_base) + 0x1C)
+#define SDIO_RESP4(sdio_base)			MMIO32((sdio_base) + 0x20)
 
 /* SDIO data timer register (SDIO_DTIMER) */
-#define SDIO_DTIMER			MMIO32(SDIO_BASE + 0x24)
+#define SDIO_DTIMER(sdio_base)			MMIO32((sdio_base) + 0x24)
 
 /* SDIO data length register (SDIO_DLEN) */
-#define SDIO_DLEN			MMIO32(SDIO_BASE + 0x28)
+#define SDIO_DLEN(sdio_base)			MMIO32((sdio_base) + 0x28)
 
 /* SDIO data control register (SDIO_DCTRL) */
-#define SDIO_DCTRL			MMIO32(SDIO_BASE + 0x2C)
+#define SDIO_DCTRL(sdio_base)			MMIO32((sdio_base) + 0x2C)
 
 /* SDIO data counter register (SDIO_DCOUNT) */
 /* read only, write has no effect */
-#define SDIO_DCOUNT			MMIO32(SDIO_BASE + 0x30)
+#define SDIO_DCOUNT(sdio_base)			MMIO32((sdio_base) + 0x30)
 
 /* SDIO status register (SDIO_STA) */
-#define SDIO_STA			MMIO32(SDIO_BASE + 0x34)
+#define SDIO_STA(sdio_base)             MMIO32((sdio_base) + 0x34)
 
 /* SDIO interrupt clear register (SDIO_ICR) */
-#define SDIO_ICR			MMIO32(SDIO_BASE + 0x38)
+#define SDIO_ICR(sdio_base)             MMIO32((sdio_base) + 0x38)
 
 /* SDIO mask register (SDIO_MASK) */
-#define SDIO_MASK			MMIO32(SDIO_BASE + 0x3C)
+#define SDIO_MASK(sdio_base)            MMIO32((sdio_base) + 0x3C)
 
 /* SDIO FIFO counter register (SDIO_FIFOCNT) */
-#define SDIO_FIFOCNT			MMIO32(SDIO_BASE + 0x48)
+#define SDIO_FIFOCNT(sdio_base)         MMIO32((sdio_base) + 0x48)
 
 /* SDIO data FIFO register (SDIO_FIFO) */
 /* the SDIO data FIFO is 32 32bit words long, beginning at this address */
-#define SDIO_FIFO			MMIO32(SDIO_BASE + 0x80)
+#define SDIO_FIFO(sdio_base)            MMIO32((sdio_base) + 0x80)
 
 
 /* --- SDIO_POWER values --------------------------------------------------- */

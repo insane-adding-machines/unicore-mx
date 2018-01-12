@@ -30,7 +30,15 @@ TGT_CFLAGS	= -Os -Wall -Wextra -I../../../include -fno-common \
 TGT_CFLAGS      += $(DEBUG_FLAGS)
 # ARFLAGS	= rcsv
 ARFLAGS		= rcs
-OBJS		= gpio.o rtc.o clock.o ppi.o uart.o radio.o timer.o i2c.o ostick.o
+OBJS		= ../common/gpio.o \
+			  ../common/rtc.o \
+			  ../common/clock.o \
+			  ./clock.o \
+			  ../common/ppi.o \
+			  ../common/uart.o \
+			  ../common/radio.o \
+			  ../common/timer.o \
+			  ../common/i2c.o \
 
 VPATH += ../../cm3
 

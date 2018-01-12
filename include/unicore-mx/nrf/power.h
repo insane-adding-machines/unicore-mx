@@ -20,6 +20,8 @@
 
 #if defined(NRF51)
 #	include <unicore-mx/nrf/51/power.h>
+#elif defined(NRF51)
+#	include <unicore-mx/nrf/52/power.h>
 #else
 #	error "Processor family not defined."
 #endif

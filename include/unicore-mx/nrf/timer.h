@@ -20,6 +20,8 @@
 
 #if defined(NRF51)
 #	include <unicore-mx/nrf/51/timer.h>
+#elif defined(NRF52)
+#	include <unicore-mx/nrf/52/timer.h>
 #else
 #	error "Processor family not defined."
 #endif

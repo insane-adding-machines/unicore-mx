@@ -20,6 +20,8 @@
 
 #if defined(NRF51)
 #	include <unicore-mx/nrf/51/i2c.h>
+#elif defined(NRF52)
+#	include <unicore-mx/nrf/52/i2c.h>
 #else
 #	error "Processor family not defined."
 #endif

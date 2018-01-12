@@ -41,6 +41,8 @@
 
 #elif defined(NRF51)
 #	include <unicore-mx/nrf/51/nvic.h>
+#elif defined(NRF52)
+#	include <unicore-mx/nrf/52/nvic.h>
 
 #elif defined(SAM3A)
 #	include <unicore-mx/sam/3a/nvic.h>

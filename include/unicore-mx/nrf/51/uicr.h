@@ -20,23 +20,7 @@
 
 #include <unicore-mx/cm3/common.h>
 #include <unicore-mx/nrf/memorymap.h>
-
-/* User Information Configuration Register */
-
-#define UICR_CLENR0			MMIO32(UICR_BASE + 0x000)
-#define UICR_RBPCONF			MMIO32(UICR_BASE + 0x004)
-#define UICR_XTALFREQ			MMIO32(UICR_BASE + 0x008)
-#define UICR_FWID			MMIO32(UICR_BASE + 0x010)
-#define UICR_BOOTLOADERADDR			MMIO32(UICR_BASE + 0x014)
-
-/* Reserved for Nordic firmware design, n = 1..14 */
-#define UICR_NRFFW(n)			MMIO32(UICR_BASE + 0x014 + 0x4 * (n))
-
-/* Reserved for Nordic hardware design, n = 0..11 */
-#define UICR_NRFHW(n)			MMIO32(UICR_BASE + 0x050 + 0x4 * (n))
-
-/* Reserved for customer n = 0..31 */
-#define UICR_CUSTOMER(n)			MMIO32(UICR_BASE + 0x080 + 0x4 * (n))
+#include <unicore-mx/nrf/common/uicr.h>
 
 
 #endif  /* NRF51_UICR_H */

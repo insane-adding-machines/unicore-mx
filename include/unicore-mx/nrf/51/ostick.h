@@ -19,14 +19,6 @@
 #define NRF51_OSTICK_H
 
 #include <unicore-mx/cm3/common.h>
-
-BEGIN_DECLS
-
-void ostick_init(uint16_t interval_ms, void (*ostick_handler)(void));
-void ostick_start(void);
-void ostick_isr(void);
-void ostick_stop(void);
-
-END_DECLS
+#include <unicore-mx/nrf/common/ostick.h>
 
 #endif  /* NRF51_OSTICK_H */

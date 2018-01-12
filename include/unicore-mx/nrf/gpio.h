@@ -23,6 +23,8 @@
 
 #if defined(NRF51)
 #	include <unicore-mx/nrf/51/gpio.h>
+#elif defined(NRF52)
+#	include <unicore-mx/nrf/52/gpio.h>
 #else
 #	error "Processor family not defined."
 #endif

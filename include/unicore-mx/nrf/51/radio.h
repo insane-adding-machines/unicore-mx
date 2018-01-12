@@ -23,5 +23,17 @@
 #include <unicore-mx/nrf/periph.h>
 #include <unicore-mx/nrf/common/radio.h>
 
+enum radio_mode {
+	RADIO_MODE_NRF_1MBIT,
+	RADIO_MODE_NRF_2MBIT,
+	RADIO_MODE_NRF_250KBIT,
+	RADIO_MODE_BLE_1MBIT,
+};
+
+BEGIN_DECLS
+
+void radio_set_mode(enum radio_mode mode);
+
+END_DECLS
 
 #endif  /* NRF51_RADIO_H */

@@ -37,6 +37,7 @@ OBJS		= ../common/gpio.o \
 			  ../common/ppi.o \
 			  ../common/uart.o \
 			  ../common/radio.o \
+			  ./radio.o \
 			  ../common/timer.o \
 			  ../common/i2c.o \
 

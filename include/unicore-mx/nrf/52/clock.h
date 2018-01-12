@@ -27,4 +27,6 @@
 /* Clock registers */
 #define CLOCK_TRACECONFIG       MMIO32(CLOCK_BASE + 0x55C)
 
+#define CLOCK_PCLK              32000000
+
 #endif  /* NRF52_CLOCK_H */

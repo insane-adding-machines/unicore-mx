@@ -125,7 +125,7 @@ void timer_set_compare(uint32_t timer, uint8_t compare_num, uint32_t compare_val
  */
 uint32_t timer_get_freq(uint32_t timer)
 {
-    return CLOCK_PCLK16M/(1<<TIMER_PRESCALER(timer));
+    return CLOCK_PCLK/(1<<TIMER_PRESCALER(timer));
 }
 
 /** @brief Get compare register

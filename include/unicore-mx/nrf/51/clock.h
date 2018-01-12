@@ -27,7 +27,7 @@
 /* Clock registers */
 #define CLOCK_XTALFREQ          MMIO32(CLOCK_BASE + 0x550)
 
-#define CLOCK_PCLK16M           16000000
+#define CLOCK_PCLK              16000000
 
 enum clock_xtal_freq {
     CLOCK_XTAL_FREQ_32MHZ,

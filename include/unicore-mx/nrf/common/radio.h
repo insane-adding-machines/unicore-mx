@@ -261,13 +261,6 @@ enum radio_txpower {
 	RADIO_TXPOWER_NEG_30DBM = 0xD8,
 };
 
-enum radio_mode {
-	RADIO_MODE_NRF_1MBIT,
-	RADIO_MODE_NRF_2MBIT,
-	RADIO_MODE_NRF_250KBIT,
-	RADIO_MODE_BLE_1MBIT,
-};
-
 enum radio_state {
 	DISABLED,
 	RXRU,
@@ -288,7 +281,6 @@ void radio_disable(void);
 void radio_enable(void);
 void radio_set_crclen(uint8_t crc_len);
 void radio_set_lsbfirst(void);
-void radio_set_mode(enum radio_mode mode);
 void radio_set_msbfirst(void);
 void radio_set_txpower(enum radio_txpower txpower);
 void radio_disable_whitening(void);

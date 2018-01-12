@@ -21,7 +21,7 @@
 
 #if defined(NRF51)
 #	include <unicore-mx/nrf/51/ficr.h>
-#elif defined(NRF51)
+#elif defined(NRF52)
 #	include <unicore-mx/nrf/52/ficr.h>
 #else
 #	error "Processor family not defined."

@@ -29,38 +29,6 @@
 #include <unicore-mx/nrf/radio.h>
 
 
-/** @brief Set radio mode.
- *
- * @details The function also performs all required overrides for BLE and NRF mode.
- *
- * @param[in] fmode enum radio_mode the new mode.
- * */
-void radio_set_mode(enum radio_mode mode)
-{
-    volatile uint32_t* override_pos = 0;
-    if ((RADIO_MODE_BLE_1MBIT == mode)
-            && (FICR_OVERRIDEEN & ~FICR_OVERRIDEEN_BLE_1MBIT)) {
-        /* Need to use Override */
-        override_pos = &FICR_BLE_1MBIT0;
-    } else if ((RADIO_MODE_NRF_1MBIT == mode)
-            && (FICR_OVERRIDEEN & ~FICR_OVERRIDEEN_NRF_1MBIT)) {
-        override_pos = &FICR_NRF_1MBIT0;
-    }
-
-    if (override_pos) {
-        uint8_t i;
-        for (i = 0; i <= 4; ++i, ++override_pos) {
-            RADIO_OVERRIDE(i) = *override_pos;
-        }
-
-        RADIO_OVERRIDE4 |= RADIO_OVERRIDE4_ENABLE;
-    } else {
-        RADIO_OVERRIDE4 &= ~RADIO_OVERRIDE4_ENABLE;
-    }
-
-    RADIO_MODE = mode;
-}
-
 /** @brief Set radio transmission power.
  *
  * @details Note, not all supported power levels are BLE compliant.
@@ -173,7 +141,9 @@ void radio_set_crc_skipaddr(bool is_skip_addr)
  */
 void radio_configure_ble(void)
 {
+#ifdef NRF51
     radio_set_mode(RADIO_MODE_BLE_1MBIT);
+#endif
     RADIO_TIFS = RADIO_BLE_TIFS;
     radio_set_lsbfirst();
     radio_enable_whitening();

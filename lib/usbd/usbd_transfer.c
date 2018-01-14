@@ -177,7 +177,7 @@ static void queue_item_append(struct usbd_urb_queue *queue, usbd_urb *urb)
 		queue->tail = urb;
 	} else {
 		/* Problem! */
-		LOGF_LN("URB Queue %p corrupt", queue);
+		USBD_LOGF_LN(USB_VURBFAIL, "URB Queue %p corrupt", queue);
 		queue->head = queue->tail = urb;
 	}
 }
@@ -298,8 +298,7 @@ usbd_urb_id usbd_transfer_submit(usbd_device *dev,
 	if (transfer->ep_type == USBD_EP_CONTROL) {
 		if (!ENDPOINT_NUMBER(transfer->ep_addr) &&
 				!ctrl_ep0_size_acceptable(transfer->ep_size)) {
-			LOGF_LN("Invalid control endpoint size %"PRIu16" for EP0",
-					transfer->ep_size);
+			USBD_LOGF_LN(USB_VURBFAIL, "Invalid control endpoint size %"PRIu16" for EP0", transfer->ep_size);
 			TRANSFER_INVALID(dev, transfer);
 			return USBD_INVALID_URB_ID;
 		}
@@ -321,6 +320,8 @@ usbd_urb_id usbd_transfer_submit(usbd_device *dev,
 		(dev->last_poll + MS2US(transfer->timeout)) : 0;
 #endif
 
+	bool to_active = !dev->urbs.force_all_new_urb_to_waiting &&
+						try_alloc_ep_for_urb(dev, urb);
 
 #if defined(USBD_DEBUG)
 	const char *ep_type_map_str[] = {
@@ -330,18 +331,14 @@ usbd_urb_id usbd_transfer_submit(usbd_device *dev,
 		[USBD_EP_BULK] = "Bulk",
 	};
 
-	LOGF_LN("Created URB %"PRIu64": %s %s %"PRIu8": data=%p, length=%u",
+	USBD_LOGF_LN(USB_VURB, "Created URB %"PRIu64": %s %s %"PRIu8": data=%p, length=%u is %s",
 				urb->id, ep_type_map_str[urb->transfer.ep_type],
 				IS_IN_ENDPOINT(urb->transfer.ep_addr) ? "IN" : "OUT",
 				ENDPOINT_NUMBER(urb->transfer.ep_addr),
-				urb->transfer.buffer, urb->transfer.length);
+				urb->transfer.buffer, urb->transfer.length
+				, ( (to_active) ? "active" : "waiting" )
+				);
 #endif
-
-	bool to_active = !dev->urbs.force_all_new_urb_to_waiting &&
-						try_alloc_ep_for_urb(dev, urb);
-
-	LOGF_LN("[new] URB id=%"PRIu64" is %s", urb->id,
-					to_active ? "active" : "waiting");
 
 	if (to_active) {
 		mark_ep_as_free(dev, urb->transfer.ep_addr, false);
@@ -365,7 +362,7 @@ static void urb_callback(usbd_device *dev, usbd_urb *urb,
 {
 	LOG_CALL
 
-	LOGF_LN("URB %"PRIu64" transfer status = %s", urb->id,
+	USBD_LOGF_LN(USB_VURB, "URB %"PRIu64" transfer status = %s", urb->id,
 		stringify_transfer_status(status));
 
 	/* callback provided */
@@ -388,7 +385,7 @@ bool usbd_transfer_cancel(usbd_device *dev, usbd_urb_id urb_id)
 	usbd_urb *urb, *prev;
 
 	if (IS_URB_ID_INVALID(urb_id)) {
-		LOG_LN("invalid urb id passed to transfer_cancel");
+		USBD_LOG_LN(USB_VURBFAIL, "invalid urb id passed to transfer_cancel");
 		return false;
 	}
 
@@ -421,7 +418,7 @@ bool usbd_transfer_cancel(usbd_device *dev, usbd_urb_id urb_id)
 		return true;
 	}
 
-	LOGF_LN("WARN: urb with id = %"PRIu64" not found", urb_id);
+	USBD_LOGF_LN(USB_VURBFAIL, "WARN: urb with id = %"PRIu64" not found", urb_id);
 	return false;
 }
 
@@ -472,7 +469,7 @@ unsigned usbd_transfer_cancel_ep(usbd_device *dev, uint8_t ep_addr)
 void usbd_urb_schedule(usbd_device *dev)
 {
 	if (dev->urbs.force_all_new_urb_to_waiting) {
-		LOG_LN("Could not schedule (force_all_new_urb_to_waiting = true)");
+		USBD_LOG_LN(USB_VURBFAIL, "Could not schedule (force_all_new_urb_to_waiting = true)");
 		return;
 	}
 
@@ -489,7 +486,7 @@ void usbd_urb_schedule(usbd_device *dev)
 		urb = queue_item_detach(&dev->urbs.waiting, prev, tmp);
 		queue_item_append(&dev->urbs.active, tmp);
 
-		LOGF_LN("[waiting] URB id=%"PRIu64" is now active", tmp->id);
+		USBD_LOGF_LN(USB_VURB, "[waiting] URB id=%"PRIu64" is now active", tmp->id);
 		dev->backend->urb_submit(dev, tmp);
 	}
 }
@@ -516,7 +513,7 @@ static void detach_from_active(usbd_device *dev, usbd_urb *item)
 		return;
 	}
 
-	LOGF_LN("WARNING: Found not find URB %"PRIu64" in active list to detach it",
+	USBD_LOGF_LN(USB_VURBFAIL, "WARNING: Found not find URB %"PRIu64" in active list to detach it",
 		urb->id);
 }
 
@@ -547,8 +544,7 @@ usbd_urb *usbd_find_active_urb(usbd_device *dev, uint8_t ep_addr)
 {
 	usbd_urb *urb = NULL;
 
-	LOGF_LN("Searching for URB which is active and has "
-		"ep_addr=0x%"PRIx8, ep_addr);
+	USBD_LOGF_LN(USB_VURBQUE, "Searching URB on ep0x%"PRIx8, ep_addr);
 
 	for (urb = dev->urbs.active.head; urb != NULL; urb = urb->next) {
 		if (urb->transfer.ep_addr == ep_addr) {
@@ -556,8 +552,7 @@ usbd_urb *usbd_find_active_urb(usbd_device *dev, uint8_t ep_addr)
 		}
 	}
 
-	LOGF_LN("Unable to find the current processing URB for "
-		"endpoint 0x%"PRIx8, ep_addr);
+	USBD_LOGF_LN(USB_VURB,"Unable to find the current processing URB for ep0x%"PRIx8, ep_addr);
 	return NULL;
 }
 

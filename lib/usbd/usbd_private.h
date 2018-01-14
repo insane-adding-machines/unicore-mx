@@ -234,22 +234,72 @@ struct usbd_backend {
 #endif
 };
 
+#define USB_VALL   0
+#define USB_VFAIL  1
+#define USB_VINFO  2
+#define USB_VNOTE  3
+#define USB_VDEBUG 4
+#define USB_VTRACE 5
+
+#define USB_VCALL  USB_VTRACE
+#define USB_VIO    USB_VDEBUG
+#define USB_VIO2   USB_VTRACE
+#define USB_VSETUP USB_VDEBUG
+#define USB_VSETUP_MSC USB_VDEBUG
+#define USB_VURB       USB_VDEBUG
+#define USB_VURBQUE    USB_VTRACE
+#define USB_VURBFAIL   USB_VDEBUG
+#define USB_VIO_MSC    USB_VDEBUG
+
+#if !defined(USBD_DEBUG)
+# define USBD_DEBUG USB_VDEBUG
+#endif
+
+#define NEW_LINE "\n"
+
 #if defined(USBD_DEBUG)
 extern void usbd_log_puts(const char *arg);
 extern void usbd_log_printf(const char *fmt, ...)
 	__attribute__((format(printf, 1, 2)));
+extern void usbd_log_call(const char *fname);
+
 # include <inttypes.h>
-# define LOG(str) usbd_log_puts(str)
-# define LOGF(fmt,...) usbd_log_printf(fmt, ##__VA_ARGS__)
+# define USBD_STR(s) s
+# define USBD_LOG(level, str)      if (level <= USBD_DEBUG) usbd_log_puts(str)
+# define USBD_LOGF(level, fmt,...) if (level <= USBD_DEBUG) usbd_log_printf(fmt, ##__VA_ARGS__)
+
+# define USBD_LOG_LN(level, str) USBD_LOG(level, str); USBD_LOG(level, NEW_LINE );
+//# define USBD_LOGF_LN(level, fmt,...) USBD_LOGF(level, fmt, __VA_ARGS__); USBD_LOG(level, NEW_LINE );
+# define USBD_LOGF_LN(level, fmt,...) USBD_LOGF(level, USBD_STR(fmt)NEW_LINE, __VA_ARGS__)
+
+# if USBD_DEBUG >= USB_VCALL
+# define USBD_LOG_CALL usbd_log_call(__func__);
+# else
+# define USBD_LOG_CALL
+# endif
+
+//temps for backport
+# define LOG(str)      USBD_LOG(USB_VALL, str)
+# define LOGF(fmt,...) USBD_LOGF(USB_VALL, fmt, __VA_ARGS__)
+
+# define LOG_LN(str)   USBD_LOG_LN(USB_VALL, str)
+# define LOGF_LN(fmt,...) USBD_LOGF_LN(USB_VALL, fmt, __VA_ARGS__)
+
+# define LOG_CALL      USBD_LOG_CALL
+
 #else
+# define USBD_LOG(level, str)
+# define USBD_LOGF(level, fmt,...)
+# define USBD_LOG_LN(level, str)
+# define USBD_LOGF_LN(level, fmt,...)
+# define USBD_LOG_CALL
+
 # define LOG(str)
 # define LOGF(fmt,...)
+# define LOG_LN(str)
+# define LOGF_LN(fmt,...)
+# define LOG_CALL
 #endif
-
-#define NEW_LINE "\n"
-#define LOG_LN(str) LOG(str); LOG(NEW_LINE)
-#define LOGF_LN(fmt,...) LOGF(fmt, __VA_ARGS__); LOG(NEW_LINE)
-#define LOG_CALL LOG("inside "); LOG_LN(__func__);
 
 #define IS_URB_ID_INVALID(urb_id) ((urb_id) == USBD_INVALID_URB_ID)
 #define IS_URB_INVALID(urb) IS_URB_ID_INVALID((urb)->id)

@@ -63,6 +63,9 @@
  * clear DTOG bit for the endpoints. (except EP0)
  */
 
+static void urb_callback(usbd_device *dev, usbd_urb *urb,
+			usbd_transfer_status status);
+
 #if defined(USBD_DEBUG)
 static const char *stringify_transfer_status(usbd_transfer_status status) {
 	switch (status) {
@@ -192,7 +195,7 @@ static void queue_item_append(struct usbd_urb_queue *queue, usbd_urb *urb)
  */
 static inline bool is_urb_timed_out(usbd_urb *urb, uint64_t now)
 {
-	if (urb->transfer->timeout == USBD_TIMEOUT_NEVER) {
+	if (urb->transfer.timeout == USBD_TIMEOUT_NEVER) {
 		return false;
 	}
 
@@ -212,10 +215,10 @@ static inline bool is_urb_timed_out(usbd_urb *urb, uint64_t now)
  * @return false if no URB timeout
  */
 static bool queue_timeout_check(usbd_device *dev, uint64_t now,
-					usbd_urb_queue *queue)
+					struct usbd_urb_queue *queue)
 {
 	bool any_urb_timedout = false;
-	usbd_urb *urb = queue->head, *prev = NULL, tmp;
+	usbd_urb *urb = queue->head, *prev = NULL, *tmp;
 
 	while (urb != NULL) {
 		if (!is_urb_timed_out(urb, now)) {
@@ -241,7 +244,7 @@ static bool queue_timeout_check(usbd_device *dev, uint64_t now,
  * @param[in] dev USB Device
  * @param[in] now Current time reference
  */
-static void usbd_timeout_checkup(usbd_device *dev, uint64_t now)
+void usbd_timeout_checkup(usbd_device *dev, uint64_t now)
 {
 	/* Check the Waiting Queue */
 	queue_timeout_check(dev, now, &dev->urbs.waiting);
@@ -300,7 +303,7 @@ usbd_urb_id usbd_transfer_submit(usbd_device *dev,
 				!ctrl_ep0_size_acceptable(transfer->ep_size)) {
 			LOGF_LN("Invalid control endpoint size %"PRIu16" for EP0",
 					transfer->ep_size);
-			TRANSFER_INVALID(dev, transfer);
+			TRANSFER_CALLBACK(dev, transfer, USBD_ERR_INVALID, USBD_INVALID_URB_ID)
 			return USBD_INVALID_URB_ID;
 		}
 	}
@@ -308,7 +311,7 @@ usbd_urb_id usbd_transfer_submit(usbd_device *dev,
 	/* check if got any URB free */
 	usbd_urb *urb = unused_pop(dev);
 	if (urb == NULL) {
-		TRANSFER_NO_RES(dev, transfer);
+		TRANSFER_CALLBACK(dev, transfer, USBD_ERR_RES_UNAVAIL, USBD_INVALID_URB_ID)
 		return USBD_INVALID_URB_ID;
 	}
 
@@ -387,7 +390,7 @@ bool usbd_transfer_cancel(usbd_device *dev, usbd_urb_id urb_id)
 {
 	usbd_urb *urb, *prev;
 
-	if (IS_URB_ID_INVALID(urb_id)) {
+	if (urb_id == USBD_INVALID_URB_ID) {
 		LOG_LN("invalid urb id passed to transfer_cancel");
 		return false;
 	}
@@ -888,7 +891,7 @@ void *usbd_urb_get_buffer_pointer(usbd_device *dev, usbd_urb *urb, size_t len)
 	if (transfer->flags & USBD_FLAG_PER_PACKET_CALLBACK) {
 		if (!out) {
 			/* IN endpoint, get data from user */
-			URB_CALLBACK(dev, urb, USBD_ONE_PACKET_DATA);
+			TRANSFER_CALLBACK(dev, &urb->transfer, USBD_ONE_PACKET_DATA, urb->id)
 		}
 	}
 
@@ -926,7 +929,7 @@ void usbd_urb_inc_data_pointer(usbd_device *dev, usbd_urb *urb, size_t len)
 	if (transfer->flags & USBD_FLAG_PER_PACKET_CALLBACK) {
 		if (out) {
 			/* OUT endpoint, give data to user */
-			URB_CALLBACK(dev, urb, USBD_ONE_PACKET_DATA);
+			TRANSFER_CALLBACK(dev, &urb->transfer, USBD_ONE_PACKET_DATA, urb->id)
 		}
 	}
 }

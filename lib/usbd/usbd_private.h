@@ -251,9 +251,6 @@ extern void usbd_log_printf(const char *fmt, ...)
 #define LOGF_LN(fmt,...) LOGF(fmt, __VA_ARGS__); LOG(NEW_LINE)
 #define LOG_CALL LOG("inside "); LOG_LN(__func__);
 
-#define IS_URB_ID_INVALID(urb_id) ((urb_id) == USBD_INVALID_URB_ID)
-#define IS_URB_INVALID(urb) IS_URB_ID_INVALID((urb)->id)
-
 /** Convert milliseconds to microseconds */
 #define MS2US(ms) ((ms) * 1000)
 
@@ -270,23 +267,6 @@ extern void usbd_log_printf(const char *fmt, ...)
 	if ((transfer)->callback != NULL) {									\
 		(transfer)->callback((dev), (transfer), (status), (urb_id));	\
 	}
-
-/**
- * Perform callback when no endpoint is available for transfer
- * @param[in] t Transfer
- */
-#define TRANSFER_NO_RES(dev, t)		\
-	TRANSFER_CALLBACK((dev), (t), USBD_ERR_RES_UNAVAIL, USBD_INVALID_URB_ID)
-
-/**
- * Perform callback when transfer is invalid
- * @param[in] t Transfer
- */
-#define TRANSFER_INVALID(dev, t)		\
-	TRANSFER_CALLBACK((dev), (t), USBD_ERR_INVALID, USBD_INVALID_URB_ID)
-
-#define URB_CALLBACK(dev, urb, status)		\
-	TRANSFER_CALLBACK((dev), &(urb)->transfer, status, (urb)->id)
 
 /* Just for readability, nothing special */
 #define IS_OUT_ENDPOINT(ep_addr) (!((ep_addr) & 0x80))

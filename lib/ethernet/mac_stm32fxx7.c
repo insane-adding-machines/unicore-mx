@@ -223,8 +223,8 @@ void eth_init(uint8_t phy, enum eth_clk clock)
 	phy_reset(phy);
 
 	ETH_MACCR = ETH_MACCR_FES | ETH_MACCR_DM | ETH_MACCR_CSTF | ETH_MACCR_APCS;
-	ETH_MACFFR = ETH_MACFFR_RA | ETH_MACFFR_PM;
-	ETH_MACHTHR = 0; /* pass all frames */
+	ETH_MACFFR = ETH_MACFFR_RA;
+	ETH_MACHTHR = 0;
 	ETH_MACHTLR = 0;
 	ETH_MACFCR = (0x100 << ETH_MACFCR_PT_SHIFT);
 	ETH_MACVLANTR = 0;

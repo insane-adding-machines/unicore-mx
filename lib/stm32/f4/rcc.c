@@ -79,6 +79,22 @@ const struct rcc_clock_scale rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_END] = {
 		.apb1_frequency = 42000000,
 		.apb2_frequency = 84000000,
 	},
+	{ /* 100MHz */
+		.pllm = 12,
+		.plln = 192,
+		.pllp = 2,
+		.pllq = 4,
+		.pllr = 0,
+		.hpre = RCC_CFGR_HPRE_DIV_NONE,
+		.ppre1 = RCC_CFGR_PPRE_DIV_2,
+		.ppre2 = RCC_CFGR_PPRE_DIV_NONE,
+		.power_save = 1,
+		.flash_config = FLASH_ACR_ICE | FLASH_ACR_DCE |
+				FLASH_ACR_LATENCY_2WS,
+		.ahb_frequency  = 100000000,
+		.apb1_frequency = 50000000,
+		.apb2_frequency = 100000000,
+	},
 	{ /* 120MHz */
 		.pllm = 8,
 		.plln = 240,

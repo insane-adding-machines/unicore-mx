@@ -195,6 +195,19 @@ void rcc_set_mco(uint32_t mcosrc)
 			(mcosrc << RCC_CFGR_MCO_SHIFT);
 }
 
+/** @brief Select the source for the RTC
+ *
+ * Select the source clock for the RTC
+ *
+ * @parame[in] clock the clock source
+ */
+
+void rcc_rtc_select_clock(uint32_t clock)
+{
+    RCC_BDCR &= ~(RCC_BDCR_RTCSEL_MASK << RCC_BDCR_RTCSEL_SHIFT);
+    RCC_BDCR |= (clock << RCC_BDCR_RTCSEL_SHIFT);
+}
+
 /**@}*/
 
 #undef _RCC_REG

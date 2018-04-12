@@ -386,6 +386,18 @@
 #define RCC_CSR_LSIRDY				(1 << 1)
 #define RCC_CSR_LSION				(1 << 0)
 
+/* --- RTC aliases --- */
+
+#define RCC_BDCR				RCC_CSR
+#define RCC_BDCR_BDRST				RCC_CSR_RTCRST
+#define RCC_BDCR_RTCEN				RCC_CSR_RTCEN
+#define RCC_BDCR_RTCSEL_SHIFT			RCC_CSR_RTCSEL_SHIFT
+#define RCC_BDCR_RTCSEL_MASK			RCC_CSR_RTCSEL_MASK
+#define RCC_BDCR_RTCSEL_NONE			RCC_CSR_RTCSEL_NONE
+#define RCC_BDCR_RTCSEL_LSE			RCC_CSR_RTCSEL_LSE
+#define RCC_BDCR_RTCSEL_LSI			RCC_CSR_RTCSEL_LSI
+#define RCC_BDCR_RTCSEL_HSE			RCC_CSR_RTCSEL_HSE
+
 struct rcc_clock_scale {
 	uint8_t pll_mul;
 	uint16_t pll_div;

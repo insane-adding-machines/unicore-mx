@@ -397,6 +397,9 @@
 #define RCC_BDCR_RTCSEL_LSE			RCC_CSR_RTCSEL_LSE
 #define RCC_BDCR_RTCSEL_LSI			RCC_CSR_RTCSEL_LSI
 #define RCC_BDCR_RTCSEL_HSE			RCC_CSR_RTCSEL_HSE
+#define RCC_BDCR_LSEBYP                         RCC_CSR_LSEBYP
+#define RCC_BDCR_LSERDY                         RCC_CSR_LSERDY
+#define RCC_BDCR_LSEON                          RCC_CSR_LSEON
 
 struct rcc_clock_scale {
 	uint8_t pll_mul;

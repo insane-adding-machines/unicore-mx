@@ -48,7 +48,7 @@ void rcc_periph_reset_hold(enum rcc_periph_rst rst);
 void rcc_periph_reset_release(enum rcc_periph_rst rst);
 
 void rcc_set_mco(uint32_t mcosrc);
-void rcc_rtc_select_clock(uint32_t clock)
+void rcc_rtc_select_clock(uint32_t clock);
 
 END_DECLS
 /**@}*/

@@ -129,7 +129,7 @@ void lcd_set_refresh_frequency(uint32_t frequency)
 	case RCC_CSR_RTCSEL_LSI:
 		lcd_clock = 37000;
 		break;
-	case RCC_CSR_RTCSEL_HSI:
+	case RCC_CSR_RTCSEL_HSE:
 		lcd_clock = 16000000;
 		break;
 	default:

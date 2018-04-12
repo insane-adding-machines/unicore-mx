@@ -616,7 +616,6 @@ void rcc_set_hpre(uint32_t hpre);
 void rcc_set_usbpre(uint32_t usbpre);
 void rcc_set_rtcpre(uint32_t rtcpre);
 uint32_t rcc_system_clock_source(void);
-void rcc_rtc_select_clock(uint32_t clock);
 void rcc_clock_setup_msi(const struct rcc_clock_scale *clock);
 void rcc_clock_setup_hsi(const struct rcc_clock_scale *clock);
 void rcc_clock_setup_pll(const struct rcc_clock_scale *clock);

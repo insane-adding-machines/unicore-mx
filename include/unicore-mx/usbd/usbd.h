@@ -133,6 +133,16 @@ enum usbd_speed {
 
 typedef enum usbd_speed usbd_speed;
 
+	/** Optional features */
+enum usbd_backend_features{
+		  USBD_FEATURE_NONE   = 0
+		, USBD_PHY_EXT        = (1 << 0)
+		, USBD_VBUS_SENSE     = (1 << 1)
+		, USBD_VBUS_EXT       = (1 << 2)
+		//* provide usb-core auto power-up/down on connect/disconnect
+		, USBD_USE_POWERDOWN  = (1 << 3)
+};
+
 struct usbd_backend_config {
 	/** Number of endpoints. (Including control endpoint) */
 	uint8_t ep_count;
@@ -143,13 +153,8 @@ struct usbd_backend_config {
 	/** Device speed */
 	usbd_speed speed;
 
-	/** Optional features */
-	enum {
-		USBD_FEATURE_NONE = 0,
-		USBD_PHY_EXT = (1 << 0),
-		USBD_VBUS_SENSE = (1 << 1),
-		USBD_VBUS_EXT = (1 << 2)
-	} feature;
+	/** Optional features see usbd_backend_features*/
+	unsigned int feature;
 };
 
 typedef struct usbd_backend_config usbd_backend_config;
@@ -277,7 +282,7 @@ enum usbd_transfer_flags {
 	USBD_FLAG_PACKET_PER_FRAME_MASK = (0x3 << 5)
 };
 
-typedef enum usbd_transfer_flags usbd_transfer_flags;
+typedef unsigned char usbd_transfer_flags;
 
 /**
  * USB Transfer status
@@ -427,6 +432,8 @@ typedef void (*usbd_set_interface_callback)(usbd_device *dev,
 typedef void (*usbd_setup_callback)(usbd_device *dev, uint8_t addr,
 					const struct usb_setup_data *setup_data);
 
+typedef void (* usbd_session_callback)(usbd_device *dev, bool online);
+
 typedef void (* usbd_generic_callback)(usbd_device *dev);
 
 struct usbd_info_string {
@@ -538,6 +545,16 @@ void usbd_register_resume_callback(usbd_device *dev,
  */
 void usbd_register_sof_callback(usbd_device *dev,
 					usbd_generic_callback callback);
+
+/**
+ * Register session connect/disconnect callback
+ *   with USBD_VBUS_SENSE feature primary need for cable 
+ *   plug detection
+ * @param[in] dev USB Device
+ * @param[in] callback callback to be invoked
+ */
+void usbd_register_session_callback(usbd_device *dev,
+					usbd_session_callback callback);
 
 /**
  * Register SET_CONFIGURATION callback \n
@@ -666,6 +683,30 @@ uint8_t usbd_get_address(usbd_device *dev);
  * @return Current enumeration speed
  */
 usbd_speed usbd_get_speed(usbd_device *dev);
+
+
+/**
+ * Get status of connected cable.
+ * @param[in] dev USB Device
+ * @return true - cable connected, and Vbus active
+ */
+bool usbd_is_vbus(usbd_device *dev);
+
+/**
+ * Controls power state of usb-core and PHY
+ * @param[in] dev USB Device
+ * @param[in] onoff  - true turn on device in action, and power PHY
+ *                     false disconnects, disable PHY and stops usb-core
+ */
+void usbd_enable(usbd_device *dev, bool onoff);
+
+/**
+ * Checks power state of usb-core and PHY
+ * @param[in] dev USB Device
+ * @param[in] \return  true  - device in action, and power PHY
+ *                     false - disabled PHY and stops usb-core
+ */
+bool usbd_is_enabled(usbd_device *dev);
 
 /**
  * Perform a transfer

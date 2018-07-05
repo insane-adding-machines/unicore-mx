@@ -109,12 +109,35 @@ static inline uint16_t get_fifo_depth(usbd_device *dev)
  */
 static void flush_fifo(usbd_device *dev)
 {
+	USBD_LOG_LN(USB_VSETUP,"USBD:Flush");
+
+	const uint32_t GINACKEFF = DWC_OTG_GINTMSK_GINAKEFFM ; // | DWC_OTG_GINTMSK_GONAKEFFM ;
+	const uint32_t GNACKEFF = DWC_OTG_GINTMSK_GINAKEFFM  | DWC_OTG_GINTMSK_GONAKEFFM ;
+	if ( (REBASE(DWC_OTG_GINTSTS) & GNACKEFF) != 0 ){
+		// Clear Global IN OUT ep NACK if it alredy set
+		REBASE(DWC_OTG_DCTL) = DWC_OTG_DCTL_CGONAK | DWC_OTG_DCTL_CGINAK;
+		while ( (REBASE(DWC_OTG_GINTSTS) & GNACKEFF) != 0 ) ;
+	}
+	
+	// Set Global IN OUT ep NACK
+	REBASE(DWC_OTG_DCTL) = DWC_OTG_DCTL_SGONAK | DWC_OTG_DCTL_SGINAK;
+
+	/* Wait for AHB idle. */
+	while (!(REBASE(DWC_OTG_GRSTCTL) & DWC_OTG_GRSTCTL_AHBIDL));
+
+	// Wait Global NACK Effective. it is demanded by RM0090 but unpredictable and can hang!
+	if (0)
+	while ( (REBASE(DWC_OTG_GINTSTS) & GINACKEFF) != GINACKEFF );
+
 	/* Flush RX, TX FIFO */
 	REBASE(DWC_OTG_GRSTCTL) = DWC_OTG_GRSTCTL_RXFFLSH |
 		(DWC_OTG_GRSTCTL_TXFFLSH | DWC_OTG_GRSTCTL_TXFNUM_ALL);
 
-	while (REBASE(DWC_OTG_GRSTCTL) &
-				(DWC_OTG_GRSTCTL_RXFFLSH | DWC_OTG_GRSTCTL_TXFFLSH));
+	const uint32_t XFLUSH = (DWC_OTG_GRSTCTL_RXFFLSH | DWC_OTG_GRSTCTL_TXFFLSH);
+	while ( (REBASE(DWC_OTG_GRSTCTL) & XFLUSH) != 0 );
+
+	// Clear Global IN OUT ep NACK
+	REBASE(DWC_OTG_DCTL) = DWC_OTG_DCTL_CGONAK | DWC_OTG_DCTL_CGINAK;
 }
 
 void dwc_otg_init(usbd_device *dev)

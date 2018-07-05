@@ -451,7 +451,7 @@ def parse_input(input_file):
 		if inp[0] == "%":
 			fmt = "/* %s */" if STRICT_C_OUTPUT else "// %s"
 			res = fmt % inp[1:].strip()
-			data.append({'type': 'extra', 'payload': res + "\n\n"})
+			data.append({'type': 'extra', 'payload': res + "\n"})
 			continue
 
 		restore_last_useful_line(tag)

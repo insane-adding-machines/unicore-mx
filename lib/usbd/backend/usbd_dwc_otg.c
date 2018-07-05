@@ -117,6 +117,34 @@ static void flush_fifo(usbd_device *dev)
 				(DWC_OTG_GRSTCTL_RXFFLSH | DWC_OTG_GRSTCTL_TXFFLSH));
 }
 
+void fifo_flush_ep(usbd_device *dev, uint8_t ep_addr){
+
+	uint8_t num = ENDPOINT_NUMBER(ep_addr);
+
+	if (IS_IN_ENDPOINT(ep_addr)) {
+		REBASE(DWC_OTG_DIEPxCTL, num) |= DWC_OTG_DIEPCTL_SNAK;
+		/* Wait for AHB idle. */
+		while (!(REBASE(DWC_OTG_GRSTCTL) & DWC_OTG_GRSTCTL_AHBIDL));
+
+		/* Flush RX, TX FIFO */
+		REBASE(DWC_OTG_GRSTCTL) = DWC_OTG_GRSTCTL_TXFFLSH | DWC_OTG_GRSTCTL_TXFNUM(num);
+
+		const uint32_t XFLUSH = DWC_OTG_GRSTCTL_TXFFLSH;
+		while ( (REBASE(DWC_OTG_GRSTCTL) & XFLUSH) != 0 );
+	}
+	else {
+		REBASE(DWC_OTG_DOEPxCTL, num) |= DWC_OTG_DOEPCTL_SNAK;
+		/* Wait for AHB idle. */
+		while (!(REBASE(DWC_OTG_GRSTCTL) & DWC_OTG_GRSTCTL_AHBIDL));
+
+		/* Flush RX, TX FIFO */
+		REBASE(DWC_OTG_GRSTCTL) = DWC_OTG_GRSTCTL_RXFFLSH;
+
+		const uint32_t XFLUSH = DWC_OTG_GRSTCTL_RXFFLSH;
+		while ( (REBASE(DWC_OTG_GRSTCTL) & XFLUSH) != 0 );
+	}
+}
+
 void dwc_otg_init(usbd_device *dev)
 {
 	/* Wait for AHB idle. */
@@ -173,11 +201,17 @@ static void disable_all_non_ep0(usbd_device *dev)
 
 		REBASE(DWC_OTG_DOEPxINT, i) = 0xFFFF;
 		REBASE(DWC_OTG_DOEPxTSIZ, i) = 0;
-		REBASE(DWC_OTG_DOEPxCTL, i) = DWC_OTG_DOEPCTL_SNAK;
+		if ((REBASE(DWC_OTG_DOEPxCTL, i) & DWC_OTG_DOEPCTL_EPENA) == 0)
+			REBASE(DWC_OTG_DOEPxCTL, i) = DWC_OTG_DOEPCTL_SNAK;
+		else
+			REBASE(DWC_OTG_DOEPxCTL, i) = DWC_OTG_DOEPCTL_SNAK | DWC_OTG_DOEPCTL_EPDIS;
 
 		REBASE(DWC_OTG_DIEPxINT, i) = 0xFFFF;
 		REBASE(DWC_OTG_DIEPxTSIZ, i) = 0;
-		REBASE(DWC_OTG_DIEPxCTL, i) = DWC_OTG_DIEPCTL_SNAK;
+		if ((REBASE(DWC_OTG_DIEPxCTL, i) & DWC_OTG_DIEPCTL_EPENA) == 0)
+			REBASE(DWC_OTG_DIEPxCTL, i) = DWC_OTG_DIEPCTL_SNAK;
+		else
+			REBASE(DWC_OTG_DIEPxCTL, i) = DWC_OTG_DIEPCTL_SNAK | DWC_OTG_DOEPCTL_EPDIS;
 	}
 
 	REBASE(DWC_OTG_DAINTMSK) &= ~(DWC_OTG_DAINTMSK_OEPM(0) | DWC_OTG_DAINTMSK_IEPM(0));
@@ -207,6 +241,7 @@ void dwc_otg_ep_prepare_start(usbd_device *dev)
 
 	dev->private_data.fifo_rx_usage_overall = 16; /* by EP0 and constant */
 	dev->private_data.fifo_rx_usage_packet = fifo_word + 1; /* EP0 */
+	dev->private_data.ep_prematured = 0;
 
 	disable_all_non_ep0(dev);
 
@@ -596,6 +631,12 @@ void dwc_otg_urb_cancel(usbd_device *dev, usbd_urb *urb)
 {
 	(void) dev;
 	(void) urb;
+	uint8_t ep_addr = urb->transfer.ep_addr; //ENDPOINT_NUMBER
+	if (dwc_otg_is_active_ep(dev, ep_addr)){
+		USBD_LOGF_LN(USB_VIO, "usbd:stop ep%"PRIx8"\n", ep_addr);
+		dwc_otg_stop_ep(dev, ep_addr);
+		fifo_flush_ep(dev, ep_addr);
+	}
 }
 
 /**
@@ -662,6 +703,45 @@ static inline void fifo_read_and_throw(usbd_device *dev, unsigned bytes)
 	}
 }
 
+bool dwc_otg_is_active_ep(usbd_device *dev, uint8_t ep_addr){
+	uint8_t ep_num = ENDPOINT_NUMBER(ep_addr);
+	if (IS_IN_ENDPOINT(ep_addr)) {
+		if ( DWC_OTG_DIEPTSIZ_XFRSIZ_GET( REBASE(DWC_OTG_DIEPxTSIZ, ep_num) ) != 0 )
+			return true;
+		if ((REBASE(DWC_OTG_DIEPxCTL, ep_num) & DWC_OTG_DIEPCTL_NAKSTS) != 0) 
+			return false;
+		//* looks that DIEPxTSIZ==0 not relyable, it still can be some data hunged in txfifo
+		//*     waiting for transmition
+		//if ( DWC_OTG_DIEPTSIZ_XFRSIZ_GET( REBASE(DWC_OTG_DIEPxTSIZ, ep_num) ) == 0 )
+		//	return false;
+	}
+	else{
+		if ((REBASE(DWC_OTG_DOEPxCTL, ep_num) & DWC_OTG_DOEPCTL_NAKSTS) != 0) 
+			return false;
+		if (DWC_OTG_DOEPTSIZ_XFRSIZ_GET(REBASE(DWC_OTG_DOEPxTSIZ, ep_num)) == 0)
+			return false;
+	}
+	return true;
+}
+
+void dwc_otg_stop_ep(usbd_device *dev, uint8_t ep_addr){
+	uint8_t ep_num = ENDPOINT_NUMBER(ep_addr);
+	if (IS_IN_ENDPOINT(ep_addr)) {
+		if ((REBASE(DWC_OTG_DIEPxCTL, ep_num) & DWC_OTG_DIEPCTL_EPENA) == 0)
+			REBASE(DWC_OTG_DIEPxCTL, ep_num) |= DWC_OTG_DIEPCTL_SNAK;
+		else
+			REBASE(DWC_OTG_DIEPxCTL, ep_num) |= DWC_OTG_DIEPCTL_SNAK | DWC_OTG_DOEPCTL_EPDIS;
+		REBASE(DWC_OTG_DIEPxINT, ep_num) = 0xFFFF;
+		REBASE(DWC_OTG_DAINTMSK) &= ~DWC_OTG_DAINTMSK_IEPM(ep_num);
+	} else {
+		if ((REBASE(DWC_OTG_DOEPxCTL, ep_num) & DWC_OTG_DOEPCTL_EPENA) == 0)
+			REBASE(DWC_OTG_DOEPxCTL, ep_num) |= DWC_OTG_DOEPCTL_SNAK;
+		else
+			REBASE(DWC_OTG_DOEPxCTL, ep_num) |= DWC_OTG_DOEPCTL_SNAK | DWC_OTG_DOEPCTL_EPDIS;
+		REBASE(DWC_OTG_DOEPxINT, ep_num) = 0xFFFF ^ DWC_OTG_DOEPINT_STUP;
+		REBASE(DWC_OTG_DAINTMSK) &= ~DWC_OTG_DAINTMSK_OEPM(ep_num);
+	}
+}
 /**
  * Perform a premature URB complete
  * This is useful when some kind of unexpected things happen in between
@@ -673,17 +753,10 @@ static void premature_urb_complete(usbd_device *dev, usbd_urb *urb,
 		usbd_transfer_status status)
 {
 	usbd_transfer *transfer = &urb->transfer;
-	uint8_t ep_num = ENDPOINT_NUMBER(transfer->ep_addr);
+	uint8_t ep_addr = transfer->ep_addr;
 
-	if (IS_IN_ENDPOINT(transfer->ep_addr)) {
-		REBASE(DWC_OTG_DIEPxCTL, ep_num) |= DWC_OTG_DIEPCTL_SNAK;
-		REBASE(DWC_OTG_DIEPxINT, ep_num) = 0xFFFF;
-		REBASE(DWC_OTG_DAINTMSK) &= ~DWC_OTG_DAINTMSK_IEPM(ep_num);
-	} else {
-		REBASE(DWC_OTG_DOEPxCTL, ep_num) |= DWC_OTG_DOEPCTL_SNAK;
-		REBASE(DWC_OTG_DOEPxINT, ep_num) = 0xFFFF ^ DWC_OTG_DOEPINT_STUP;
-		REBASE(DWC_OTG_DAINTMSK) &= ~DWC_OTG_DAINTMSK_OEPM(ep_num);
-	}
+	dwc_otg_stop_ep(dev, ep_addr);
+	mark_ep_as_prematured(dev, ep_addr, true);
 
 	usbd_urb_complete(dev, urb, status);
 }
@@ -919,6 +992,15 @@ static void process_out_endpoint_interrupt(usbd_device *dev, uint8_t ep_num)
 		LOGF_LN("Transfer Complete: endpoint 0x%"PRIx8, ep_addr);
 		usbd_urb *urb = usbd_find_active_urb(dev, ep_addr);
 
+		if (is_ep_prematured(dev, ep_addr)) {
+			if (urb != NULL){
+				//* ommit this RXC and restart current URB
+				REBASE(DWC_OTG_DOEPxCTL, ep_num) |= DWC_OTG_DOEP0CTL_EPENA
+				                                 | DWC_OTG_DOEP0CTL_CNAK;
+			}
+			mark_ep_as_prematured(dev, ep_addr, false);
+		}
+		else
 		if (!ep_num && urb != NULL && dev->private_data.ep0tsiz_pktcnt) {
 			/* We are still expecting data! */
 

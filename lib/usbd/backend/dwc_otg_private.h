@@ -83,11 +83,19 @@ struct dwc_otg_private_data {
 
 	/* FIXME: used for all endpoint setup_data. */
 	struct usb_setup_data setup_data;
+
+	/* Premature terminated OUT URBs are probably have followed by 
+	 * COMP_OUT cause IRQ RXC - that should be ommited, 
+	 * else  next URB will terminate by this loosed RXC */
+	uint32_t ep_prematured;
 };
 
 #define USBD_DEVICE_EXTRA												\
 	struct dwc_otg_private_data private_data;
 
+
+
+#include "../usbd_private.h"
 void dwc_otg_init(usbd_device *dev);
 
 void dwc_otg_set_address(usbd_device *dev, uint8_t addr);
@@ -97,6 +105,8 @@ void dwc_otg_ep_prepare(usbd_device *dev, uint8_t addr, usbd_ep_type type,
 					uint16_t max_size, uint16_t internval,
 					usbd_ep_flags flags);
 void dwc_otg_ep_prepare_end(usbd_device *dev);
+void dwc_otg_stop_ep(usbd_device *dev, uint8_t ep_num);
+bool dwc_otg_is_active_ep(usbd_device *dev, uint8_t ep_addr);
 void dwc_otg_set_ep_dtog(usbd_device *dev, uint8_t addr, bool dtog);
 bool dwc_otg_get_ep_dtog(usbd_device *dev, uint8_t addr);
 void dwc_otg_set_ep_stall(usbd_device *dev, uint8_t addr, bool stall);
@@ -111,6 +121,23 @@ uint16_t dwc_otg_frame_number(usbd_device *dev);
 typedef struct usbd_urb usbd_urb;
 void dwc_otg_urb_submit(usbd_device *dev, usbd_urb *urb);
 void dwc_otg_urb_cancel(usbd_device *dev, usbd_urb *urb);
+
+static inline
+bool is_ep_prematured(usbd_device *dev, uint8_t ep_addr)
+{
+	return (dev->private_data.ep_prematured & ep_free_mask(ep_addr));
+}
+
+static inline 
+void mark_ep_as_prematured(usbd_device *dev, uint8_t ep_addr, bool yes)
+{
+	uint32_t mask = ep_free_mask(ep_addr);
+	if (yes) {
+		dev->private_data.ep_prematured |= mask;
+	} else {
+		dev->private_data.ep_prematured &= ~mask;
+	}
+}
 
 END_DECLS
 

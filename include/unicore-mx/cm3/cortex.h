@@ -33,8 +33,11 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <unicore-mx/common/cmsis.h>
 
 /*---------------------------------------------------------------------------*/
+#if __CMSIS_USE==0
+#if defined ( __GNUC__ )
 /** @brief Cortex M Enable interrupts
  *
  * Disable the interrupt mask and enable interrupts globally
@@ -53,7 +56,6 @@ static inline void cm_disable_interrupts(void)
 {
 	__asm__ volatile ("CPSID I\n");
 }
-
 /*---------------------------------------------------------------------------*/
 /** @brief Cortex M Enable faults
  *
@@ -143,6 +145,60 @@ static inline uint32_t cm_mask_faults(uint32_t mask)
 	__asm__ __volatile__ ("MSR FAULTMASK, %0" : : "r" (mask));
 	return old;
 }
+#elif defined  ( __CC_ARM )
+
+__attribute__((always_inline))
+static inline
+uint32_t __get_PRIMASK(void)
+{
+  register uint32_t __regPriMask         __asm("primask");
+  return(__regPriMask);
+}
+
+__attribute__((always_inline))
+static inline
+void __set_PRIMASK(uint32_t priMask)
+{
+  register uint32_t __regPriMask         __asm("primask");
+  __regPriMask = (priMask);
+}
+
+#endif //defined ( __GNUC__ )
+
+#else	//__CMSIS_USE==0
+
+#endif //__CMSIS_USE!=0
+
+#if defined ( __CC_ARM )
+/** @brief Cortex M Enable interrupts
+ *
+ * Disable the interrupt mask and enable interrupts globally
+ */
+static inline void cm_enable_interrupts(void)
+{
+	__enable_irq();
+}
+
+/*---------------------------------------------------------------------------*/
+/** @brief Cortex M Disable interrupts
+ *
+ * Mask all interrupts globally
+ */
+static inline void cm_disable_interrupts(void)
+{
+	__disable_irq();
+}
+
+__attribute__((always_inline))
+static inline 
+uint32_t cm_mask_interrupts(uint32_t mask)
+{
+	register uint32_t old;
+	old = __get_PRIMASK();
+	__set_PRIMASK(mask);
+	return old;
+}
+#endif //defined ( __CC_ARM )
 
 /**@}*/
 

@@ -65,7 +65,7 @@
 
 /* --- FLASH_CR values ----------------------------------------------------- */
 
-#define FLASH_CR_LOCK			(1 << 31)
+#define FLASH_CR_LOCK			(1u << 31)
 #define FLASH_CR_ERRIE			(1 << 25)
 #define FLASH_CR_EOPIE			(1 << 24)
 #define FLASH_CR_STRT			(1 << 16)

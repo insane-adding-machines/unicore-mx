@@ -39,12 +39,14 @@ specific memorymap.h header before including this header file.*/
 @ingroup STM32F_usart_defines
 
 @{*/
+#if !(__HAL_USE) && !(__CMSIS_USE)
 #define USART1				USART1_BASE
 #define USART2				USART2_BASE
 #define USART3				USART3_BASE
 /**@}*/
 #define UART4				UART4_BASE
 #define UART5				UART5_BASE
+#endif
 
 /* --- Convenience defines ------------------------------------------------- */
 
@@ -54,9 +56,11 @@ specific memorymap.h header before including this header file.*/
 @ingroup STM32F_usart_defines
 
 @{*/
+#if !(__HAL_USE) && !(__CMSIS_USE)
 #define USART_PARITY_NONE		0x00
 #define USART_PARITY_EVEN		USART_CR1_PCE
 #define USART_PARITY_ODD		(USART_CR1_PS | USART_CR1_PCE)
+#endif
 /**@}*/
 #define USART_PARITY_MASK		(USART_CR1_PS | USART_CR1_PCE)
 
@@ -66,9 +70,11 @@ specific memorymap.h header before including this header file.*/
 @ingroup STM32F_usart_defines
 
 @{*/
+#if !(__HAL_USE) && !(__CMSIS_USE)
 #define USART_MODE_RX                   USART_CR1_RE
 #define USART_MODE_TX		        USART_CR1_TE
 #define USART_MODE_TX_RX		(USART_CR1_RE | USART_CR1_TE)
+#endif
 /**@}*/
 #define USART_MODE_MASK		        (USART_CR1_RE | USART_CR1_TE)
 
@@ -77,10 +83,12 @@ specific memorymap.h header before including this header file.*/
 @ingroup STM32F_usart_defines
 
 @{*/
+#if !(__HAL_USE) && !(__CMSIS_USE)
 #define USART_STOPBITS_1		USART_CR2_STOPBITS_1   /* 1 stop bit */
 #define USART_STOPBITS_0_5		USART_CR2_STOPBITS_0_5 /* .5 stop bit */
 #define USART_STOPBITS_2		USART_CR2_STOPBITS_2   /* 2 stop bits */
 #define USART_STOPBITS_1_5		USART_CR2_STOPBITS_1_5 /* 1.5 stop bit*/
+#endif
 /**@}*/
 
 /* CR3_CTSE/CR3_RTSE combined values */
@@ -128,6 +136,8 @@ void usart_enable_error_interrupt(uint32_t usart);
 void usart_disable_error_interrupt(uint32_t usart);
 bool usart_get_flag(uint32_t usart, uint32_t flag);
 bool usart_get_interrupt_source(uint32_t usart, uint32_t flag);
+
+
 
 END_DECLS
 

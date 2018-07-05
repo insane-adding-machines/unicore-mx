@@ -44,6 +44,7 @@
 #define UNICOREMX_RCC_H
 
 /* --- RCC registers ------------------------------------------------------- */
+#include <unicore-mx/common/cmsis.h>
 
 #define RCC_CR					MMIO32(RCC_BASE + 0x00)
 #define RCC_PLLCFGR				MMIO32(RCC_BASE + 0x04)
@@ -83,23 +84,26 @@
 #define RCC_DCKCFGR				MMIO32(RCC_BASE + 0x8C)
 
 /* --- RCC_CR values ------------------------------------------------------- */
-
-#define RCC_CR_PLLSAIRDY			(1 << 29)
-#define RCC_CR_PLLSAION				(1 << 28)
-#define RCC_CR_PLLI2SRDY			(1 << 27)
-#define RCC_CR_PLLI2SON				(1 << 26)
-#define RCC_CR_PLLRDY				(1 << 25)
-#define RCC_CR_PLLON				(1 << 24)
-#define RCC_CR_CSSON				(1 << 19)
-#define RCC_CR_HSEBYP				(1 << 18)
-#define RCC_CR_HSERDY				(1 << 17)
-#define RCC_CR_HSEON				(1 << 16)
+#define RCC_CR_PLLSAIRDY    (1ul << 29)
+#define RCC_CR_PLLSAION     (1ul << 28)
+#if !(__CMSIS_USE)
+#define RCC_CR_PLLI2SRDY    (1ul << 27)
+#define RCC_CR_PLLI2SON     (1ul << 26)
+#define RCC_CR_PLLRDY       (1ul << 25)
+#define RCC_CR_PLLON        (1ul << 24)
+#define RCC_CR_CSSON        (1ul << 19)
+#define RCC_CR_HSEBYP       (1ul << 18)
+#define RCC_CR_HSERDY       (1ul << 17)
+#define RCC_CR_HSEON        (1ul << 16)
+#endif
 /* HSICAL: [15:8] */
 /* HSITRIM: [7:3] */
 #define RCC_CR_HSITRIM_SHIFT			3
 #define RCC_CR_HSITRIM_MASK			0x1f
+#if !(__CMSIS_USE)
 #define RCC_CR_HSIRDY				(1 << 1)
 #define RCC_CR_HSION				(1 << 0)
+#endif
 
 /* --- RCC_PLLCFGR values -------------------------------------------------- */
 
@@ -109,7 +113,9 @@
 /* PLLQ: [27:24] */
 #define RCC_PLLCFGR_PLLQ_SHIFT			24
 #define RCC_PLLCFGR_PLLQ_MASK			0xf
+#if !(__CMSIS_USE)
 #define RCC_PLLCFGR_PLLSRC			(1 << 22)
+#endif
 /* PLLP: [17:16] */
 #define RCC_PLLCFGR_PLLP_SHIFT			16
 #define RCC_PLLCFGR_PLLP_MASK			0x3
@@ -142,7 +148,9 @@
 #define RCC_CFGR_MCOPRE_DIV_5			0x7
 
 /* I2SSRC: I2S clock selection */
-#define RCC_CFGR_I2SSRC				(1 << 23)
+#if !(__CMSIS_USE)
+#define RCC_CFGR_I2SSRC				(1ul << 23)
+#endif
 
 /* MCO1: Microcontroller clock output 1 */
 #define RCC_CFGR_MCO1_SHIFT			21
@@ -184,17 +192,22 @@
 
 /* SWS: System clock switch status */
 #define RCC_CFGR_SWS_SHIFT			2
+#if !(__CMSIS_USE)
 #define RCC_CFGR_SWS_HSI			0x0
 #define RCC_CFGR_SWS_HSE			0x1
 #define RCC_CFGR_SWS_PLL			0x2
+#endif
 
 /* SW: System clock switch */
 #define RCC_CFGR_SW_SHIFT			0
+#if !(__CMSIS_USE)
 #define RCC_CFGR_SW_HSI				0x0
 #define RCC_CFGR_SW_HSE				0x1
 #define RCC_CFGR_SW_PLL				0x2
+#endif
 
 /* --- RCC_CIR values ------------------------------------------------------ */
+#if !(__CMSIS_USE)
 
 /* Clock security system interrupt clear bit */
 #define RCC_CIR_CSSC				(1 << 23)
@@ -535,6 +548,7 @@
 #define RCC_SSCGR_MODPER_SHIFT			0
 #define RCC_SSCGR_MODPER_MASK			0xfff
 
+#endif //!(__CMSIS_USE)
 /* --- RCC_PLLI2SCFGR values ----------------------------------------------- */
 
 /* RCC_PLLI2SCFGR[30:28]: PLLI2SR */

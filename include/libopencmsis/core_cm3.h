@@ -10,6 +10,7 @@
 #ifndef OPENCMSIS_CORECM3_H
 #define OPENCMSIS_CORECM3_H
 
+#include <unicore-mx/common/cmsis.h>
 #include <unicore-mx/cm3/common.h>
 #include <unicore-mx/cm3/cortex.h>
 #include <unicore-mx/cm3/memorymap.h>
@@ -88,6 +89,10 @@ static inline void NVIC_DisableIRQ(uint8_t irqn)
 
 /* stubs for efm32_int */
 
+//* looks like ARMCC have this by internals
+
+#if __CMSIS_USE==0
+#if defined ( __GNUC__ )
 static inline void __enable_irq(void)
 {
 	cm_enable_interrupts();
@@ -96,6 +101,8 @@ static inline void __disable_irq(void)
 {
 	cm_disable_interrupts();
 }
+#endif //defined ( __GNUC__ )
+#endif // __CMSIS_USE==0
 
 /* stubs for efm32_mpu FIXME */
 
